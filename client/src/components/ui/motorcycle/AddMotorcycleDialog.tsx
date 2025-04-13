@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { insertMotorcycleSchema } from "@shared/schema";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddMotorcycleDialogProps {
   open: boolean;
@@ -30,8 +31,17 @@ interface AddMotorcycleDialogProps {
   onSuccess: () => void;
 }
 
-const formSchema = insertMotorcycleSchema.extend({
-  tags: z.string().transform((val) => val.split(',').map(t => t.trim())),
+// Extend the schema to handle string input for tags
+const formSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  make: z.string().min(1, "Make is required"),
+  model: z.string().min(1, "Model is required"),
+  year: z.number().int().min(1900).max(new Date().getFullYear() + 1),
+  engineSize: z.string().min(1, "Engine size is required"),
+  mileage: z.number().int().min(0),
+  imageUrl: z.string().optional(),
+  status: z.string().min(1, "Status is required"),
+  tags: z.string().transform((val) => val.split(',').map(t => t.trim()).filter(Boolean)),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,6 +49,7 @@ type FormValues = z.infer<typeof formSchema>;
 const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDialogProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,22 +62,37 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
       mileage: 0,
       imageUrl: "",
       status: "active",
-      tags: "",
+      tags: "Motorcycle",
     },
   });
 
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      await apiRequest("POST", "/api/motorcycles", data);
+      // Log the data being sent to check values
+      console.log("Submitting motorcycle:", data);
+      
+      // Make sure tags is an array before sending
+      const formattedData = {
+        ...data,
+        tags: Array.isArray(data.tags) ? data.tags : [data.tags],
+      };
+      
+      await apiRequest("POST", "/api/motorcycles", formattedData);
+      
       toast({
         title: "Success",
         description: "Motorcycle added to your garage!",
       });
+      
+      // Invalidate cache to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+      
       form.reset();
       onOpenChange(false);
       onSuccess();
     } catch (error) {
+      console.error("Error adding motorcycle:", error);
       toast({
         title: "Error",
         description: "Failed to add motorcycle. Please try again.",

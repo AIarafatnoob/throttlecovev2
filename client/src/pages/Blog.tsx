@@ -154,7 +154,7 @@ const blogArticles = [
 ];
 
 // Get unique categories
-const categories = [...new Set(blogArticles.map(article => article.category))];
+const uniqueCategories = Array.from(new Set(blogArticles.map(article => article.category)));
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
