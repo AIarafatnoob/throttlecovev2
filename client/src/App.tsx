@@ -6,6 +6,7 @@ import Garage from "@/pages/Garage";
 import Maintenance from "@/pages/Maintenance";
 import Community from "@/pages/Community";
 import Catalog from "@/pages/Catalog";
+import Shop from "@/pages/Shop";
 import Blog from "@/pages/Blog";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";

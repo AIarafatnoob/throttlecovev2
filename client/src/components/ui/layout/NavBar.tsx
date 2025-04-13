@@ -17,7 +17,7 @@ import {
 
 const NavBar = () => {
   const [location] = useLocation();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,11 +33,20 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       await apiRequest("POST", "/api/auth/logout", {});
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/session'] });
+      
+      // Clear user session in auth context
+      setUser(null);
+      
+      // Invalidate all queries to refresh data
+      queryClient.invalidateQueries();
+      
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
+      
+      // Redirect to home page
+      window.location.href = '/';
     } catch (error) {
       toast({
         title: "Error",
@@ -52,6 +61,7 @@ const NavBar = () => {
     { name: "Maintenance", path: "/maintenance" },
     { name: "Community", path: "/community" },
     { name: "Catalog", path: "/catalog" },
+    { name: "Shop", path: "/shop" },
     { name: "Blog", path: "/blog" },
   ];
 
