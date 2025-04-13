@@ -51,10 +51,11 @@ const NavBar = () => {
   return (
     <nav className="bg-[#1A1A1A] text-white">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-8">
-          <Link href="/" className="text-2xl font-bold font-header tracking-wider">
-            THROTTLECOVE
-          </Link>
+        <Link href="/" className="text-2xl font-bold font-header tracking-wider">
+          THROTTLE<span className="text-[#FF3B30]">COVE</span>
+        </Link>
+        
+        <div className="flex items-center space-x-6">
           <div className="hidden md:flex space-x-6">
             {navLinks.map((link) => (
               <Link 
@@ -68,56 +69,57 @@ const NavBar = () => {
               </Link>
             ))}
           </div>
-        </div>
-        <div className="flex items-center space-x-4">
-          {user ? (
-            <>
-              <div className="relative">
-                <Button variant="ghost" className="hover:text-[#007AFF] transition-all p-1">
-                  <Bell size={20} />
-                  {notificationCount > 0 && (
-                    <span className="bg-[#FF3B30] rounded-full px-1.5 text-xs absolute -top-1 -right-1">
-                      {notificationCount}
-                    </span>
-                  )}
-                </Button>
+          
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <>
+                <div className="relative">
+                  <Button variant="ghost" className="hover:text-[#FF3B30] transition-all p-1">
+                    <Bell size={20} />
+                    {notificationCount > 0 && (
+                      <span className="bg-[#FF3B30] rounded-full px-1.5 text-xs absolute -top-1 -right-1">
+                        {notificationCount}
+                      </span>
+                    )}
+                  </Button>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
+                    <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:inline">{user.fullName.split(' ')[0]} {user.fullName.split(' ')[1]?.charAt(0)}.</span>
+                  <Button 
+                    variant="ghost" 
+                    className="p-1" 
+                    onClick={handleLogout}
+                  >
+                    <ChevronDown size={16} />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex space-x-2">
+                <Link href="/login">
+                  <Button variant="ghost" className="text-white hover:text-[#FF3B30]">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-[#FF3B30] hover:bg-opacity-90 text-white">
+                    Sign Up
+                  </Button>
+                </Link>
               </div>
-              <div className="flex items-center space-x-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
-                  <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="hidden md:inline">{user.fullName.split(' ')[0]} {user.fullName.split(' ')[1]?.charAt(0)}.</span>
-                <Button 
-                  variant="ghost" 
-                  className="p-1" 
-                  onClick={handleLogout}
-                >
-                  <ChevronDown size={16} />
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="flex space-x-2">
-              <Link href="/login">
-                <Button variant="ghost" className="text-white hover:text-[#007AFF]">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button className="bg-[#FF3B30] hover:bg-opacity-90 text-white">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
-          )}
-          <Button
-            variant="ghost"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </Button>
+            )}
+            <Button
+              variant="ghost"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </Button>
+          </div>
         </div>
       </div>
       
