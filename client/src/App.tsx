@@ -5,6 +5,8 @@ import Home from "@/pages/Home";
 import Garage from "@/pages/Garage";
 import Maintenance from "@/pages/Maintenance";
 import Community from "@/pages/Community";
+import Catalog from "@/pages/Catalog";
+import Blog from "@/pages/Blog";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import NotFound from "@/pages/not-found";
@@ -57,6 +59,8 @@ function App() {
           <Route path="/community">
             <AuthenticatedRoute component={Community} />
           </Route>
+          <Route path="/catalog" component={Catalog} />
+          <Route path="/blog" component={Blog} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
           <Route component={NotFound} />

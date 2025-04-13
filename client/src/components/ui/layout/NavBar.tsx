@@ -3,10 +3,17 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronDown, Bell, Menu, X } from "lucide-react";
+import { ChevronDown, Bell, Menu, X, User, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const NavBar = () => {
   const [location] = useLocation();
@@ -84,18 +91,43 @@ const NavBar = () => {
                   </Button>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
-                    <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline">{user.fullName.split(' ')[0]} {user.fullName.split(' ')[1]?.charAt(0)}.</span>
-                  <Button 
-                    variant="ghost" 
-                    className="p-1" 
-                    onClick={handleLogout}
-                  >
-                    <ChevronDown size={16} />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div className="flex items-center space-x-2 cursor-pointer">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
+                          <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span className="hidden md:inline">{user.fullName.split(' ')[0]} {user.fullName.split(' ')[1]?.charAt(0)}.</span>
+                        <ChevronDown size={16} className="text-gray-400" />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-white text-black">
+                      <div className="flex items-center justify-start p-2 border-b mb-1">
+                        <Avatar className="h-8 w-8 mr-2">
+                          <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
+                          <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{user.fullName}</span>
+                          <span className="text-xs text-gray-500">@{user.username}</span>
+                        </div>
+                      </div>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer text-red-600" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Logout</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </>
             ) : (
