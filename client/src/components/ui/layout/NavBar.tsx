@@ -16,12 +16,12 @@ const NavBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Get maintenance reminders
-  const { data: reminders } = useQuery({
+  const { data: reminders = [] } = useQuery<any[]>({
     queryKey: ['/api/motorcycles/maintenance-reminders'],
     enabled: !!user,
   });
   
-  const notificationCount = reminders?.length || 0;
+  const notificationCount = reminders.length;
 
   const handleLogout = async () => {
     try {
@@ -52,21 +52,19 @@ const NavBar = () => {
     <nav className="bg-[#1A1A1A] text-white">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-8">
-          <Link href="/">
-            <a className="text-2xl font-bold font-header tracking-wider">
-              THROTTLECOVE
-            </a>
+          <Link href="/" className="text-2xl font-bold font-header tracking-wider">
+            THROTTLECOVE
           </Link>
           <div className="hidden md:flex space-x-6">
             {navLinks.map((link) => (
-              <Link key={link.path} href={link.path}>
-                <a
-                  className={`hover:text-[#FF3B30] transition-all py-2 ${
-                    location === link.path ? "text-[#FF3B30]" : ""
-                  }`}
-                >
-                  {link.name}
-                </a>
+              <Link 
+                key={link.path} 
+                href={link.path}
+                className={`hover:text-[#FF3B30] transition-all py-2 ${
+                  location === link.path ? "text-[#FF3B30]" : ""
+                }`}
+              >
+                {link.name}
               </Link>
             ))}
           </div>
@@ -86,7 +84,7 @@ const NavBar = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatarUrl} alt={user.username} />
+                  <AvatarImage src={user.avatarUrl || undefined} alt={user.username} />
                   <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="hidden md:inline">{user.fullName.split(' ')[0]} {user.fullName.split(' ')[1]?.charAt(0)}.</span>
@@ -128,28 +126,32 @@ const NavBar = () => {
         <div className="md:hidden bg-[#1A1A1A] border-t border-gray-800 px-4 py-2">
           <div className="flex flex-col space-y-2 py-2">
             {navLinks.map((link) => (
-              <Link key={link.path} href={link.path}>
-                <a
-                  className={`py-2 block ${
-                    location === link.path ? "text-[#FF3B30]" : ""
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
+              <Link 
+                key={link.path} 
+                href={link.path}
+                className={`py-2 block ${
+                  location === link.path ? "text-[#FF3B30]" : ""
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.name}
               </Link>
             ))}
             {!user && (
               <>
-                <Link href="/login">
-                  <a className="py-2 block" onClick={() => setMobileMenuOpen(false)}>
-                    Login
-                  </a>
+                <Link 
+                  href="/login" 
+                  className="py-2 block" 
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
                 </Link>
-                <Link href="/register">
-                  <a className="py-2 block text-[#FF3B30]" onClick={() => setMobileMenuOpen(false)}>
-                    Sign Up
-                  </a>
+                <Link 
+                  href="/register" 
+                  className="py-2 block text-[#FF3B30]" 
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
                 </Link>
               </>
             )}
