@@ -61,6 +61,7 @@ function App() {
             <AuthenticatedRoute component={Community} />
           </Route>
           <Route path="/catalog" component={Catalog} />
+          <Route path="/shop" component={Shop} />
           <Route path="/blog" component={Blog} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />

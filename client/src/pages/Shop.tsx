@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HardHat, Boot, ShieldCheck, Wind, Zap } from "lucide-react";
+import { Shirt, HardHat, ShieldCheck, Wind, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Product interface
@@ -321,7 +321,7 @@ const CategoryIcon = ({ category }: { category: string }) => {
     case 'gloves':
       return <Wind className="h-5 w-5" />;
     case 'boots':
-      return <Boot className="h-5 w-5" />;
+      return <Shirt className="h-5 w-5" />;
     case 'accessories':
       return <Zap className="h-5 w-5" />;
     default:
@@ -379,7 +379,7 @@ const Shop = () => {
             <span>Gloves</span>
           </TabsTrigger>
           <TabsTrigger value="boots" className="flex items-center gap-2">
-            <BootIcon className="h-4 w-4" />
+            <Shirt className="h-4 w-4" />
             <span>Boots</span>
           </TabsTrigger>
           <TabsTrigger value="accessories" className="flex items-center gap-2">

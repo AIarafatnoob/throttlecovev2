@@ -268,8 +268,9 @@ const Home = () => {
                 </Button>
               </Link>
               <Link href="/garage">
-                <Button variant="outline" className="border-white text-white px-6 py-2 hover:bg-white/10">
-                  Explore Features
+                <Button variant="outline" className="border-2 border-white text-white px-6 py-2 hover:bg-white hover:text-[#1A1A1A] transition-colors font-medium relative overflow-hidden group">
+                  <span className="relative z-10">Explore Features</span>
+                  <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
                 </Button>
               </Link>
             </motion.div>
