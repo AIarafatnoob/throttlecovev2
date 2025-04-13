@@ -40,28 +40,28 @@ const Footer = () => {
             <h4 className="font-bold mb-4">Features</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/garage">
-                  <a className="text-gray-400 hover:text-white transition-all">Digital Garage</a>
+                <Link href="/garage" className="text-gray-400 hover:text-white transition-all">
+                  Digital Garage
                 </Link>
               </li>
               <li>
-                <Link href="/maintenance">
-                  <a className="text-gray-400 hover:text-white transition-all">Maintenance Tracker</a>
+                <Link href="/maintenance" className="text-gray-400 hover:text-white transition-all">
+                  Maintenance Tracker
                 </Link>
               </li>
               <li>
-                <Link href="/community">
-                  <a className="text-gray-400 hover:text-white transition-all">Rider Community</a>
+                <Link href="/community" className="text-gray-400 hover:text-white transition-all">
+                  Rider Community
                 </Link>
               </li>
               <li>
-                <Link href="/catalog">
-                  <a className="text-gray-400 hover:text-white transition-all">Motorcycle Catalog</a>
+                <Link href="/catalog" className="text-gray-400 hover:text-white transition-all">
+                  Motorcycle Catalog
                 </Link>
               </li>
               <li>
-                <Link href="/rides">
-                  <a className="text-gray-400 hover:text-white transition-all">Ride Planning</a>
+                <Link href="/rides" className="text-gray-400 hover:text-white transition-all">
+                  Ride Planning
                 </Link>
               </li>
             </ul>
@@ -71,28 +71,28 @@ const Footer = () => {
             <h4 className="font-bold mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/help">
-                  <a className="text-gray-400 hover:text-white transition-all">Help Center</a>
+                <Link href="/help" className="text-gray-400 hover:text-white transition-all">
+                  Help Center
                 </Link>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-gray-400 hover:text-white transition-all">Contact Us</a>
+                <Link href="/contact" className="text-gray-400 hover:text-white transition-all">
+                  Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/privacy">
-                  <a className="text-gray-400 hover:text-white transition-all">Privacy Policy</a>
+                <Link href="/privacy" className="text-gray-400 hover:text-white transition-all">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-gray-400 hover:text-white transition-all">Terms of Service</a>
+                <Link href="/terms" className="text-gray-400 hover:text-white transition-all">
+                  Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/faq">
-                  <a className="text-gray-400 hover:text-white transition-all">FAQ</a>
+                <Link href="/faq" className="text-gray-400 hover:text-white transition-all">
+                  FAQ
                 </Link>
               </li>
             </ul>
@@ -122,14 +122,14 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400">© {new Date().getFullYear()} ThrottleCove. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex space-x-4">
-            <Link href="/privacy">
-              <a className="text-gray-400 hover:text-white transition-all">Privacy</a>
+            <Link href="/privacy" className="text-gray-400 hover:text-white transition-all">
+              Privacy
             </Link>
-            <Link href="/terms">
-              <a className="text-gray-400 hover:text-white transition-all">Terms</a>
+            <Link href="/terms" className="text-gray-400 hover:text-white transition-all">
+              Terms
             </Link>
-            <Link href="/cookies">
-              <a className="text-gray-400 hover:text-white transition-all">Cookies</a>
+            <Link href="/cookies" className="text-gray-400 hover:text-white transition-all">
+              Cookies
             </Link>
           </div>
         </div>

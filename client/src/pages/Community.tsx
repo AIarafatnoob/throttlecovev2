@@ -225,21 +225,17 @@ const Community = () => {
   const { toast } = useToast();
   
   // Get user's friends
-  const { data: friends, isLoading: friendsLoading } = useQuery<Omit<User, 'password'>[]>({
+  const { data: friends = mockSquadMembers, isLoading: friendsLoading } = useQuery<Omit<User, 'password'>[]>({
     queryKey: ['/api/friends'],
-    onError: () => {
-      // Use mock data for now
-      return mockSquadMembers;
-    }
+    enabled: true,
+    retry: false
   });
   
   // Get upcoming rides
-  const { data: rides, isLoading: ridesLoading } = useQuery<Ride[]>({
+  const { data: rides = mockRides, isLoading: ridesLoading } = useQuery<Ride[]>({
     queryKey: ['/api/rides'],
-    onError: () => {
-      // Use mock data for now
-      return mockRides;
-    }
+    enabled: true,
+    retry: false
   });
   
   // Join a ride
@@ -308,7 +304,7 @@ const Community = () => {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-              ) : (mockRides?.length === 0 ? (
+              ) : (rides.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Calendar className="h-12 w-12 text-gray-300 mb-4" />
                   <h3 className="text-lg font-medium mb-2">No Upcoming Rides</h3>
@@ -366,7 +362,7 @@ const Community = () => {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-              ) : (friends?.length === 0 ? (
+              ) : (friends.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8">
                   <Users className="h-12 w-12 text-gray-300 mb-4" />
                   <h3 className="text-lg font-medium mb-2">No Squad Members</h3>
