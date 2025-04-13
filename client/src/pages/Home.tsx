@@ -1,170 +1,279 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Bike, Wrench, Users, TrafficCone } from "lucide-react";
+import { Bike, Wrench, Users, TrafficCone, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Home = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero section */}
-      <section className="bg-[#1A1A1A] text-white relative h-[50vh] md:h-[60vh] overflow-hidden">
+      <section className="bg-[#1A1A1A] text-white relative h-[45vh] md:h-[55vh] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
-        <img 
+        <motion.img 
           src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80" 
           alt="Bike in garage" 
           className="absolute inset-0 w-full h-full object-cover"
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 8, ease: "easeOut" }}
         />
-        <div className="container mx-auto px-4 py-12 relative z-20 h-full flex flex-col justify-center">
-          <h1 className="text-4xl md:text-6xl font-bold font-header leading-tight max-w-2xl">
+        <div className="container mx-auto px-4 py-10 relative z-20 h-full flex flex-col justify-center">
+          <motion.h1 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold font-header leading-tight max-w-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             YOUR DIGITAL GARAGE
-          </h1>
-          <p className="mt-6 text-lg md:text-xl max-w-xl">
-            Marvel at your ride collection, connect with riders, build up your squad, and let us help 
-            <span className="font-semibold"> maintain, build, upgrade</span>, and pamper your 
-            <span className="text-[#FF3B30] font-semibold"> THROTTLE</span> machines
-          </p>
-          <div className="mt-8">
+          </motion.h1>
+          <motion.p 
+            className="mt-4 text-base md:text-lg max-w-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            Track your bikes, schedule maintenance, connect with riders, and pamper your 
+            <span className="font-semibold text-[#FF3B30]"> THROTTLE</span> machines
+          </motion.p>
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
             <Link href="/garage">
-              <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 transition-all text-white px-8 py-6 rounded font-medium text-lg">
+              <Button 
+                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 transition-all text-white px-6 py-5 rounded font-medium text-lg group"
+              >
                 OPEN YOUR GARAGE
-                <TrafficCone className="ml-2 h-5 w-5" />
+                <motion.div
+                  className="inline-block ml-2"
+                  initial={{ rotate: 0 }}
+                  whileHover={{ rotate: 180 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TrafficCone className="h-5 w-5" />
+                </motion.div>
               </Button>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-header text-[#1A1A1A]">
+          <motion.div 
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold font-header text-[#1A1A1A]">
               Your Complete Bike Companion
             </h2>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-              ThrottleCove helps you manage all aspects of your motorcycle ownership experience in one place
+            <p className="mt-3 text-gray-600 max-w-xl mx-auto">
+              Manage all aspects of your motorcycle journey in one streamlined platform
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-              <div className="bg-[#007AFF]/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <Bike className="h-8 w-8 text-[#007AFF]" />
-              </div>
-              <h3 className="text-xl font-bold font-header mb-3">Digital Garage</h3>
-              <p className="text-gray-600">
-                Create profiles for all your motorcycles with detailed specifications and track maintenance history
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div 
+              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+            >
+              <motion.div 
+                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Bike className="h-7 w-7 text-[#FF3B30]" />
+              </motion.div>
+              <h3 className="text-lg font-bold font-header mb-2">Digital Garage</h3>
+              <p className="text-gray-600 text-sm">
+                Create detailed profiles for your motorcycles and track their complete history
               </p>
-            </div>
+            </motion.div>
 
-            <div className="text-center p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-              <div className="bg-[#FF3B30]/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <Wrench className="h-8 w-8 text-[#FF3B30]" />
-              </div>
-              <h3 className="text-xl font-bold font-header mb-3">Maintenance Tracker</h3>
-              <p className="text-gray-600">
-                Set service reminders and keep your bikes in peak condition with our maintenance tools
+            <motion.div 
+              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+            >
+              <motion.div 
+                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Wrench className="h-7 w-7 text-[#FF3B30]" />
+              </motion.div>
+              <h3 className="text-lg font-bold font-header mb-2">Maintenance Tracker</h3>
+              <p className="text-gray-600 text-sm">
+                Set reminders and keep your bikes in prime condition with our smart tools
               </p>
-            </div>
+            </motion.div>
 
-            <div className="text-center p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-              <div className="bg-[#1A1A1A]/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <Users className="h-8 w-8 text-[#1A1A1A]" />
-              </div>
-              <h3 className="text-xl font-bold font-header mb-3">Rider Community</h3>
-              <p className="text-gray-600">
-                Connect with fellow enthusiasts, share your rides, and join motorcycle events near you
+            <motion.div 
+              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+            >
+              <motion.div 
+                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Users className="h-7 w-7 text-[#FF3B30]" />
+              </motion.div>
+              <h3 className="text-lg font-bold font-header mb-2">Rider Community</h3>
+              <p className="text-gray-600 text-sm">
+                Connect with fellow riders, share experiences, and join local motorcycle events
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA section */}
-      <section className="py-16 bg-[#F6F6F6]">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-header mb-6">
-            Ready to Start Your Bike Journey?
-          </h2>
-          <p className="mb-8 max-w-2xl mx-auto text-gray-600">
-            Join ThrottleCove today and discover the perfect place to manage your motorcycles,
-            track maintenance, and connect with a community of passionate riders.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/register">
-              <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white px-6 py-2">
-                Create Free Account
-              </Button>
-            </Link>
-            <Link href="/garage">
-              <Button variant="outline" className="border-[#1A1A1A] text-[#1A1A1A] px-6 py-2">
-                Explore Features
-              </Button>
-            </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Testimonials section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold font-header text-center mb-12">
+          <motion.h2 
+            className="text-2xl md:text-3xl font-bold font-header text-center mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             What Riders Are Saying
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-lg border border-gray-200">
-              <div className="flex items-center mb-4">
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <motion.div 
+              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <div className="flex items-center mb-3">
                 <img
                   src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="User"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
+                  className="w-10 h-10 rounded-full object-cover mr-3"
                 />
                 <div>
-                  <h4 className="font-bold">Alex Johnson</h4>
-                  <p className="text-sm text-gray-500">Ducati Owner</p>
+                  <h4 className="font-bold text-sm">Alex Johnson</h4>
+                  <p className="text-xs text-gray-500">Ducati Owner</p>
                 </div>
               </div>
-              <p className="text-gray-600 italic">
-                "ThrottleCove has completely changed how I manage my motorcycles. The maintenance reminders
-                have saved me from costly repairs multiple times!"
+              <p className="text-gray-600 text-sm italic">
+                "ThrottleCove changed how I manage my bikes. The maintenance reminders have saved me from costly repairs!"
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-6 rounded-lg border border-gray-200">
-              <div className="flex items-center mb-4">
+            <motion.div 
+              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              <div className="flex items-center mb-3">
                 <img
                   src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="User"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
+                  className="w-10 h-10 rounded-full object-cover mr-3"
                 />
                 <div>
-                  <h4 className="font-bold">Jessica Taylor</h4>
-                  <p className="text-sm text-gray-500">Sport Bike Enthusiast</p>
+                  <h4 className="font-bold text-sm">Jessica Taylor</h4>
+                  <p className="text-xs text-gray-500">Sport Bike Enthusiast</p>
                 </div>
               </div>
-              <p className="text-gray-600 italic">
-                "I've met some of my closest riding buddies through ThrottleCove's community features.
-                The ride planning tools make organizing group rides so easy!"
+              <p className="text-gray-600 text-sm italic">
+                "I've met my closest riding buddies through ThrottleCove. The ride planning tools make group rides so easy!"
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-6 rounded-lg border border-gray-200">
-              <div className="flex items-center mb-4">
+            <motion.div 
+              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <div className="flex items-center mb-3">
                 <img
                   src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="User"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
+                  className="w-10 h-10 rounded-full object-cover mr-3"
                 />
                 <div>
-                  <h4 className="font-bold">Mike Smith</h4>
-                  <p className="text-sm text-gray-500">Vintage Collector</p>
+                  <h4 className="font-bold text-sm">Mike Smith</h4>
+                  <p className="text-xs text-gray-500">Vintage Collector</p>
                 </div>
               </div>
-              <p className="text-gray-600 italic">
-                "As someone with multiple vintage motorcycles, keeping track of maintenance was a nightmare before.
-                ThrottleCove's digital garage is perfect for collectors like me."
+              <p className="text-gray-600 text-sm italic">
+                "As a vintage motorcycle collector, keeping track of maintenance was a nightmare before ThrottleCove."
               </p>
-            </div>
+            </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* CTA section */}
+      <section className="py-12 bg-[#1A1A1A] text-white">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold font-header mb-4">
+              Ready to Start Your Bike Journey?
+            </h2>
+            <p className="mb-6 max-w-lg mx-auto text-gray-400 text-sm">
+              Join ThrottleCove today to manage your motorcycles, track maintenance, and connect with riders
+            </p>
+            <motion.div 
+              className="flex flex-col sm:flex-row justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Link href="/register">
+                <Button 
+                  className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white px-6 py-2 group"
+                >
+                  Create Free Account
+                  <motion.div
+                    className="inline-block ml-2"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </motion.div>
+                </Button>
+              </Link>
+              <Link href="/garage">
+                <Button variant="outline" className="border-white text-white px-6 py-2 hover:bg-white/10">
+                  Explore Features
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </div>
