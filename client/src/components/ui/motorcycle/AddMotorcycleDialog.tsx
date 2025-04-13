@@ -41,7 +41,8 @@ const formSchema = z.object({
   mileage: z.number().int().min(0),
   imageUrl: z.string().optional(),
   status: z.string().min(1, "Status is required"),
-  tags: z.string().transform((val) => val.split(',').map(t => t.trim()).filter(Boolean)),
+  tags: z.string()
+    .transform((val) => val ? val.split(',').map(t => t.trim()).filter(Boolean) : ["Motorcycle"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -69,14 +70,33 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      // Log the data being sent to check values
-      console.log("Submitting motorcycle:", data);
+      // Make sure tags is properly formatted as an array
+      let formattedTags: string[];
       
-      // Make sure tags is an array before sending
+      if (typeof data.tags === 'string') {
+        // If it's a string (should not happen with our transform), convert to array
+        formattedTags = data.tags.split(',').map(tag => tag.trim()).filter(Boolean);
+        if (formattedTags.length === 0) {
+          formattedTags = ["Motorcycle"];
+        }
+      } else if (Array.isArray(data.tags)) {
+        // If it's already an array, use it
+        formattedTags = data.tags;
+        if (formattedTags.length === 0) {
+          formattedTags = ["Motorcycle"];
+        }
+      } else {
+        // Fallback
+        formattedTags = ["Motorcycle"];
+      }
+      
+      // Create the formatted data
       const formattedData = {
         ...data,
-        tags: Array.isArray(data.tags) ? data.tags : [data.tags],
+        tags: formattedTags
       };
+      
+      console.log("Submitting motorcycle:", formattedData);
       
       await apiRequest("POST", "/api/motorcycles", formattedData);
       
