@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    color: #333333;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+  
+  /* Define standard padding value */
+  .p-standard {
+    padding: 24px;
+  }
+  
+  .m-standard {
+    margin: 24px;
+  }
+  
+  .space-standard > * + * {
+    margin-top: 24px;
+  }
+  
+  .gap-standard {
+    gap: 24px;
+  }
+  
+  /* Add smooth transitions to all elements */
+  .transition-standard {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}
