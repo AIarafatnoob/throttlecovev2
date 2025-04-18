@@ -1,0 +1,111 @@
+1. Vision Pillars
+User & Vehicle Hub
+– Secure, personalized profiles
+– Multi‑vehicle support
+
+Maintenance & Records
+– Digital logbook (oil changes, inspections)
+– Paper/document storage (registration, insurance PDFs)
+
+Intelligent Recommendations
+– Parts suggestions by vehicle make/model/year
+– Predictive service alerts
+
+Service Marketplace
+– ThrottleCove appointment booking
+– Integration with shop calendars
+
+Data & Commerce
+– Vehicle spec database (VIN decoding, trim info)
+– Buy/sell listings, parts e‑commerce
+
+Community & Content
+– Rider groups, event scheduling
+– Blog/articles aggregator
+
+Each pillar should feel like a “mini‑app” within your portal, styled consistently but able to evolve independently.
+
+2. Component Map
+text
+Copy
+Edit
+┌─────────────────────────────────────────────────────────┐
+│                         Frontend                       │
+│ ┌──────────┐  ┌────────┐  ┌────────┐  ┌───────┐       │
+│ │  Auth &  │  │  Profile│  │ Garage │  │ Shop  │  …   │
+│ │  Onboarding│       │        │         │       │       │
+│ └──────────┘  └────────┘  └────────┘  └───────┘       │
+└──────────┬────────────────┬──────────┬────────────────┘
+           │                │          │
+           ▼                ▼          ▼
+┌─────────────────────────────────────────────────────────┐
+│                        Backend                         │
+│                                                         │
+│ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ │
+│ │ User &    │ │ Vehicle   │ │ Maintenance│ │ Commerce│ │
+│ │ Auth      │ │ Catalog   │ │ Scheduler  │ │ & Listing│ │
+│ └───────────┘ └───────────┘ └───────────┘ └───────────┘ │
+│ ┌───────────┐ ┌───────────┐ ┌────────────────────────┐ │
+│ │ Doc Store │ │ Recommendation Engine           │ │
+│ │ (S3/Blob) │ │ (rules + ML)                    │ │
+│ └───────────┘ └───────────┘ └────────────────────────┘ │
+└───────────┬────────────────────────────────────────────┘
+            │
+            ▼
+┌─────────────────────────────────────────────────────────┐
+│                        Database                       │
+│ ┌──────────┐ ┌──────────┐ ┌────────────┐ ┌───────────┐ │
+│ │ Users    │ │ Vehicles │ │ Services   │ │ Listings  │ │
+│ └──────────┘ └──────────┘ └────────────┘ └───────────┘ │
+│ ┌──────────┐ ┌──────────┐ ┌──────────────────────────┐ │
+│ │ Docs     │ │ Parts    │ │ Event & Blog Content     │ │
+│ │ metadata │ │ catalog  │ │ (CMS tables)             │ │
+│ └──────────┘ └──────────┘ └──────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+3. Core Data Flows
+Onboard → Profile
+
+Email/Social SSO → create User record
+
+Prompt “Add your vehicle” → VIN lookup → create Vehicle record
+
+Maintenance Logging
+
+User selects vehicle → “Log service” form → stores in Services table + optional file upload to Doc Store
+
+Scheduler triggers reminder (cron/queue + push notification)
+
+Recommendations
+
+On vehicle add/update → Recommendation Engine queries Parts catalog → caches suggestions
+
+Booking
+
+User selects service type & center → system checks center’s available slots via API → books & writes to Services
+
+Commerce
+
+Listings CRUD → stored in Listings table → front‑end marketplace
+
+Parts shop: add to cart → Stripe/PayPal integration → fulfillment webhook
+
+Community & Content
+
+CMS‑backed blog posts → rendered in “News”
+
+Event creation → RSVP → calendar sync
+
+4. Technical Stack Recommendations
+
+Layer	Tech Choices
+Frontend	React or Vue 3 + Tailwind CSS + i18n support
+Backend API	Node.js/Express or Python/FastAPI + JWT auth
+Database	PostgreSQL (relational for structured data)
+File Storage	AWS S3 or Azure Blob Storage
+Search & Cache	Elasticsearch (vehicle specs) + Redis (sessions)
+Scheduler	BullMQ / Celery
+Payments	Stripe
+Notifications	Firebase Cloud Messaging / OneSignal
+Deployment	Docker + Kubernetes (EKS/GKE)
+CI/CD	GitHub Actions → Helm → Kubernetes
+Monitoring	Prometheus + Grafana + Sentry
