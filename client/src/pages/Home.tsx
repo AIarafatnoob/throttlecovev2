@@ -7,6 +7,7 @@ import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "luci
 import { motion } from "framer-motion";
 import { useState } from "react";
 import tcLogo from "@assets/image_1750267062334.png";
+import PartsCarousel from "@/components/ui/PartsCarousel";
 
 // Sample motorcycle data
 const motorcycles = [

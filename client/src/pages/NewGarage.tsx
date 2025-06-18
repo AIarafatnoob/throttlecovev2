@@ -4,10 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
-import { Plus, MoreVertical, Wrench, MapPin, Calendar } from "lucide-react";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { getUserRank, getNextRank, getMilesToNextRank } from "@/utils/ranking";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -215,15 +216,54 @@ const NewGarage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1A1A1A]">My Garage & Maintenance</h1>
-            <p className="text-gray-600 mt-1">
+        <div className="flex justify-between items-start mb-8">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Your Garage</h1>
+            <p className="text-gray-600 mb-4">
               Manage your motorcycles and track their maintenance schedules
             </p>
+            
+            {/* Military Ranking System */}
+            <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-3xl">{currentRank.insignia}</div>
+                    <div>
+                      <h3 className="font-bold text-lg text-[#1A1A1A]">{currentRank.name}</h3>
+                      <p className="text-sm text-gray-600">{currentRank.description}</p>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Gauge className="h-4 w-4 text-[#FF3B30]" />
+                        <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {nextRank && (
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 mb-1">Next Rank: {nextRank.name}</p>
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
+                        <span className="text-sm font-medium text-[#FF3B30]">
+                          {milesToNext.toLocaleString()} miles to go
+                        </span>
+                      </div>
+                      <div className="w-32 bg-gray-200 rounded-full h-2 mt-2">
+                        <div 
+                          className="bg-[#FF3B30] h-2 rounded-full transition-all duration-300"
+                          style={{ 
+                            width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
-          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
+          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6 ml-6">
             <Plus className="h-4 w-4 mr-2" />
             Add Bike
           </Button>
