@@ -223,58 +223,58 @@ const NewGarage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-start mb-8">
-          <div className="flex-1">
+        <div className="flex justify-between items-center mb-8">
+          <div>
             <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Your Garage</h1>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600">
               Manage your motorcycles and track their maintenance schedules
             </p>
-            
-            {/* Military Ranking System */}
-            <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-3xl">{currentRank.insignia}</div>
-                    <div>
-                      <h3 className="font-bold text-lg text-[#1A1A1A]">{currentRank.name}</h3>
-                      <p className="text-sm text-gray-600">{currentRank.description}</p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Gauge className="h-4 w-4 text-[#FF3B30]" />
-                        <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {nextRank && (
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 mb-1">Next Rank: {nextRank.name}</p>
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
-                        <span className="text-sm font-medium text-[#FF3B30]">
-                          {milesToNext.toLocaleString()} miles to go
-                        </span>
-                      </div>
-                      <div className="w-32 bg-gray-200 rounded-full h-2 mt-2">
-                        <div 
-                          className="bg-[#FF3B30] h-2 rounded-full transition-all duration-300"
-                          style={{ 
-                            width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
           </div>
           
-          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6 ml-6">
+          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
             <Plus className="h-4 w-4 mr-2" />
             Add Bike
           </Button>
         </div>
+
+        {/* Military Ranking System - Dedicated Section */}
+        <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 mb-8">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="text-4xl">{currentRank.insignia}</div>
+                <div>
+                  <h3 className="font-bold text-xl text-[#1A1A1A]">{currentRank.name}</h3>
+                  <p className="text-sm text-gray-600 mb-2">{currentRank.description}</p>
+                  <div className="flex items-center space-x-2">
+                    <Gauge className="h-4 w-4 text-[#FF3B30]" />
+                    <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
+                  </div>
+                </div>
+              </div>
+              
+              {nextRank && (
+                <div className="text-right">
+                  <p className="text-sm text-gray-500 mb-2">Next Rank: <span className="font-medium">{nextRank.name}</span></p>
+                  <div className="flex items-center space-x-2 mb-3">
+                    <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
+                    <span className="text-sm font-medium text-[#FF3B30]">
+                      {milesToNext.toLocaleString()} miles to go
+                    </span>
+                  </div>
+                  <div className="w-40 bg-gray-200 rounded-full h-3">
+                    <div 
+                      className="bg-[#FF3B30] h-3 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {!motorcycles || motorcycles.length === 0 ? (
           <div className="text-center py-16">
@@ -291,21 +291,14 @@ const NewGarage = () => {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {motorcycles.map((motorcycle) => (
-              <div key={motorcycle.id}>
-                <ModernMotorcycleCard
-                  motorcycle={motorcycle}
-                  onEdit={handleEditMotorcycle}
-                  onDelete={(id) => setMotorcycleToDelete(id)}
-                />
-                {/* Parts and Accessories Carousel for user's bikes */}
-                <PartsCarousel 
-                  vehicleMake={motorcycle.make || 'Generic'}
-                  vehicleModel={motorcycle.model || motorcycle.name}
-                  vehicleYear={motorcycle.year || 2024}
-                />
-              </div>
+              <ExpandableMotorcycleCard
+                key={motorcycle.id}
+                motorcycle={motorcycle}
+                onEdit={handleEditMotorcycle}
+                onDelete={(id) => setMotorcycleToDelete(id)}
+              />
             ))}
           </div>
         )}

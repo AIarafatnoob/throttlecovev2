@@ -99,10 +99,9 @@ const PartsCarousel = ({ vehicleMake, vehicleModel, vehicleYear }: PartsCarousel
   };
 
   return (
-    <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+    <div className="p-4 bg-gray-50 rounded-lg">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="font-semibold text-lg text-[#1A1A1A]">Recommended Parts & Accessories</h4>
           <p className="text-sm text-gray-600">Compatible with {vehicleMake} {vehicleModel} ({vehicleYear})</p>
         </div>
         
