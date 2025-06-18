@@ -67,7 +67,7 @@ const ModernNavBar = () => {
             </div>
           </div>
 
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 relative">
             {user ? (
               <Button
                 onClick={handleLogout}
@@ -78,11 +78,16 @@ const ModernNavBar = () => {
                 Logout
               </Button>
             ) : (
-              <Link href="/register">
-                <Button size="sm" className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-2 sm:px-4 whitespace-nowrap">
-                  Join Now
-                </Button>
-              </Link>
+              <div className="relative overflow-hidden">
+                <Link href="/register">
+                  <Button 
+                    size="sm" 
+                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-transform duration-300 ease-in-out transform translate-x-[30%] hover:translate-x-0 relative z-10"
+                  >
+                    Join
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </div>
