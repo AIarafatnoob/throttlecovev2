@@ -27,7 +27,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/hooks/use-auth";
 
 // Modern motorcycle card component based on the mockup
 const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
@@ -38,7 +37,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
   // Calculate next service date (mock data for now)
   const nextServiceDate = new Date();
   nextServiceDate.setDate(nextServiceDate.getDate() + 30);
-
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -61,7 +60,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
                 <p className="text-gray-500 text-sm">{motorcycle.make} {motorcycle.model}</p>
               </div>
             </div>
-
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -126,7 +125,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ mileage: Number(newMileage) })
                     });
-
+                    
                     // Refresh the page to show updated mileage
                     window.location.reload();
                   } catch (error) {
@@ -158,8 +157,7 @@ const NewGarage = () => {
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
-
+  
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
   });
@@ -169,25 +167,25 @@ const NewGarage = () => {
   const currentRank = getUserRank(totalMileage);
   const nextRank = getNextRank(totalMileage);
   const milesToNext = getMilesToNextRank(totalMileage);
-
+  
   const handleAddMotorcycle = () => {
     setIsAddDialogOpen(true);
   };
-
+  
   const handleEditMotorcycle = (motorcycle: Motorcycle) => {
     toast({
       title: "Coming Soon",
       description: "Motorcycle editing feature will be available soon!",
     });
   };
-
+  
   const handleDeleteMotorcycle = async () => {
     if (!motorcycleToDelete) return;
-
+    
     try {
       await apiRequest("DELETE", `/api/motorcycles/${motorcycleToDelete}`, undefined);
       queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
-
+      
       toast({
         title: "Motorcycle deleted",
         description: "Your motorcycle has been removed from the garage.",
@@ -233,7 +231,7 @@ const NewGarage = () => {
               Manage your motorcycles and track their maintenance schedules
             </p>
           </div>
-
+          
           <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
             <Plus className="h-4 w-4 mr-2" />
             Add Bike
@@ -244,17 +242,10 @@ const NewGarage = () => {
         <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 mb-8">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              {/* Profile Picture, Name, Rank, and Progress Bar */}
-              <div className="flex items-center">
-                <div className="mr-4 relative">
-                  <img
-                    src={user?.image || "/path/to/default/image.jpg"} // Use user's image or default
-                    alt="Profile"
-                    className="rounded-full w-20 h-20 object-cover"
-                  />
-                </div>
+              <div className="flex items-center space-x-4">
+                <div className="text-4xl">{currentRank.insignia}</div>
                 <div>
-                  <h3 className="font-bold text-xl text-[#1A1A1A]">{user?.name}</h3>
+                  <h3 className="font-bold text-xl text-[#1A1A1A]">{currentRank.name}</h3>
                   <p className="text-sm text-gray-600 mb-2">{currentRank.description}</p>
                   <div className="flex items-center space-x-2">
                     <Gauge className="h-4 w-4 text-[#FF3B30]" />
@@ -262,7 +253,7 @@ const NewGarage = () => {
                   </div>
                 </div>
               </div>
-
+              
               {nextRank && (
                 <div className="text-right">
                   <p className="text-sm text-gray-500 mb-2">Next Rank: <span className="font-medium">{nextRank.name}</span></p>
