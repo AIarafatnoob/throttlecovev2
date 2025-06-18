@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { getUserRank, getNextRank, getMilesToNextRank } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -157,6 +158,7 @@ const NewGarage = () => {
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
@@ -242,14 +244,28 @@ const NewGarage = () => {
         <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 mb-8">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">{currentRank.insignia}</div>
-                <div>
-                  <h3 className="font-bold text-xl text-[#1A1A1A]">{currentRank.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{currentRank.description}</p>
-                  <div className="flex items-center space-x-2">
-                    <Gauge className="h-4 w-4 text-[#FF3B30]" />
-                    <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
+              <div className="flex items-center space-x-6">
+                {/* User Profile Section */}
+                <div className="flex flex-col items-center">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full flex items-center justify-center mb-2 overflow-hidden">
+                    {/* Mock user avatar - replace with actual user image when available */}
+                    <div className="w-full h-full bg-gradient-to-br from-[#FF3B30] to-[#FF3B30]/80 flex items-center justify-center text-white font-bold text-xl sm:text-2xl">
+                      {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-[#1A1A1A] text-center">{user?.fullName || user?.username || "User"}</p>
+                </div>
+                
+                {/* Rank Information */}
+                <div className="flex items-center space-x-4">
+                  <div className="text-4xl">{currentRank.insignia}</div>
+                  <div>
+                    <h3 className="font-bold text-xl text-[#1A1A1A]">{currentRank.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{currentRank.description}</p>
+                    <div className="flex items-center space-x-2">
+                      <Gauge className="h-4 w-4 text-[#FF3B30]" />
+                      <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
+                    </div>
                   </div>
                 </div>
               </div>
