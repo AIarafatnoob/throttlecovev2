@@ -174,7 +174,7 @@ const Home = () => {
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder="search for your dream machine"
+                  placeholder="Search For Your Dream Machine"
                   className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-xl shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -265,10 +265,27 @@ const Home = () => {
                       ))}
                     </div>
                     <div className="flex gap-2">
-                      <Button className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white">
+                      <Button 
+                        className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
+                        onClick={() => window.location.href = `/catalog/${bike.id}`}
+                      >
                         View Details
                       </Button>
-                      <Button variant="outline" className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]">
+                      <Button 
+                        variant="outline" 
+                        className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]"
+                        onClick={() => {
+                          // Add to comparison list
+                          const existingComparisons = JSON.parse(localStorage.getItem('bikeComparisons') || '[]');
+                          if (!existingComparisons.find((b: any) => b.id === bike.id)) {
+                            existingComparisons.push(bike);
+                            localStorage.setItem('bikeComparisons', JSON.stringify(existingComparisons));
+                            alert(`${bike.name} added to comparison list!`);
+                          } else {
+                            alert(`${bike.name} is already in your comparison list!`);
+                          }
+                        }}
+                      >
                         Compare
                       </Button>
                     </div>

@@ -102,19 +102,32 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
           <div className="flex gap-2">
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
-              onClick={() => {}}
+              onClick={() => {
+                // Navigate to maintenance/service page
+                window.location.href = `/garage/${motorcycle.id}/service`;
+              }}
             >
               Service
             </Button>
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
-              onClick={() => {}}
+              onClick={() => {
+                // Open mileage update dialog
+                const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
+                if (newMileage && !isNaN(Number(newMileage))) {
+                  // Here you would update the motorcycle mileage
+                  console.log(`Updating ${motorcycle.name} mileage to ${newMileage}`);
+                }
+              }}
             >
               New Mile
             </Button>
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
-              onClick={() => {}}
+              onClick={() => {
+                // Navigate to motorcycle detail page
+                window.location.href = `/garage/${motorcycle.id}`;
+              }}
             >
               Detail
             </Button>
