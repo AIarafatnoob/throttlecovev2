@@ -243,9 +243,6 @@ const Home = () => {
                       <CardTitle className="text-xl font-bold text-[#1A1A1A]">
                         {bike.name}
                       </CardTitle>
-                      <span className="text-2xl font-bold text-[#FF3B30]">
-                        {bike.price}
-                      </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <span className="font-medium">{bike.brand}</span>
