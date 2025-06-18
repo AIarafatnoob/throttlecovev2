@@ -92,19 +92,6 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    username: "",
-    password: ""
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-  };
-
-
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -163,55 +150,71 @@ const Register = () => {
           {/* Registration Form */}
           <Card className="w-full max-w-md mx-auto mb-12 sm:mb-16">
             <CardContent className="p-6 sm:p-8">
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Input
                       type="text"
                       placeholder="Full Name"
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      {...form.register("fullName")}
                       className="w-full h-11 sm:h-12"
-                      required
                     />
+                    {form.formState.errors.fullName && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.fullName.message}</p>
+                    )}
                   </div>
                   <div>
                     <Input
                       type="email"
                       placeholder="Email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      {...form.register("email")}
                       className="w-full h-11 sm:h-12"
-                      required
                     />
+                    {form.formState.errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.email.message}</p>
+                    )}
                   </div>
                   <div>
                     <Input
                       type="text"
                       placeholder="Username"
-                      value={formData.username}
-                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      {...form.register("username")}
                       className="w-full h-11 sm:h-12"
-                      required
                     />
+                    {form.formState.errors.username && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.username.message}</p>
+                    )}
                   </div>
                   <div>
                     <Input
                       type="password"
                       placeholder="Password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      {...form.register("password")}
                       className="w-full h-11 sm:h-12"
-                      required
                     />
+                    {form.formState.errors.password && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.password.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Input
+                      type="password"
+                      placeholder="Confirm Password"
+                      {...form.register("confirmPassword")}
+                      className="w-full h-11 sm:h-12"
+                    />
+                    {form.formState.errors.confirmPassword && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.confirmPassword.message}</p>
+                    )}
                   </div>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white py-3 sm:py-4 text-base sm:text-lg font-semibold h-12 sm:h-14"
+                  disabled={isLoading}
+                  className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white py-3 sm:py-4 text-base sm:text-lg font-semibold h-12 sm:h-14 disabled:opacity-50"
                 >
-                  Create Account
+                  {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
 
                 <CardFooter className="text-center px-0 pb-0">

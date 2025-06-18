@@ -37,8 +37,8 @@ const ModernNavBar = () => {
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex justify-center relative">
-          <div className="flex items-center bg-[#1A1A1A] rounded-full px-4 sm:px-6 lg:px-8 py-2 sm:py-3 shadow-lg max-w-fit">
+        <div className="flex justify-center relative min-h-[60px] items-center">
+          <div className="flex items-center bg-[#1A1A1A] rounded-full px-3 sm:px-6 lg:px-8 py-2 sm:py-3 shadow-lg max-w-fit">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 mr-3 sm:mr-6">
               <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-5 sm:h-5 text-white fill-current">
@@ -67,7 +67,7 @@ const ModernNavBar = () => {
             </div>
           </div>
 
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
             {user ? (
               <Button
                 onClick={handleLogout}
@@ -79,7 +79,7 @@ const ModernNavBar = () => {
               </Button>
             ) : (
               <Link href="/register">
-                <Button size="sm" className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-6">
+                <Button size="sm" className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-2 sm:px-4 whitespace-nowrap">
                   Join Now
                 </Button>
               </Link>

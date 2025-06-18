@@ -169,7 +169,7 @@ const Home = () => {
                 <Input
                   type="text"
                   placeholder="Search For Your Dream Machine"
-                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-full shadow-sm placeholder:opacity-50"
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-full shadow-sm placeholder:opacity-50 text-center"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
