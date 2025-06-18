@@ -58,7 +58,6 @@ const NavBar = () => {
 
   const navLinks = [
     { name: "Garage", path: "/garage" },
-    { name: "Maintenance", path: "/maintenance" },
     { name: "Community", path: "/community" },
     { name: "Catalog", path: "/catalog" },
     { name: "Shop", path: "/shop" },
@@ -68,8 +67,15 @@ const NavBar = () => {
   return (
     <nav className="bg-[#1A1A1A] text-white">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold font-header tracking-wider">
-          THROTTLE<span className="text-[#FF3B30]">COVE</span>
+        <Link href="/" className="flex items-center gap-3">
+          <img 
+            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNGRjNCMzAiLz4KPHN2ZyB4PSI0IiB5PSI0IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0yIDIwQzIgMTYgNiAxMiAxMCAxMkgxNEMxOCAxMiAyMiAxNiAyMiAyMEMyMiAyNCAyNCAyMiAyMCAyMkM0IDIyIDIgMjQgMiAyMFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik04IDEyVjhIMTZWMTIiIGZpbGw9IndoaXRlIi8+CjwvZz4KPC9zdmc+"
+            alt="ThrottleCove Logo" 
+            className="h-8 w-8"
+          />
+          <span className="text-2xl font-bold font-header tracking-wider">
+            THROTTLE<span className="text-[#FF3B30]">COVE</span>
+          </span>
         </Link>
         
         <div className="flex items-center space-x-6">

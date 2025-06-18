@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
-import MotorcycleCard from "@/components/ui/motorcycle/MotorcycleCard";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
-import { Grid, List, Plus, Bike, AlertTriangle } from "lucide-react";
+import { Plus, Settings, Calendar, MapPin, MoreVertical, Wrench, Clock } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Garage = () => {
   const [isGridView, setIsGridView] = useState(true);

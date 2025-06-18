@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import NavBar from "@/components/ui/layout/NavBar";
 import Footer from "@/components/ui/layout/Footer";
 import Home from "@/pages/Home";
-import Garage from "@/pages/Garage";
+import Garage from "@/pages/NewGarage";
 import Maintenance from "@/pages/Maintenance";
 import Community from "@/pages/Community";
 import Catalog from "@/pages/Catalog";
@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 function App() {
   const { user, setUser } = useAuth();
   
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['/api/auth/session'],
     retry: false,
     refetchOnWindowFocus: false,
@@ -27,8 +27,19 @@ function App() {
   useEffect(() => {
     if (data) {
       setUser(data);
+    } else if (!isLoading && !error) {
+      // Set a demo user for development
+      setUser({
+        id: 1,
+        username: "demo",
+        password: "",
+        fullName: "Demo User", 
+        email: "demo@throttlecove.com",
+        avatarUrl: null,
+        createdAt: new Date()
+      });
     }
-  }, [data, setUser]);
+  }, [data, setUser, isLoading, error]);
   
   // Use the AuthenticatedRoute component to protect routes
   const AuthenticatedRoute = ({ component: Component, ...rest }: any) => {
@@ -54,9 +65,7 @@ function App() {
           <Route path="/garage">
             <AuthenticatedRoute component={Garage} />
           </Route>
-          <Route path="/maintenance">
-            <AuthenticatedRoute component={Maintenance} />
-          </Route>
+
           <Route path="/community">
             <AuthenticatedRoute component={Community} />
           </Route>

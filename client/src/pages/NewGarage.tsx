@@ -1,0 +1,266 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Motorcycle } from "@shared/schema";
+import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+// Modern motorcycle card component based on the mockup
+const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
+  motorcycle: Motorcycle;
+  onEdit: (motorcycle: Motorcycle) => void;
+  onDelete: (id: number) => void;
+}) => {
+  // Calculate next service date (mock data for now)
+  const nextServiceDate = new Date();
+  nextServiceDate.setDate(nextServiceDate.getDate() + 30);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
+                {/* Motorcycle silhouette icon */}
+                <svg viewBox="0 0 100 100" className="w-10 h-10 text-white fill-current">
+                  <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-[#1A1A1A]">{motorcycle.name}</h3>
+                <p className="text-gray-500 text-sm">{motorcycle.make} {motorcycle.model}</p>
+              </div>
+            </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onEdit(motorcycle)}>
+                  <Wrench className="mr-2 h-4 w-4" />
+                  Edit Details
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onDelete(motorcycle.id)}
+                  className="text-red-600"
+                >
+                  <span className="mr-2">🗑️</span>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="text-center">
+              <p className="text-gray-500 text-sm mb-1">Total Miles</p>
+              <p className="text-2xl font-bold text-[#1A1A1A]">
+                {motorcycle.mileage?.toLocaleString() || "12,000"}
+              </p>
+              <p className="text-xs text-gray-500">MI</p>
+            </div>
+            <div className="text-center">
+              <p className="text-gray-500 text-sm mb-1">Next Service</p>
+              <p className="text-lg font-semibold text-[#1A1A1A]">
+                {nextServiceDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </p>
+              <p className="text-xs text-gray-500">
+                {nextServiceDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric' })}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <Button 
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
+              onClick={() => {}}
+            >
+              Service
+            </Button>
+            <Button 
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
+              onClick={() => {}}
+            >
+              New Mile
+            </Button>
+            <Button 
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
+              onClick={() => {}}
+            >
+              Detail
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+const NewGarage = () => {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
+    queryKey: ['/api/motorcycles'],
+  });
+  
+  const handleAddMotorcycle = () => {
+    setIsAddDialogOpen(true);
+  };
+  
+  const handleEditMotorcycle = (motorcycle: Motorcycle) => {
+    toast({
+      title: "Coming Soon",
+      description: "Motorcycle editing feature will be available soon!",
+    });
+  };
+  
+  const handleDeleteMotorcycle = async () => {
+    if (!motorcycleToDelete) return;
+    
+    try {
+      await apiRequest("DELETE", `/api/motorcycles/${motorcycleToDelete}`, undefined);
+      queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+      
+      toast({
+        title: "Motorcycle deleted",
+        description: "Your motorcycle has been removed from the garage.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete motorcycle. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setMotorcycleToDelete(null);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF3B30]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+          <p className="text-gray-600">Failed to load your motorcycles. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-[#1A1A1A]">My Garage & Maintenance</h1>
+            <p className="text-gray-600 mt-1">
+              Manage your motorcycles and track their maintenance schedules
+            </p>
+          </div>
+          
+          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-lg px-6">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Bike
+          </Button>
+        </div>
+
+        {!motorcycles || motorcycles.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-4xl">🏍️</div>
+            </div>
+            <h2 className="text-2xl font-semibold mb-4 text-[#1A1A1A]">Your garage is empty</h2>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              Add your first motorcycle to start tracking maintenance, mileage, and service schedules
+            </p>
+            <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 px-8 py-3 rounded-lg">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Your First Bike
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {motorcycles.map((motorcycle) => (
+              <ModernMotorcycleCard
+                key={motorcycle.id}
+                motorcycle={motorcycle}
+                onEdit={handleEditMotorcycle}
+                onDelete={(id) => setMotorcycleToDelete(id)}
+              />
+            ))}
+          </div>
+        )}
+
+        <AddMotorcycleDialog 
+          open={isAddDialogOpen} 
+          onOpenChange={setIsAddDialogOpen}
+          onSuccess={() => {
+            setIsAddDialogOpen(false);
+            queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+          }}
+        />
+
+        <AlertDialog open={motorcycleToDelete !== null} onOpenChange={() => setMotorcycleToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your motorcycle
+                and all associated maintenance records.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteMotorcycle} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+};
+
+export default NewGarage;

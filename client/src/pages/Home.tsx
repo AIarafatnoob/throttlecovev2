@@ -1,9 +1,100 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { Bike, Wrench, Users, TrafficCone, ArrowRight } from "lucide-react";
+import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import tcLogo from "@assets/image_1750267062334.png";
+
+// Sample motorcycle data
+const motorcycles = [
+  {
+    id: 1,
+    name: "Yamaha YZF-R1",
+    brand: "Yamaha",
+    year: 2024,
+    engine: "998cc",
+    type: "Sport",
+    price: "$17,999",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Track Ready", "Quick Shifter", "Traction Control"]
+  },
+  {
+    id: 2,
+    name: "Harley-Davidson Street Glide",
+    brand: "Harley-Davidson",
+    year: 2024,
+    engine: "1868cc",
+    type: "Touring",
+    price: "$21,999",
+    rating: 4.6,
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Touring", "Audio System", "Comfort"]
+  },
+  {
+    id: 3,
+    name: "Honda CBR600RR",
+    brand: "Honda",
+    year: 2024,
+    engine: "599cc",
+    type: "Sport",
+    price: "$12,199",
+    rating: 4.7,
+    image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Lightweight", "Agile", "Track Focused"]
+  },
+  {
+    id: 4,
+    name: "BMW R1250GS",
+    brand: "BMW",
+    year: 2024,
+    engine: "1254cc",
+    type: "Adventure",
+    price: "$17,495",
+    rating: 4.9,
+    image: "https://images.unsplash.com/photo-1608845206259-da2d4feda8a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Adventure Ready", "ABS", "Traction Control"]
+  },
+  {
+    id: 5,
+    name: "Ducati Panigale V4",
+    brand: "Ducati",
+    year: 2024,
+    engine: "1103cc",
+    type: "Sport",
+    price: "$23,995",
+    rating: 4.9,
+    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Premium", "Race Derived", "Electronics"]
+  },
+  {
+    id: 6,
+    name: "Kawasaki Ninja ZX-10R",
+    brand: "Kawasaki",
+    year: 2024,
+    engine: "998cc",
+    type: "Sport",
+    price: "$16,999",
+    rating: 4.7,
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    features: ["Track Ready", "Advanced Electronics", "Power"]
+  }
+];
 
 const Home = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState("All");
+  
+  const filteredMotorcycles = motorcycles.filter(bike => {
+    const matchesSearch = bike.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         bike.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = selectedType === "All" || bike.type === selectedType;
+    return matchesSearch && matchesType;
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero section */}
@@ -60,220 +151,150 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features section */}
-      <section className="py-12 bg-white">
+      {/* Motorcycle Catalog Section */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <motion.div 
-            className="text-center mb-10"
+            className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold font-header text-[#1A1A1A]">
-              Your Complete Bike Companion
+            <h2 className="text-3xl md:text-4xl font-bold font-header text-[#1A1A1A] mb-4">
+              Search for your dream machine
             </h2>
-            <p className="mt-3 text-gray-600 max-w-xl mx-auto">
-              Manage all aspects of your motorcycle journey in one streamlined platform
+            <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+              Browse our extensive catalog of motorcycles and find the perfect ride for your adventures
             </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto relative mb-8">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Input
+                  type="text"
+                  placeholder="search for your dream machine"
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-xl shadow-sm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {["All", "Sport", "Touring", "Adventure", "Cruiser"].map((type) => (
+                <Button
+                  key={type}
+                  variant={selectedType === type ? "default" : "outline"}
+                  className={`px-6 py-2 rounded-full transition-all ${
+                    selectedType === type 
+                      ? "bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white" 
+                      : "border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]"
+                  }`}
+                  onClick={() => setSelectedType(type)}
+                >
+                  {type}
+                </Button>
+              ))}
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <motion.div 
-              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-            >
-              <motion.div 
-                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.5 }}
+          {/* Motorcycle Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredMotorcycles.map((bike, index) => (
+              <motion.div
+                key={bike.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
               >
-                <Bike className="h-7 w-7 text-[#FF3B30]" />
+                <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border-0">
+                  <div className="relative">
+                    <img
+                      src={bike.image}
+                      alt={bike.name}
+                      className="w-full h-56 object-cover"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-[#FF3B30] text-white px-3 py-1">
+                        {bike.type}
+                      </Badge>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-600 hover:text-[#FF3B30] rounded-full p-2"
+                    >
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <CardTitle className="text-xl font-bold text-[#1A1A1A]">
+                        {bike.name}
+                      </CardTitle>
+                      <span className="text-2xl font-bold text-[#FF3B30]">
+                        {bike.price}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span className="font-medium">{bike.brand}</span>
+                      <span>•</span>
+                      <span>{bike.year}</span>
+                      <span>•</span>
+                      <span>{bike.engine}</span>
+                    </div>
+                    <div className="flex items-center gap-1 mt-2">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="text-sm font-medium">{bike.rating}</span>
+                      <span className="text-sm text-gray-500">(142 reviews)</span>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {bike.features.map((feature, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs bg-gray-100 text-gray-700">
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white">
+                        View Details
+                      </Button>
+                      <Button variant="outline" className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]">
+                        Compare
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
-              <h3 className="text-lg font-bold font-header mb-2">Digital Garage</h3>
-              <p className="text-gray-600 text-sm">
-                Create detailed profiles for your motorcycles and track their complete history
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-            >
-              <motion.div 
-                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Wrench className="h-7 w-7 text-[#FF3B30]" />
-              </motion.div>
-              <h3 className="text-lg font-bold font-header mb-2">Maintenance Tracker</h3>
-              <p className="text-gray-600 text-sm">
-                Set reminders and keep your bikes in prime condition with our smart tools
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="text-center p-5 rounded-lg border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-            >
-              <motion.div 
-                className="bg-[#FF3B30]/10 w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3"
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Users className="h-7 w-7 text-[#FF3B30]" />
-              </motion.div>
-              <h3 className="text-lg font-bold font-header mb-2">Rider Community</h3>
-              <p className="text-gray-600 text-sm">
-                Connect with fellow riders, share experiences, and join local motorcycle events
-              </p>
-            </motion.div>
+            ))}
           </div>
-        </div>
-      </section>
 
-      {/* Testimonials section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.h2 
-            className="text-2xl md:text-3xl font-bold font-header text-center mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          {/* View More Button */}
+          <motion.div 
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
-            What Riders Are Saying
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <motion.div 
-              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <div className="flex items-center mb-3">
-                <img
-                  src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
-                />
-                <div>
-                  <h4 className="font-bold text-sm">Alex Johnson</h4>
-                  <p className="text-xs text-gray-500">Ducati Owner</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm italic">
-                "ThrottleCove changed how I manage my bikes. The maintenance reminders have saved me from costly repairs!"
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <div className="flex items-center mb-3">
-                <img
-                  src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
-                />
-                <div>
-                  <h4 className="font-bold text-sm">Jessica Taylor</h4>
-                  <p className="text-xs text-gray-500">Sport Bike Enthusiast</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm italic">
-                "I've met my closest riding buddies through ThrottleCove. The ride planning tools make group rides so easy!"
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-            >
-              <div className="flex items-center mb-3">
-                <img
-                  src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User"
-                  className="w-10 h-10 rounded-full object-cover mr-3"
-                />
-                <div>
-                  <h4 className="font-bold text-sm">Mike Smith</h4>
-                  <p className="text-xs text-gray-500">Vintage Collector</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm italic">
-                "As a vintage motorcycle collector, keeping track of maintenance was a nightmare before ThrottleCove."
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA section */}
-      <section className="py-12 bg-[#1A1A1A] text-white">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-bold font-header mb-4">
-              Ready to Start Your Bike Journey?
-            </h2>
-            <p className="mb-6 max-w-lg mx-auto text-gray-400 text-sm">
-              Join ThrottleCove today to manage your motorcycles, track maintenance, and connect with riders
-            </p>
-            <motion.div 
-              className="flex flex-col sm:flex-row justify-center gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Link href="/register">
-                <Button 
-                  className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white px-6 py-2 group"
-                >
-                  Create Free Account
-                  <motion.div
-                    className="inline-block ml-2"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </motion.div>
-                </Button>
-              </Link>
-              <Link href="/garage">
-                <Button variant="outline" className="border-2 border-white text-white px-6 py-2 hover:bg-white hover:text-[#1A1A1A] transition-colors font-medium relative overflow-hidden group">
-                  <span className="relative z-10">Explore Features</span>
-                  <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
-                </Button>
-              </Link>
-            </motion.div>
+            <Link href="/catalog">
+              <Button 
+                variant="outline" 
+                className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium"
+              >
+                View Full Catalog
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
