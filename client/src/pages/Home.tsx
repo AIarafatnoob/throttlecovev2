@@ -161,6 +161,20 @@ const Home = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto relative mb-8">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Input
+                  type="text"
+                  placeholder="Search motorcycles by name, brand, or type..."
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-full shadow-sm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* Filter Buttons */}
             <div className="flex flex-wrap justify-center gap-3 mb-8">
               {["All", "Sport", "Touring", "Adventure", "Cruiser"].map((type) => (
@@ -280,6 +294,13 @@ const Home = () => {
                       </Button>
                     </div>
                   </CardContent>
+                  
+                  {/* Parts and Accessories Carousel */}
+                  <PartsCarousel 
+                    vehicleMake={bike.brand}
+                    vehicleModel={bike.name}
+                    vehicleYear={bike.year}
+                  />
                 </Card>
               </motion.div>
             ))}

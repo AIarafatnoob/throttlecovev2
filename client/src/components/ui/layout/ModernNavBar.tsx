@@ -70,7 +70,7 @@ const ModernNavBar = () => {
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
             {user ? (
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600 hidden sm:block">Welcome, {user.fullName || user.username}</span>
+                <span className="text-sm text-gray-600 hidden sm:block">{user.fullName || user.username}'s Garage</span>
                 <Button
                   onClick={handleLogout}
                   variant="outline"
