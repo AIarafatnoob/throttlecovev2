@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { Badge } from "@/components/ui/badge";
+import { Star, Shield, Users, Wrench } from "lucide-react";
 import { 
   Card, 
   CardContent, 

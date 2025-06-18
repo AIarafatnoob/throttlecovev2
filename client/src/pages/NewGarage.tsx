@@ -160,6 +160,12 @@ const NewGarage = () => {
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
   });
+
+  // Calculate total mileage for ranking
+  const totalMileage = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage || 0), 0) || 0;
+  const currentRank = getUserRank(totalMileage);
+  const nextRank = getNextRank(totalMileage);
+  const milesToNext = getMilesToNextRank(totalMileage);
   
   const handleAddMotorcycle = () => {
     setIsAddDialogOpen(true);
