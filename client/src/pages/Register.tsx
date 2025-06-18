@@ -135,7 +135,7 @@ const Register = () => {
           {/* Main Registration Section - Primary Focus */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold font-header text-[#1A1A1A] mb-4">
-              THROTTLECOVE
+              THROTTLE<span className="text-[#FF3B30] font-bold">COVE</span>
             </h1>
             <p className="text-xl text-gray-600 mb-2">Join the motorcycle community</p>
             <p className="text-sm text-gray-500">Everything you need to manage your motorcycle life</p>

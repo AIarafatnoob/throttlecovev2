@@ -46,10 +46,10 @@ const ModernNavBar = () => {
                 </svg>
               </div>
               <span className="text-lg font-semibold text-white">
-                ThrottleCove
+                Throttle<span className="text-[#FF3B30] font-bold">Cove</span>
               </span>
             </Link>
-            
+
             <div className="flex items-center space-x-1">
               {navLinks.filter(link => link.name !== 'Admin').map((link) => (
                 <Link
@@ -66,7 +66,7 @@ const ModernNavBar = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
             {user ? (
               <Button
@@ -93,7 +93,7 @@ const ModernNavBar = () => {
             )}
           </div>
         </div>
-        
+
         {/* User garage text below navbar */}
         {user && (
           <div className="text-center py-2 border-t border-gray-100">
@@ -101,8 +101,8 @@ const ModernNavBar = () => {
           </div>
         )}
       </div>
-      
-      
+
+
     </nav>
   );
 };
