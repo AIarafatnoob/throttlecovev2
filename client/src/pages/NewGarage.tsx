@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { getUserRank, getNextRank, getMilesToNextRank } from "@/utils/ranking";
+import PartsCarousel from "@/components/ui/PartsCarousel";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -286,12 +287,19 @@ const NewGarage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {motorcycles.map((motorcycle) => (
-              <ModernMotorcycleCard
-                key={motorcycle.id}
-                motorcycle={motorcycle}
-                onEdit={handleEditMotorcycle}
-                onDelete={(id) => setMotorcycleToDelete(id)}
-              />
+              <div key={motorcycle.id}>
+                <ModernMotorcycleCard
+                  motorcycle={motorcycle}
+                  onEdit={handleEditMotorcycle}
+                  onDelete={(id) => setMotorcycleToDelete(id)}
+                />
+                {/* Parts and Accessories Carousel for user's bikes */}
+                <PartsCarousel 
+                  vehicleMake={motorcycle.make || 'Generic'}
+                  vehicleModel={motorcycle.model || motorcycle.name}
+                  vehicleYear={motorcycle.year || 2024}
+                />
+              </div>
             ))}
           </div>
         )}

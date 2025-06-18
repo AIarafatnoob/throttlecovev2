@@ -296,12 +296,7 @@ const Home = () => {
                     </div>
                   </CardContent>
                   
-                  {/* Parts and Accessories Carousel */}
-                  <PartsCarousel 
-                    vehicleMake={bike.brand}
-                    vehicleModel={bike.name}
-                    vehicleYear={bike.year}
-                  />
+
                 </Card>
               </motion.div>
             ))}

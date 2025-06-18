@@ -69,17 +69,14 @@ const ModernNavBar = () => {
           
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
             {user ? (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600 hidden sm:block">{user.fullName || user.username}'s Garage</span>
-                <Button
-                  onClick={handleLogout}
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full border-gray-300 text-gray-600 hover:bg-[#FF3B30] hover:text-white hover:border-[#FF3B30]"
-                >
-                  Logout
-                </Button>
-              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="rounded-full border-gray-300 text-gray-600 hover:bg-[#FF3B30] hover:text-white hover:border-[#FF3B30]"
+              >
+                Logout
+              </Button>
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href="/login">
@@ -96,6 +93,13 @@ const ModernNavBar = () => {
             )}
           </div>
         </div>
+        
+        {/* User garage text below navbar */}
+        {user && (
+          <div className="text-center py-2 border-t border-gray-100">
+            <span className="text-sm text-gray-600">{user.fullName || user.username}'s Garage</span>
+          </div>
+        )}
       </div>
       
       {/* Mobile menu for smaller screens */}
