@@ -51,25 +51,51 @@
     background: #e5342a;
   }
   
-  /* Define standard padding value */
+  /* Define responsive padding values */
   .p-standard {
-    padding: 24px;
+    @apply p-4 sm:p-6 lg:p-8;
   }
   
   .m-standard {
-    margin: 24px;
+    @apply m-4 sm:m-6 lg:m-8;
   }
   
   .space-standard > * + * {
-    margin-top: 24px;
+    @apply mt-4 sm:mt-6 lg:mt-8;
   }
   
   .gap-standard {
-    gap: 24px;
+    @apply gap-4 sm:gap-6 lg:gap-8;
   }
   
   /* Add smooth transitions to all elements */
   .transition-standard {
     @apply transition-all duration-300 ease-in-out;
+  }
+  
+  /* Responsive text utilities */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  /* Container responsive padding */
+  .container-responsive {
+    @apply px-4 sm:px-6 lg:px-8;
   }
 }

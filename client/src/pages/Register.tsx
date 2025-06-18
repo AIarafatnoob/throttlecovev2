@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -63,19 +63,25 @@ const reviews = [
     name: "Jake Rodriguez",
     rating: 5,
     comment: "Finally, a platform that gets motorcycle enthusiasts! Love the maintenance tracking.",
-    avatar: "JR"
+    avatar: "JR",
+    location: "Los Angeles, CA",
+    text: "This app has revolutionized how I manage my motorcycles. The maintenance tracking is a lifesaver!",
   },
   {
     name: "Sarah Chen",
     rating: 5,
     comment: "The community features are amazing. Found my local riding group here!",
-    avatar: "SC"
+    avatar: "SC",
+    location: "New York, NY",
+    text: "I've connected with so many riders in my area thanks to this app's community features. It's been an incredible experience!",
   },
   {
     name: "Mike Thompson",
     rating: 4,
     comment: "Great for organizing my bikes and keeping track of service history.",
-    avatar: "MT"
+    avatar: "MT",
+    location: "Chicago, IL",
+    text: "Organizing my bikes and tracking their service history has never been easier. A must-have for any motorcycle owner!",
   }
 ];
 
@@ -85,7 +91,20 @@ const Register = () => {
   const { setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
-  
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    username: "",
+    password: ""
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+  };
+
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -96,25 +115,25 @@ const Register = () => {
       confirmPassword: "",
     },
   });
-  
+
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
-    
+
     // Remove confirmPassword before sending to API
     const { confirmPassword, ...registerData } = data;
-    
+
     try {
       const res = await apiRequest("POST", "/api/auth/register", registerData);
       const user = await res.json();
-      
+
       setUser(user);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/session'] });
-      
+
       toast({
         title: "Registration Successful",
         description: `Welcome to ThrottleCove, ${user.fullName}!`,
       });
-      
+
       navigate("/garage");
     } catch (error) {
       toast({
@@ -126,170 +145,113 @@ const Register = () => {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          
+
           {/* Main Registration Section - Primary Focus */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold font-header text-[#1A1A1A] mb-4">
+          <div className="text-center mb-8 sm:mb-12 px-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-header text-[#1A1A1A] mb-4">
               THROTTLE<span className="text-[#FF3B30] font-bold">COVE</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-2">Join the motorcycle community</p>
+            <p className="text-lg sm:text-xl text-gray-600 mb-2">Join the motorcycle community</p>
             <p className="text-sm text-gray-500">Everything you need to manage your motorcycle life</p>
           </div>
-          
-          <div className="flex justify-center mb-16">
-            <div className="w-full max-w-md">
-              <Card className="shadow-2xl border-0 bg-white">
-                <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-2xl font-bold text-[#1A1A1A]">Create Account</CardTitle>
-                  <CardDescription className="text-gray-600">
-                    Start your journey with us
-                  </CardDescription>
-                </CardHeader>
-                
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <CardContent className="space-y-5 px-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="username" className="text-sm font-medium">Username</Label>
-                      <Input
-                        id="username"
-                        type="text"
-                        placeholder="Choose a username"
-                        className="h-12"
-                        {...form.register("username")}
-                      />
-                      {form.formState.errors.username && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.username.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
-                      <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="Your full name"
-                        className="h-12"
-                        {...form.register("fullName")}
-                      />
-                      {form.formState.errors.fullName && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.fullName.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Your email address"
-                        className="h-12"
-                        {...form.register("email")}
-                      />
-                      {form.formState.errors.email && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.email.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Create a password"
-                        className="h-12"
-                        {...form.register("password")}
-                      />
-                      {form.formState.errors.password && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.password.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        className="h-12"
-                        {...form.register("confirmPassword")}
-                      />
-                      {form.formState.errors.confirmPassword && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.confirmPassword.message}
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter className="flex flex-col gap-4 px-8 pb-8">
-                    <Button 
-                      className="w-full h-12 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-lg font-semibold"
-                      type="submit"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Creating account..." : "Create Account"}
-                    </Button>
-                    
-                    <div className="text-center space-y-2">
-                      <p className="text-sm text-gray-600">
-                        Already have an account?{" "}
-                        <Link href="/login">
-                          <a className="text-[#FF3B30] hover:underline font-medium">
-                            Sign in
-                          </a>
-                        </Link>
-                      </p>
-                      <Link href="/">
-                        <a className="text-sm text-gray-500 hover:text-[#1A1A1A] inline-block">
-                          ← Back to home
-                        </a>
-                      </Link>
-                    </div>
-                  </CardFooter>
-                </form>
-              </Card>
-            </div>
-          </div>
-          
+
+          {/* Registration Form */}
+          <Card className="w-full max-w-md mx-auto mb-12 sm:mb-16">
+            <CardContent className="p-6 sm:p-8">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Full Name"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      className="w-full h-11 sm:h-12"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full h-11 sm:h-12"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      className="w-full h-11 sm:h-12"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full h-11 sm:h-12"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white py-3 sm:py-4 text-base sm:text-lg font-semibold h-12 sm:h-14"
+                >
+                  Create Account
+                </Button>
+
+                <CardFooter className="text-center px-0 pb-0">
+                  <p className="text-sm text-gray-600">
+                    Already have an account?{" "}
+                    <Link href="/login" className="text-[#FF3B30] hover:underline font-medium">
+                      Sign in
+                    </Link>
+                  </p>
+                </CardFooter>
+              </form>
+            </CardContent>
+          </Card>
+
           {/* Secondary Content - Features and Reviews */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-            
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto px-4">
+
             {/* Features Section */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center lg:text-left">
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-3">
                   Why Choose ThrottleCove?
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm sm:text-base">
                   Everything you need in one place
                 </p>
               </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {features.map((feature, index) => (
-                  <Card key={index} className="p-4 bg-gray-50/50 border-gray-200 hover:bg-white hover:shadow-md transition-all">
-                    <div className="space-y-3">
-                      <div className="w-10 h-10 bg-[#FF3B30]/10 rounded-lg flex items-center justify-center">
-                        <feature.icon className="h-5 w-5 text-[#FF3B30]" />
+                  <Card key={index} className="p-3 sm:p-4 bg-gray-50/50 border-gray-200 hover:bg-white hover:shadow-md transition-all">
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#FF3B30]/10 rounded-lg flex items-center justify-center">
+                        <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF3B30]" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-[#1A1A1A] mb-1">
+                        <h3 className="font-semibold text-[#1A1A1A] mb-1 text-sm sm:text-base">
                           {feature.title}
                         </h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                           {feature.description}
                         </p>
                       </div>
@@ -298,8 +260,8 @@ const Register = () => {
                 ))}
               </div>
             </div>
-            
-            {/* Reviews Section */}
+
+             {/* Reviews Section */}
             <div className="space-y-6">
               <div className="text-center lg:text-left">
                 <h2 className="text-2xl font-bold text-[#1A1A1A] mb-3">
@@ -309,7 +271,7 @@ const Register = () => {
                   See what our community says
                 </p>
               </div>
-              
+
               <div className="space-y-4">
                 {reviews.map((review, index) => (
                   <Card key={index} className="p-4 bg-gray-50/50 border-gray-200">
@@ -326,11 +288,11 @@ const Register = () => {
                           />
                         ))}
                       </div>
-                      
+
                       <p className="text-gray-700 text-sm leading-relaxed italic">
                         "{review.comment}"
                       </p>
-                      
+
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
                           <span className="text-white text-xs font-semibold">
@@ -347,7 +309,7 @@ const Register = () => {
                     </div>
                   </Card>
                 ))}
-                
+
                 <Card className="p-4 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF3B30]/10 border-[#FF3B30]/20">
                   <div className="text-center">
                     <div className="flex justify-center space-x-1 mb-2">
@@ -365,7 +327,7 @@ const Register = () => {
                 </Card>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>

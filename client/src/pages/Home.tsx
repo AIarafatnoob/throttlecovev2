@@ -88,7 +88,7 @@ const motorcycles = [
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
-  
+
   const filteredMotorcycles = motorcycles.filter(bike => {
     const matchesSearch = bike.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          bike.brand.toLowerCase().includes(searchTerm.toLowerCase());
@@ -237,7 +237,7 @@ const Home = () => {
                       <Heart className="h-4 w-4" />
                     </Button>
                   </div>
-                  
+
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-xl font-bold text-[#1A1A1A]">
@@ -257,7 +257,7 @@ const Home = () => {
                       <span className="text-sm text-gray-500">(142 reviews)</span>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="pt-0">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {bike.features.map((feature, i) => (
@@ -292,7 +292,7 @@ const Home = () => {
                       </Button>
                     </div>
                   </CardContent>
-                  
+
 
                 </Card>
               </motion.div>
