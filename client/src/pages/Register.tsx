@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Star, Shield, Users, Wrench } from "lucide-react";
+import { Star, Shield, Users, Wrench, Calendar, MessageSquare, Trophy, Camera } from "lucide-react";
 import { 
   Card, 
   CardContent, 
@@ -33,6 +33,50 @@ const registerSchema = z.object({
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
+
+const features = [
+  {
+    icon: Shield,
+    title: "Digital Garage",
+    description: "Store and manage all your motorcycles in one secure place"
+  },
+  {
+    icon: Calendar,
+    title: "Maintenance Tracking",
+    description: "Never miss important service dates with smart reminders"
+  },
+  {
+    icon: Users,
+    title: "Community Hub",
+    description: "Connect with riders, join group rides, and share experiences"
+  },
+  {
+    icon: Trophy,
+    title: "Achievements",
+    description: "Unlock badges and track your riding milestones"
+  }
+];
+
+const reviews = [
+  {
+    name: "Jake Rodriguez",
+    rating: 5,
+    comment: "Finally, a platform that gets motorcycle enthusiasts! Love the maintenance tracking.",
+    avatar: "JR"
+  },
+  {
+    name: "Sarah Chen",
+    rating: 5,
+    comment: "The community features are amazing. Found my local riding group here!",
+    avatar: "SC"
+  },
+  {
+    name: "Mike Thompson",
+    rating: 4,
+    comment: "Great for organizing my bikes and keeping track of service history.",
+    avatar: "MT"
+  }
+];
 
 const Register = () => {
   const [, navigate] = useLocation();
@@ -83,126 +127,234 @@ const Register = () => {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold font-header text-[#1A1A1A]">THROTTLECOVE</h2>
-          <p className="mt-2 text-gray-600">Create your account</p>
-        </div>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Register</CardTitle>
-            <CardDescription>
-              Join the motorcycle community
-            </CardDescription>
-          </CardHeader>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Choose a username"
-                  {...form.register("username")}
-                />
-                {form.formState.errors.username && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.username.message}
-                  </p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="Your full name"
-                  {...form.register("fullName")}
-                />
-                {form.formState.errors.fullName && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.fullName.message}
-                  </p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Your email address"
-                  {...form.register("email")}
-                />
-                {form.formState.errors.email && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Create a password"
-                  {...form.register("password")}
-                />
-                {form.formState.errors.password && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.password.message}
-                  </p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password"
-                  {...form.register("confirmPassword")}
-                />
-                {form.formState.errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-            
-            <CardFooter className="flex flex-col gap-4">
-              <Button 
-                className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90"
-                type="submit"
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating account..." : "Create Account"}
-              </Button>
-              
-              <p className="text-sm text-center text-gray-600">
-                Already have an account?{" "}
-                <Link href="/login">
-                  <a className="text-[#007AFF] hover:underline">
-                    Login
-                  </a>
-                </Link>
+          {/* Left Column - Features */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="text-center lg:text-left">
+              <h2 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">
+                Why Join ThrottleCove?
+              </h2>
+              <p className="text-gray-600">
+                Everything you need to manage your motorcycle life
               </p>
-            </CardFooter>
-          </form>
-        </Card>
-        
-        <div className="mt-4 text-center">
-          <Link href="/">
-            <a className="text-sm text-gray-600 hover:text-[#1A1A1A]">
-              ← Back to home
-            </a>
-          </Link>
+            </div>
+            
+            <div className="space-y-4">
+              {features.map((feature, index) => (
+                <Card key={index} className="p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-[#FF3B30]/10 rounded-lg flex items-center justify-center">
+                        <feature.icon className="h-5 w-5 text-[#FF3B30]" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-[#1A1A1A] mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+          
+          {/* Center Column - Registration Form */}
+          <div className="lg:col-span-1">
+            <div className="text-center mb-6">
+              <h1 className="text-4xl font-bold font-header text-[#1A1A1A]">THROTTLECOVE</h1>
+              <p className="mt-2 text-gray-600">Create your account</p>
+            </div>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Register</CardTitle>
+                <CardDescription>
+                  Join the motorcycle community
+                </CardDescription>
+              </CardHeader>
+              
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Choose a username"
+                      {...form.register("username")}
+                    />
+                    {form.formState.errors.username && (
+                      <p className="text-sm text-red-500">
+                        {form.formState.errors.username.message}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Your full name"
+                      {...form.register("fullName")}
+                    />
+                    {form.formState.errors.fullName && (
+                      <p className="text-sm text-red-500">
+                        {form.formState.errors.fullName.message}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Your email address"
+                      {...form.register("email")}
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-sm text-red-500">
+                        {form.formState.errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Create a password"
+                      {...form.register("password")}
+                    />
+                    {form.formState.errors.password && (
+                      <p className="text-sm text-red-500">
+                        {form.formState.errors.password.message}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      {...form.register("confirmPassword")}
+                    />
+                    {form.formState.errors.confirmPassword && (
+                      <p className="text-sm text-red-500">
+                        {form.formState.errors.confirmPassword.message}
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+                
+                <CardFooter className="flex flex-col gap-4">
+                  <Button 
+                    className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Creating account..." : "Create Account"}
+                  </Button>
+                  
+                  <p className="text-sm text-center text-gray-600">
+                    Already have an account?{" "}
+                    <Link href="/login">
+                      <a className="text-[#007AFF] hover:underline">
+                        Login
+                      </a>
+                    </Link>
+                  </p>
+                </CardFooter>
+              </form>
+            </Card>
+            
+            <div className="mt-4 text-center">
+              <Link href="/">
+                <a className="text-sm text-gray-600 hover:text-[#1A1A1A]">
+                  ← Back to home
+                </a>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Right Column - User Reviews */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl font-bold font-header text-[#1A1A1A] mb-2">
+                What Riders Say
+              </h2>
+              <p className="text-gray-600">
+                Trusted by motorcycle enthusiasts worldwide
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              {reviews.map((review, index) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`h-4 w-4 ${
+                            i < review.rating 
+                              ? "text-yellow-400 fill-current" 
+                              : "text-gray-300"
+                          }`} 
+                        />
+                      ))}
+                    </div>
+                    
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      "{review.comment}"
+                    </p>
+                    
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-semibold">
+                          {review.avatar}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm text-[#1A1A1A]">
+                          {review.name}
+                        </p>
+                        <p className="text-xs text-gray-500">Verified Rider</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            
+            <Card className="p-4 bg-[#FF3B30]/5 border-[#FF3B30]/20">
+              <div className="text-center">
+                <div className="flex justify-center space-x-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-sm font-medium text-[#1A1A1A]">
+                  4.9/5 from 2,847+ riders
+                </p>
+                <p className="text-xs text-gray-600 mt-1">
+                  Join thousands of satisfied members
+                </p>
+              </div>
+            </Card>
+          </div>
+          
         </div>
       </div>
     </div>
