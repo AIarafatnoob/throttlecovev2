@@ -102,26 +102,7 @@ const ModernNavBar = () => {
         )}
       </div>
       
-      {/* Mobile menu for smaller screens */}
-      <div className="md:hidden">
-        <div className="px-4 py-2 border-t border-gray-200">
-          <div className="flex flex-wrap justify-center gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                className={`text-sm font-medium px-3 py-1 rounded-full transition-all ${
-                  location === link.path
-                    ? "bg-[#FF3B30] text-white"
-                    : "text-gray-600 hover:text-[#FF3B30]"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      
     </nav>
   );
 };
