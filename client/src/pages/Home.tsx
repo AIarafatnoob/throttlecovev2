@@ -161,27 +161,6 @@ const Home = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold font-header text-[#1A1A1A] mb-4">
-              Search for your dream machine
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              Browse our extensive catalog of motorcycles and find the perfect ride for your adventures
-            </p>
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto relative mb-8">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  type="text"
-                  placeholder="Search For Your Dream Machine"
-                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-xl shadow-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-
             {/* Filter Buttons */}
             <div className="flex flex-wrap justify-center gap-3 mb-8">
               {["All", "Sport", "Touring", "Adventure", "Cruiser"].map((type) => (
@@ -277,14 +256,14 @@ const Home = () => {
                     </div>
                     <div className="flex gap-2">
                       <Button 
-                        className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
+                        className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
                         onClick={() => window.location.href = `/catalog/${bike.id}`}
                       >
                         View Details
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]"
+                        className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30] rounded-full"
                         onClick={() => {
                           // Add to comparison list
                           const existingComparisons = JSON.parse(localStorage.getItem('bikeComparisons') || '[]');
@@ -317,7 +296,7 @@ const Home = () => {
             <Link href="/catalog">
               <Button 
                 variant="outline" 
-                className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium"
+                className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium rounded-full"
               >
                 View Full Catalog
                 <ArrowRight className="ml-2 h-4 w-4" />

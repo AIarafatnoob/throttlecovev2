@@ -101,29 +101,40 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
 
           <div className="flex gap-2">
             <Button 
-              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
               onClick={() => {
-                // Navigate to maintenance/service page
-                window.location.href = `/garage/${motorcycle.id}/service`;
+                // Navigate to maintenance scheduler
+                window.location.href = `/maintenance`;
               }}
             >
               Service
             </Button>
             <Button 
-              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
-              onClick={() => {
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
+              onClick={async () => {
                 // Open mileage update dialog
                 const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
                 if (newMileage && !isNaN(Number(newMileage))) {
-                  // Here you would update the motorcycle mileage
-                  console.log(`Updating ${motorcycle.name} mileage to ${newMileage}`);
+                  try {
+                    // Update motorcycle mileage via API
+                    await fetch(`/api/motorcycles/${motorcycle.id}`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ mileage: Number(newMileage) })
+                    });
+                    
+                    // Refresh the page to show updated mileage
+                    window.location.reload();
+                  } catch (error) {
+                    alert('Failed to update mileage. Please try again.');
+                  }
                 }
               }}
             >
               New Mile
             </Button>
             <Button 
-              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-lg"
+              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
               onClick={() => {
                 // Navigate to motorcycle detail page
                 window.location.href = `/garage/${motorcycle.id}`;
@@ -212,7 +223,7 @@ const NewGarage = () => {
             </p>
           </div>
           
-          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-lg px-6">
+          <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
             <Plus className="h-4 w-4 mr-2" />
             Add Bike
           </Button>
@@ -227,7 +238,7 @@ const NewGarage = () => {
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               Add your first motorcycle to start tracking maintenance, mileage, and service schedules
             </p>
-            <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 px-8 py-3 rounded-lg">
+            <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 px-8 py-3 rounded-full">
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Bike
             </Button>

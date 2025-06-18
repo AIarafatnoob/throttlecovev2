@@ -8,7 +8,7 @@ import Community from "@/pages/Community";
 import Catalog from "@/pages/Catalog";
 import Shop from "@/pages/Shop";
 import Blog from "@/pages/Blog";
-import Admin from "@/pages/Admin";
+import MaintenanceScheduler from "@/pages/MaintenanceScheduler";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import NotFound from "@/pages/not-found";
@@ -73,8 +73,8 @@ function App() {
           <Route path="/catalog" component={Catalog} />
           <Route path="/shop" component={Shop} />
           <Route path="/blog" component={Blog} />
-          <Route path="/admin">
-            <AuthenticatedRoute component={Admin} />
+          <Route path="/maintenance">
+            <AuthenticatedRoute component={MaintenanceScheduler} />
           </Route>
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
