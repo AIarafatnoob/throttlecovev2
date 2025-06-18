@@ -168,8 +168,8 @@ const Home = () => {
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder="Search motorcycles by name, brand, or type..."
-                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-full shadow-sm"
+                  placeholder="Search For Your Dream Machine"
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 focus:border-[#FF3B30] rounded-full shadow-sm placeholder:opacity-50"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

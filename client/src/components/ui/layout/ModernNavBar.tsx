@@ -78,18 +78,11 @@ const ModernNavBar = () => {
                 Logout
               </Button>
             ) : (
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="rounded-full text-gray-600 hover:text-[#FF3B30] text-xs sm:text-sm px-2 sm:px-4">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button size="sm" className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-2 sm:px-4">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/register">
+                <Button size="sm" className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-6">
+                  Join Now
+                </Button>
+              </Link>
             )}
           </div>
         </div>
