@@ -353,6 +353,23 @@ const Shop = () => {
   
   // Handle add to cart
   const handleAddToCart = (product: Product) => {
+    // Get existing cart from localStorage
+    const existingCart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+    
+    // Check if product already exists in cart
+    const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    
+    if (existingIndex >= 0) {
+      // Increment quantity if product exists
+      existingCart[existingIndex].quantity += 1;
+    } else {
+      // Add new product to cart
+      existingCart.push({ ...product, quantity: 1 });
+    }
+    
+    // Save updated cart to localStorage
+    localStorage.setItem('shoppingCart', JSON.stringify(existingCart));
+    
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,

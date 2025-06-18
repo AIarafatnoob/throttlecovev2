@@ -228,6 +228,17 @@ const Home = () => {
                       variant="ghost"
                       size="sm"
                       className="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-600 hover:text-[#FF3B30] rounded-full p-2"
+                      onClick={() => {
+                        // Add to favorites
+                        const favorites = JSON.parse(localStorage.getItem('bikeFavorites') || '[]');
+                        if (!favorites.find((b: any) => b.id === bike.id)) {
+                          favorites.push(bike);
+                          localStorage.setItem('bikeFavorites', JSON.stringify(favorites));
+                          alert(`${bike.name} added to favorites!`);
+                        } else {
+                          alert(`${bike.name} is already in favorites!`);
+                        }
+                      }}
                     >
                       <Heart className="h-4 w-4" />
                     </Button>

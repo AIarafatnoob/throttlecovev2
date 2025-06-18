@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import NavBar from "@/components/ui/layout/NavBar";
+import NavBar from "@/components/ui/layout/ModernNavBar";
 import Footer from "@/components/ui/layout/Footer";
 import Home from "@/pages/Home";
 import Garage from "@/pages/NewGarage";
