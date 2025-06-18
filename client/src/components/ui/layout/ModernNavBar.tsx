@@ -82,7 +82,7 @@ const ModernNavBar = () => {
                 <Link href="/register">
                   <Button 
                     size="sm" 
-                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-transform duration-300 ease-in-out transform translate-x-[30%] hover:translate-x-0 relative z-10"
+                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-all duration-300 ease-in-out transform translate-x-[50%] hover:translate-x-0 relative z-10 text-right hover:text-center"
                   >
                     Join
                   </Button>

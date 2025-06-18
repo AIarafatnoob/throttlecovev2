@@ -240,59 +240,6 @@ const NewGarage = () => {
           </Button>
         </div>
 
-        {/* Military Ranking System - Dedicated Section */}
-        <Card className="bg-gradient-to-r from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 mb-8">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                {/* User Profile Section */}
-                <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full flex items-center justify-center mb-2 overflow-hidden">
-                    {/* Mock user avatar - replace with actual user image when available */}
-                    <div className="w-full h-full bg-gradient-to-br from-[#FF3B30] to-[#FF3B30]/80 flex items-center justify-center text-white font-bold text-xl sm:text-2xl">
-                      {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-[#1A1A1A] text-center">{user?.fullName || user?.username || "User"}</p>
-                </div>
-                
-                {/* Rank Information */}
-                <div className="flex items-center space-x-4">
-                  <div className="text-4xl">{currentRank.insignia}</div>
-                  <div>
-                    <h3 className="font-bold text-xl text-[#1A1A1A]">{currentRank.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{currentRank.description}</p>
-                    <div className="flex items-center space-x-2">
-                      <Gauge className="h-4 w-4 text-[#FF3B30]" />
-                      <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {nextRank && (
-                <div className="text-right">
-                  <p className="text-sm text-gray-500 mb-2">Next Rank: <span className="font-medium">{nextRank.name}</span></p>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
-                    <span className="text-sm font-medium text-[#FF3B30]">
-                      {milesToNext.toLocaleString()} miles to go
-                    </span>
-                  </div>
-                  <div className="w-40 bg-gray-200 rounded-full h-3">
-                    <div 
-                      className="bg-[#FF3B30] h-3 rounded-full transition-all duration-500"
-                      style={{ 
-                        width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
         {!motorcycles || motorcycles.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -308,15 +255,76 @@ const NewGarage = () => {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {motorcycles.map((motorcycle) => (
-              <ExpandableMotorcycleCard
-                key={motorcycle.id}
-                motorcycle={motorcycle}
-                onEdit={handleEditMotorcycle}
-                onDelete={(id) => setMotorcycleToDelete(id)}
-              />
-            ))}
+          <div className="flex gap-6">
+            {/* Left side - Vehicle Cards (60%) */}
+            <div className="w-3/5">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {motorcycles.map((motorcycle) => (
+                  <ExpandableMotorcycleCard
+                    key={motorcycle.id}
+                    motorcycle={motorcycle}
+                    onEdit={handleEditMotorcycle}
+                    onDelete={(id) => setMotorcycleToDelete(id)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Right side - Profile & Ranking (40%) */}
+            <div className="w-2/5">
+              <Card className="bg-gradient-to-br from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 h-fit sticky top-6">
+                <CardContent className="p-6">
+                  {/* User Profile Section */}
+                  <div className="flex flex-col items-center mb-6">
+                    <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center mb-3 overflow-hidden">
+                      <div className="w-full h-full bg-gradient-to-br from-[#FF3B30] to-[#FF3B30]/80 flex items-center justify-center text-white font-bold text-2xl">
+                        {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#1A1A1A] text-center">{user?.fullName || user?.username || "User"}</h3>
+                    <p className="text-sm text-gray-600 text-center">Rider Profile</p>
+                  </div>
+
+                  {/* Rank Information */}
+                  <div className="text-center mb-6">
+                    <div className="text-6xl mb-3">{currentRank.insignia}</div>
+                    <h4 className="font-bold text-xl text-[#1A1A1A] mb-2">{currentRank.name}</h4>
+                    <p className="text-sm text-gray-600 mb-4">{currentRank.description}</p>
+                    <div className="flex items-center justify-center space-x-2 mb-4">
+                      <Gauge className="h-4 w-4 text-[#FF3B30]" />
+                      <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
+                    </div>
+                  </div>
+
+                  {/* Progress to Next Rank */}
+                  {nextRank && (
+                    <div className="border-t border-gray-200 pt-6">
+                      <div className="text-center mb-4">
+                        <p className="text-sm text-gray-500 mb-2">Next Rank</p>
+                        <p className="font-semibold text-[#1A1A1A] mb-2">{nextRank.name}</p>
+                        <div className="flex items-center justify-center space-x-2 mb-4">
+                          <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
+                          <span className="text-sm font-medium text-[#FF3B30]">
+                            {milesToNext.toLocaleString()} miles to go
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
+                        <div 
+                          className="bg-[#FF3B30] h-4 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
+                          }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-500 text-center">
+                        Progress to {nextRank.name}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 
