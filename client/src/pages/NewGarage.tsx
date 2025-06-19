@@ -262,24 +262,13 @@ const NewGarage = () => {
                 </div>
                 
                 <div className="flex flex-col w-full lg:w-auto gap-4">
-                  <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 justify-around lg:justify-end">
+                  <div className="flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-gray-500 text-xs mb-1">Total Miles</p>
-                      <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
+                      <p className="text-gray-500 text-sm mb-2">Total Miles</p>
+                      <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
                         {totalMileage.toLocaleString()}
                       </p>
-                      <p className="text-gray-400 text-xs">miles</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-gray-500 text-xs mb-1">Current Rank</p>
-                      <div className="flex flex-col items-center gap-1">
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${getTierColor(currentRank.tier)} rounded-2xl flex items-center justify-center shadow-lg`}>
-                          <span className="text-white text-lg sm:text-2xl font-bold">
-                            {currentRank.patch}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 font-medium">{currentRank.tier}</p>
-                      </div>
+                      <p className="text-gray-400 text-sm mt-1">miles traveled</p>
                     </div>
                   </div>
                   
