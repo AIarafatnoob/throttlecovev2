@@ -5,12 +5,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
-import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User } from "lucide-react";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, ChevronUp, ChevronDown } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { getUserRank, getNextRank, getMilesToNextRank, getTierColor, bikerRanks } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
+import DocumentUpload from "@/components/ui/DocumentUpload";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   AlertDialog,
@@ -264,6 +265,31 @@ const NewGarage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
+        
+        {/* Header with Actions */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Your Garage</h1>
+            <p className="text-gray-600">
+              Manage your motorcycles and track their maintenance schedules
+            </p>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button 
+              variant="outline"
+              onClick={() => setIsDocumentDialogOpen(true)} 
+              className="rounded-full px-6 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Documents
+            </Button>
+            <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Bike
+            </Button>
+          </div>
+        </div>
         {/* Profile Section */}
         <div className="flex flex-col items-center mb-8">
           <Card className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden w-full max-w-7xl mb-4">
