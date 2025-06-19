@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FileText, Upload, Download, Eye, X, Check, AlertCircle, Calendar, Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
 interface Document {
@@ -77,6 +77,7 @@ const DocumentUploadDialog = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [uploadingType, setUploadingType] = useState<string | null>(null);
   const [expiryDates, setExpiryDates] = useState<Record<string, string>>({});
+  const [showQuickActions, setShowQuickActions] = useState(false);
   const { toast } = useToast();
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -175,16 +176,78 @@ const DocumentUploadDialog = () => {
     }
   };
 
+  const handleQuickAccess = (documentType: string) => {
+    const doc = getDocumentForType(documentType);
+    if (doc) {
+      handleViewDocument(doc);
+    } else {
+      toast({
+        title: "Document not found",
+        description: `Please upload your ${DOCUMENT_TYPES.find(dt => dt.key === documentType)?.name} first.`,
+        variant: "destructive",
+      });
+    }
+    setShowQuickActions(false);
+  };
+
+  const toggleQuickActions = () => {
+    if (showQuickActions) {
+      setShowQuickActions(false);
+    } else {
+      setShowQuickActions(true);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <>
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        {/* Quick Action Buttons */}
+        <AnimatePresence>
+          {showQuickActions && (
+            <motion.div
+              className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex flex-col space-y-2"
+              initial={{ opacity: 0, y: 20, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                onClick={() => handleQuickAccess('license')}
+                className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-full px-4 py-2 shadow-md text-sm"
+                size="sm"
+              >
+                🪪 License
+              </Button>
+              <Button
+                onClick={() => handleQuickAccess('insurance')}
+                className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-full px-4 py-2 shadow-md text-sm"
+                size="sm"
+              >
+                🛡️ Insurance
+              </Button>
+              <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => setShowQuickActions(false)}
+                    className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-full px-4 py-2 shadow-md text-sm"
+                    size="sm"
+                  >
+                    ⋯ All Documents
+                  </Button>
+                </DialogTrigger>
+              </Dialog>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Document Button */}
         <motion.div
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Button
+            onClick={toggleQuickActions}
             className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             size="sm"
           >
@@ -195,16 +258,16 @@ const DocumentUploadDialog = () => {
                   const doc = getDocumentForType(docType.key);
                   const dotColor = doc 
                     ? doc.status === 'expired' 
-                      ? 'bg-red-400' 
+                      ? 'bg-red-300/70' 
                       : doc.status === 'expiring' 
-                        ? 'bg-yellow-400' 
-                        : 'bg-green-400'
-                    : 'bg-gray-400';
+                        ? 'bg-amber-300/70' 
+                        : 'bg-emerald-300/70'
+                    : 'bg-gray-300/50';
                   
                   return (
                     <div
                       key={docType.key}
-                      className={`w-2 h-2 rounded-full ${dotColor} transition-colors duration-300`}
+                      className={`w-1.5 h-1.5 rounded-full ${dotColor} transition-colors duration-300`}
                       title={docType.name}
                     />
                   );
@@ -213,7 +276,9 @@ const DocumentUploadDialog = () => {
             </div>
           </Button>
         </motion.div>
-      </DialogTrigger>
+      </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
       
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -490,8 +555,9 @@ const DocumentUploadDialog = () => {
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
