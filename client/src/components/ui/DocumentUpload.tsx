@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { FileText, Upload, Download, Eye, X, Check, AlertCircle } from "lucide-react";
+import { FileText, Upload, Download, Eye, X, Check, AlertCircle, Calendar, Shield } from "lucide-react";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface Document {
   id: string;
@@ -16,38 +17,131 @@ interface Document {
   uploadDate: Date;
   expiryDate?: Date;
   isRequired: boolean;
+  fileUrl?: string;
+  status: 'valid' | 'expiring' | 'expired';
 }
 
 const DOCUMENT_TYPES = [
-  { key: 'license', name: 'Driving License', required: true, icon: '🪪' },
-  { key: 'registration', name: 'Registration Certificate (RC)', required: true, icon: '📋' },
-  { key: 'insurance', name: 'Vehicle Insurance Certificate', required: true, icon: '🛡️' },
-  { key: 'pollution', name: 'Pollution Under Control (PUC)', required: true, icon: '🌱' },
-  { key: 'tax', name: 'Tax Token', required: false, icon: '💰' },
-  { key: 'roadworthy', name: 'Road Worthiness Certificate', required: false, icon: '✅' },
+  { 
+    key: 'license', 
+    name: 'Driving License', 
+    required: true, 
+    icon: '🪪',
+    description: 'Valid driving license for motorcycle operation',
+    hasExpiry: true 
+  },
+  { 
+    key: 'registration', 
+    name: 'Registration Certificate (RC)', 
+    required: true, 
+    icon: '📋',
+    description: 'Official vehicle registration document',
+    hasExpiry: false
+  },
+  { 
+    key: 'insurance', 
+    name: 'Vehicle Insurance Certificate', 
+    required: true, 
+    icon: '🛡️',
+    description: 'Current vehicle insurance coverage',
+    hasExpiry: true
+  },
+  { 
+    key: 'pollution', 
+    name: 'Pollution Under Control (PUC)', 
+    required: true, 
+    icon: '🌱',
+    description: 'Environmental compliance certificate',
+    hasExpiry: true
+  },
+  { 
+    key: 'tax', 
+    name: 'Tax Token', 
+    required: false, 
+    icon: '💰',
+    description: 'Vehicle tax payment receipt',
+    hasExpiry: true
+  },
+  { 
+    key: 'roadworthy', 
+    name: 'Road Worthiness Certificate', 
+    required: false, 
+    icon: '✅',
+    description: 'Vehicle safety inspection certificate',
+    hasExpiry: true
+  },
 ];
 
 const DocumentUploadDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [uploadingType, setUploadingType] = useState<string | null>(null);
+  const [expiryDates, setExpiryDates] = useState<Record<string, string>>({});
+  const { toast } = useToast();
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const calculateStatus = (expiryDate?: Date): Document['status'] => {
+    if (!expiryDate) return 'valid';
+    const now = new Date();
+    const daysDiff = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysDiff < 0) return 'expired';
+    if (daysDiff <= 30) return 'expiring';
+    return 'valid';
+  };
 
   const handleFileUpload = (type: string, file: File) => {
+    const docType = DOCUMENT_TYPES.find(dt => dt.key === type);
+    const expiryDateStr = expiryDates[type];
+    const expiryDate = expiryDateStr ? new Date(expiryDateStr) : undefined;
+    
     const newDoc: Document = {
       id: Date.now().toString(),
       name: file.name,
       type: type as Document['type'],
       file: file,
       uploadDate: new Date(),
-      isRequired: DOCUMENT_TYPES.find(dt => dt.key === type)?.required || false
+      expiryDate,
+      isRequired: docType?.required || false,
+      fileUrl: URL.createObjectURL(file),
+      status: calculateStatus(expiryDate)
     };
 
     setDocuments(prev => [...prev.filter(d => d.type !== type), newDoc]);
     setUploadingType(null);
+    
+    toast({
+      title: "Document uploaded successfully",
+      description: `${docType?.name} has been added to your collection.`,
+    });
   };
 
   const removeDocument = (id: string) => {
+    const doc = documents.find(d => d.id === id);
+    if (doc?.fileUrl) {
+      URL.revokeObjectURL(doc.fileUrl);
+    }
     setDocuments(prev => prev.filter(d => d.id !== id));
+    toast({
+      title: "Document removed",
+      description: "The document has been removed from your collection.",
+    });
+  };
+
+  const handleExpiryDateChange = (type: string, date: string) => {
+    setExpiryDates(prev => ({ ...prev, [type]: date }));
+    
+    // Update existing document if it exists
+    const existingDoc = documents.find(d => d.type === type);
+    if (existingDoc) {
+      const newExpiryDate = date ? new Date(date) : undefined;
+      const updatedDoc = {
+        ...existingDoc,
+        expiryDate: newExpiryDate,
+        status: calculateStatus(newExpiryDate)
+      };
+      setDocuments(prev => prev.map(d => d.id === existingDoc.id ? updatedDoc : d));
+    }
   };
 
   const getDocumentForType = (type: string) => {
@@ -57,10 +151,29 @@ const DocumentUploadDialog = () => {
   const getCompletionStats = () => {
     const required = DOCUMENT_TYPES.filter(dt => dt.required);
     const uploaded = required.filter(dt => getDocumentForType(dt.key));
-    return { completed: uploaded.length, total: required.length };
+    const expiring = documents.filter(d => d.status === 'expiring').length;
+    const expired = documents.filter(d => d.status === 'expired').length;
+    return { completed: uploaded.length, total: required.length, expiring, expired };
   };
 
   const stats = getCompletionStats();
+
+  const getStatusBadge = (document: Document) => {
+    switch (document.status) {
+      case 'expired':
+        return <Badge variant="destructive" className="text-xs">Expired</Badge>;
+      case 'expiring':
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs">Expiring Soon</Badge>;
+      default:
+        return <Badge className="bg-green-100 text-green-800 text-xs"><Check className="h-3 w-3 mr-1" />Valid</Badge>;
+    }
+  };
+
+  const handleViewDocument = (document: Document) => {
+    if (document.fileUrl) {
+      window.open(document.fileUrl, '_blank');
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -81,21 +194,38 @@ const DocumentUploadDialog = () => {
         </motion.div>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#1A1A1A] mb-2">
             Vehicle Documents Manager
           </DialogTitle>
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600">
-              Keep all your essential riding documents in one secure place
-            </p>
+          <DialogDescription className="text-gray-600 mb-4">
+            Keep all your essential riding documents in one secure place. Required for legal riding in Bangladesh.
+          </DialogDescription>
+          
+          {/* Status Overview */}
+          <div className="flex flex-wrap gap-3 mb-4">
             <Badge 
               variant={stats.completed === stats.total ? "default" : "secondary"}
               className={stats.completed === stats.total ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
             >
-              {stats.completed === stats.total ? "Complete" : `${stats.completed}/${stats.total} Required`}
+              <Shield className="h-3 w-3 mr-1" />
+              {stats.completed === stats.total ? "All Required Docs Complete" : `${stats.completed}/${stats.total} Required`}
             </Badge>
+            
+            {stats.expiring > 0 && (
+              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                <Calendar className="h-3 w-3 mr-1" />
+                {stats.expiring} Expiring Soon
+              </Badge>
+            )}
+            
+            {stats.expired > 0 && (
+              <Badge variant="destructive">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {stats.expired} Expired
+              </Badge>
+            )}
           </div>
         </DialogHeader>
 
@@ -120,20 +250,16 @@ const DocumentUploadDialog = () => {
                 }`}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-2xl">{docType.icon}</div>
-                        <div>
-                          <h3 className="font-semibold text-[#1A1A1A]">{docType.name}</h3>
-                          <div className="flex items-center space-x-2 mt-1">
+                      <div className="flex items-center space-x-3 flex-1">
+                        <div className="text-2xl flex-shrink-0">{docType.icon}</div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-[#1A1A1A] text-sm">{docType.name}</h3>
+                          <p className="text-xs text-gray-500 mt-1">{docType.description}</p>
+                          <div className="flex items-center flex-wrap gap-2 mt-2">
                             {docType.required && (
                               <Badge variant="destructive" className="text-xs">Required</Badge>
                             )}
-                            {uploadedDoc && (
-                              <Badge className="bg-green-100 text-green-800 text-xs">
-                                <Check className="h-3 w-3 mr-1" />
-                                Uploaded
-                              </Badge>
-                            )}
+                            {uploadedDoc && getStatusBadge(uploadedDoc)}
                           </div>
                         </div>
                       </div>
@@ -143,7 +269,7 @@ const DocumentUploadDialog = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeDocument(uploadedDoc.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -153,40 +279,76 @@ const DocumentUploadDialog = () => {
                     {uploadedDoc ? (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                          <div className="flex items-center space-x-3">
-                            <FileText className="h-5 w-5 text-[#FF3B30]" />
-                            <div>
-                              <p className="font-medium text-sm">{uploadedDoc.name}</p>
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <FileText className="h-5 w-5 text-[#FF3B30] flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-sm truncate">{uploadedDoc.name}</p>
                               <p className="text-xs text-gray-500">
                                 Uploaded {uploadedDoc.uploadDate.toLocaleDateString()}
                               </p>
+                              {uploadedDoc.expiryDate && (
+                                <p className={`text-xs mt-1 ${
+                                  uploadedDoc.status === 'expired' ? 'text-red-600' : 
+                                  uploadedDoc.status === 'expiring' ? 'text-yellow-600' : 'text-green-600'
+                                }`}>
+                                  {uploadedDoc.status === 'expired' ? 'Expired' : 'Expires'}: {uploadedDoc.expiryDate.toLocaleDateString()}
+                                </p>
+                              )}
                             </div>
                           </div>
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" className="rounded-full">
+                          <div className="flex space-x-2 flex-shrink-0">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="rounded-full"
+                              onClick={() => handleViewDocument(uploadedDoc)}
+                            >
                               <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="rounded-full">
-                              <Download className="h-4 w-4" />
                             </Button>
                           </div>
                         </div>
+                        
+                        {/* Expiry Date Input for documents with expiry */}
+                        {docType.hasExpiry && (
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <Label htmlFor={`expiry-${docType.key}`} className="text-sm font-medium mb-2 block">
+                              {uploadedDoc.expiryDate ? 'Update Expiry Date' : 'Set Expiry Date'}
+                            </Label>
+                            <Input
+                              id={`expiry-${docType.key}`}
+                              type="date"
+                              value={expiryDates[docType.key] || (uploadedDoc.expiryDate ? uploadedDoc.expiryDate.toISOString().split('T')[0] : '')}
+                              onChange={(e) => handleExpiryDateChange(docType.key, e.target.value)}
+                              className="text-sm"
+                            />
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-3">
+                        {/* File Upload Area */}
                         <Label htmlFor={`file-${docType.key}`}>
                           <div className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300 ${
                             isUploading 
                               ? "border-[#FF3B30] bg-[#FF3B30]/5" 
                               : "border-gray-300 hover:border-[#FF3B30] hover:bg-[#FF3B30]/5"
                           }`}>
-                            <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                            <p className="text-sm text-gray-600">
-                              Click to upload or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              PDF, JPG, PNG up to 10MB
-                            </p>
+                            {isUploading ? (
+                              <div className="flex flex-col items-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF3B30] mb-2"></div>
+                                <p className="text-sm text-[#FF3B30]">Uploading...</p>
+                              </div>
+                            ) : (
+                              <>
+                                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                                <p className="text-sm text-gray-600 font-medium">
+                                  Click to upload {docType.name}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  PDF, JPG, PNG up to 10MB
+                                </p>
+                              </>
+                            )}
                           </div>
                         </Label>
                         <Input
@@ -197,19 +359,49 @@ const DocumentUploadDialog = () => {
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
+                              if (file.size > 10 * 1024 * 1024) {
+                                toast({
+                                  title: "File too large",
+                                  description: "Please select a file smaller than 10MB.",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
                               setUploadingType(docType.key);
                               // Simulate upload delay
                               setTimeout(() => {
                                 handleFileUpload(docType.key, file);
-                              }, 1000);
+                              }, 1500);
                             }
                           }}
+                          ref={(el) => fileInputRefs.current[docType.key] = el}
                         />
                         
+                        {/* Expiry Date Input for new uploads */}
+                        {docType.hasExpiry && (
+                          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                            <Label htmlFor={`new-expiry-${docType.key}`} className="text-sm font-medium mb-2 block text-blue-900">
+                              <Calendar className="h-4 w-4 inline mr-1" />
+                              Set Expiry Date (Optional)
+                            </Label>
+                            <Input
+                              id={`new-expiry-${docType.key}`}
+                              type="date"
+                              value={expiryDates[docType.key] || ''}
+                              onChange={(e) => handleExpiryDateChange(docType.key, e.target.value)}
+                              className="text-sm bg-white"
+                              min={new Date().toISOString().split('T')[0]}
+                            />
+                            <p className="text-xs text-blue-700 mt-1">
+                              Setting expiry helps track document validity
+                            </p>
+                          </div>
+                        )}
+                        
                         {docType.required && !uploadedDoc && (
-                          <div className="flex items-center space-x-2 text-amber-600 text-sm">
-                            <AlertCircle className="h-4 w-4" />
-                            <span>This document is required for legal riding</span>
+                          <div className="flex items-center space-x-2 text-amber-600 text-sm bg-amber-50 p-2 rounded-lg">
+                            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                            <span>Required for legal riding in Bangladesh</span>
                           </div>
                         )}
                       </div>
@@ -221,18 +413,48 @@ const DocumentUploadDialog = () => {
           })}
         </div>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        {/* Quick Access Section */}
+        {documents.length > 0 && (
+          <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="flex items-start space-x-3">
+              <div className="text-blue-500 mt-1">
+                <Shield className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-blue-900 mb-2">Quick Access Ready</h4>
+                <p className="text-sm text-blue-700 mb-3">
+                  Your documents are securely stored and ready for instant access during traffic stops or inspections.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {documents.map((doc) => (
+                    <Button
+                      key={doc.id}
+                      size="sm"
+                      variant="outline"
+                      className="bg-white border-blue-200 hover:bg-blue-50 text-blue-900"
+                      onClick={() => handleViewDocument(doc)}
+                    >
+                      <span className="mr-2">{DOCUMENT_TYPES.find(dt => dt.key === doc.type)?.icon}</span>
+                      {DOCUMENT_TYPES.find(dt => dt.key === doc.type)?.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Info Section */}
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-start space-x-3">
-            <div className="text-blue-500 mt-1">
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
+            <div className="text-gray-500 mt-1">
+              <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="font-semibold text-blue-900 mb-1">Quick Access Tip</h4>
-              <p className="text-sm text-blue-700">
-                All documents are stored securely and can be quickly accessed during traffic stops or inspections. 
-                Keep your device handy while riding for instant document presentation.
+              <h4 className="font-semibold text-gray-800 mb-1">Important Reminder</h4>
+              <p className="text-sm text-gray-600">
+                In Bangladesh, carrying required documents while riding is mandatory. Digital copies are legally acceptable 
+                for most inspections, but always verify current regulations with local authorities.
               </p>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
+import DocumentUploadDialog from "@/components/ui/DocumentUpload";
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -599,6 +600,8 @@ const NewGarage = () => {
             queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
           }}
         />
+
+        <DocumentUploadDialog />
 
         <AlertDialog open={motorcycleToDelete !== null} onOpenChange={() => setMotorcycleToDelete(null)}>
           <AlertDialogContent>
