@@ -36,7 +36,7 @@ const ModernNavBar = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm">
+    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex justify-between items-center min-h-[60px] w-full gap-2">
           <div className="flex items-center bg-[#1A1A1A] rounded-full px-3 sm:px-6 lg:px-8 py-2 sm:py-3 shadow-lg flex-1 max-w-none sm:max-w-fit sm:mx-auto justify-center">

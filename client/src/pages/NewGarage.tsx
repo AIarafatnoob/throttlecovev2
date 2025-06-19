@@ -9,7 +9,7 @@ import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from 
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { getUserRank, getNextRank, getMilesToNextRank, getTierColor } from "@/utils/ranking";
+import { getUserRank, getNextRank, getMilesToNextRank, getTierColor, bikerRanks } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -261,32 +261,81 @@ const NewGarage = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 w-full lg:w-auto justify-around lg:justify-end">
-                  <div className="text-center">
-                    <p className="text-gray-500 text-xs mb-1">Total Miles</p>
-                    <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
-                      {totalMileage.toLocaleString()}
-                    </p>
-                    <p className="text-gray-400 text-xs">miles</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-gray-500 text-xs mb-1">Progress</p>
-                    <p className="text-sm sm:text-base font-semibold text-[#FF3B30]">
-                      {nextRank ? `${milesToNext.toLocaleString()} to ${nextRank.name}` : "Apex Achieved"}
-                    </p>
-                    <p className="text-gray-400 text-xs">
-                      {nextRank ? "miles to go" : "Max rank reached"}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-gray-500 text-xs mb-1">Current Rank</p>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className={`w-12 h-12 sm:w-14 sm:h-14 ${getTierColor(currentRank.tier)} rounded-2xl flex items-center justify-center shadow-lg`}>
-                        <span className="text-white text-lg sm:text-2xl font-bold">
-                          {currentRank.patch}
-                        </span>
+                <div className="flex flex-col w-full lg:w-auto gap-4">
+                  <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 justify-around lg:justify-end">
+                    <div className="text-center">
+                      <p className="text-gray-500 text-xs mb-1">Total Miles</p>
+                      <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
+                        {totalMileage.toLocaleString()}
+                      </p>
+                      <p className="text-gray-400 text-xs">miles</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-gray-500 text-xs mb-1">Current Rank</p>
+                      <div className="flex flex-col items-center gap-1">
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${getTierColor(currentRank.tier)} rounded-2xl flex items-center justify-center shadow-lg`}>
+                          <span className="text-white text-lg sm:text-2xl font-bold">
+                            {currentRank.patch}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 font-medium">{currentRank.tier}</p>
                       </div>
-                      <p className="text-xs text-gray-600 font-medium">{currentRank.tier}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Progress Bar with Rank Dots */}
+                  <div className="w-full px-4">
+                    <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
+                      {/* Progress fill */}
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-red-500 rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${Math.min((totalMileage / 100000) * 100, 100)}%` 
+                        }}
+                      />
+                      
+                      {/* Rank dots */}
+                      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-1">
+                        {bikerRanks.map((rank, index) => {
+                          const position = (rank.minMiles / 100000) * 100;
+                          const isAchieved = totalMileage >= rank.minMiles;
+                          const isCurrent = currentRank.id === rank.id;
+                          
+                          return (
+                            <div
+                              key={rank.id}
+                              className={`relative w-3 h-3 rounded-full border-2 transition-all duration-300 ${
+                                isCurrent
+                                  ? 'bg-[#FF3B30] border-white shadow-lg scale-125'
+                                  : isAchieved
+                                  ? 'bg-white border-gray-300'
+                                  : 'bg-gray-300 border-gray-400'
+                              }`}
+                              style={{ 
+                                position: 'absolute',
+                                left: `${Math.min(position, 95)}%`,
+                                transform: 'translateX(-50%)'
+                              }}
+                              title={`${rank.name} - ${rank.minMiles.toLocaleString()} miles`}
+                            >
+                              {isCurrent && (
+                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A] text-white px-2 py-1 rounded text-xs whitespace-nowrap">
+                                  {rank.name}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Progress info */}
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                      <span>Rookie Rider</span>
+                      <span className="text-[#FF3B30] font-medium">
+                        {nextRank ? `${milesToNext.toLocaleString()} miles to ${nextRank.name}` : "Max Rank Achieved!"}
+                      </span>
+                      <span>Apex Nomad</span>
                     </div>
                   </div>
                 </div>
