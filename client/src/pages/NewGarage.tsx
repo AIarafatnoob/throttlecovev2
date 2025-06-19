@@ -268,6 +268,20 @@ const NewGarage = () => {
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
                 <div className="flex items-center gap-4 flex-shrink-0">
+                  {/* Rank Patch on the left */}
+                  <div className="relative">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
+                      <span className="text-white text-lg sm:text-2xl font-bold">
+                        {currentRank.patch}
+                      </span>
+                    </div>
+                    {/* Tier indicator */}
+                    <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                      <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                    </div>
+                  </div>
+
+                  {/* Profile Picture */}
                   <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center"
                       onClick={() => profileInputRef.current?.click()}>
                       {profilePicture ? (
@@ -292,27 +306,13 @@ const NewGarage = () => {
                       onChange={handleProfilePictureUpload}
                       className="hidden"
                   />
-                  <div className="min-w-0 flex items-center gap-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold text-lg sm:text-xl text-[#1A1A1A] truncate">
-                          {user?.fullName || user?.username || "User"}
-                        </h3>
-                        {/* Rank Patch beside name */}
-                        <div className="relative">
-                          <div className={`w-8 h-8 sm:w-10 sm:h-10 ${getTierColor(currentRank.tier)} rounded-xl flex items-center justify-center shadow-md`}>
-                            <span className="text-white text-sm sm:text-lg font-bold">
-                              {currentRank.patch}
-                            </span>
-                          </div>
-                          {/* Tier indicator */}
-                          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
-                            <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-gray-500 text-xs sm:text-sm truncate">{currentRank.name} • {currentRank.tier}</p>
-                    </div>
+                  
+                  {/* User Name and Rank Info centered */}
+                  <div className="min-w-0 flex-1 text-center">
+                    <h3 className="font-bold text-lg sm:text-xl text-[#1A1A1A] truncate">
+                      {user?.fullName || user?.username || "User"}
+                    </h3>
+                    <p className="text-gray-500 text-xs sm:text-sm truncate">{currentRank.name} • {currentRank.tier}</p>
                   </div>
                 </div>
 
