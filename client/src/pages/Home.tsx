@@ -177,15 +177,16 @@ const Home = () => {
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
               {["All", "Sport", "Touring", "Adventure", "Cruiser"].map((type) => (
                 <Button
                   key={type}
                   variant={selectedType === type ? "default" : "outline"}
-                  className={`px-6 py-2 rounded-full transition-all ${
+                  size="sm"
+                  className={`px-4 py-1.5 rounded-full transition-all text-sm ${
                     selectedType === type 
-                      ? "bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white" 
-                      : "border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30]"
+                      ? "bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white border-[#FF3B30]" 
+                      : "border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30] bg-white"
                   }`}
                   onClick={() => setSelectedType(type)}
                 >
