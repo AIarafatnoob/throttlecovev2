@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowRight } from "lucide-react";
 
 const ModernNavBar = () => {
   const [location] = useLocation();
@@ -78,14 +79,19 @@ const ModernNavBar = () => {
                 Logout
               </Button>
             ) : (
-              <div className="relative overflow-hidden w-16">
+              <div className="relative">
                 <Link href="/register">
-                  <Button 
-                    size="sm" 
-                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-all duration-300 ease-in-out transform -translate-x-[60%] hover:translate-x-0 relative z-10"
-                  >
-                    Join
-                  </Button>
+                  <div className="group relative">
+                    <Button 
+                      size="sm" 
+                      className="rounded-full bg-[#1A1A1A] hover:bg-[#FF3B30] text-white text-xs sm:text-sm transition-all duration-300 ease-in-out transform group-hover:px-4 px-2 shadow-lg hover:shadow-xl relative overflow-hidden"
+                    >
+                      <ArrowRight className="h-4 w-4 group-hover:opacity-0 transition-opacity duration-300" />
+                      <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        JOIN
+                      </span>
+                    </Button>
+                  </div>
                 </Link>
               </div>
             )}
