@@ -226,13 +226,47 @@ const NewGarage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Your Garage</h1>
-            <p className="text-gray-600">
-              Manage your motorcycles and track their maintenance schedules
-            </p>
-          </div>
+        {/* Profile Section */}
+        <div className="flex flex-col items-center mb-8">
+          <Card className="bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden w-full max-w-2xl mb-4">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-[#FF3B30] rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-2xl">
+                      {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-bold text-xl text-[#1A1A1A] truncate">
+                      {user?.fullName || user?.username || "User"}
+                    </h3>
+                    <p className="text-gray-500 text-sm truncate">Rider Profile</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-6 text-center">
+                  <div>
+                    <div className="text-4xl mb-2">{currentRank.insignia}</div>
+                    <p className="text-gray-500 text-xs mb-1">Rank</p>
+                    <p className="text-lg font-bold text-[#1A1A1A]">{currentRank.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs mb-1">Total Miles</p>
+                    <p className="text-lg font-bold text-[#1A1A1A]">
+                      {totalMileage.toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs mb-1">Progress</p>
+                    <p className="text-sm font-semibold text-[#FF3B30]">
+                      {nextRank ? `${milesToNext.toLocaleString()} to ${nextRank.name}` : "Max Rank"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
           <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">
             <Plus className="h-4 w-4 mr-2" />
@@ -255,159 +289,98 @@ const NewGarage = () => {
             </Button>
           </div>
         ) : (
-          <div className="flex gap-6">
-            {/* Left side - Vehicle Cards (60%) */}
-            <div className="w-3/5">
-              <div className="space-y-4">
-                {motorcycles.map((motorcycle) => (
-                  <motion.div
-                    key={motorcycle.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -2 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Card className="bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                              <svg viewBox="0 0 100 100" className="w-8 h-8 text-white fill-current">
-                                <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
-                              </svg>
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h3 className="font-bold text-lg text-[#1A1A1A] truncate">{motorcycle.name}</h3>
-                              <p className="text-gray-500 text-sm truncate">{motorcycle.make} {motorcycle.model}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-6 text-center">
-                            <div>
-                              <p className="text-gray-500 text-xs mb-1">Miles</p>
-                              <p className="text-lg font-bold text-[#1A1A1A]">
-                                {motorcycle.mileage?.toLocaleString() || "0"}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-gray-500 text-xs mb-1">Service</p>
-                              <p className="text-sm font-semibold text-[#FF3B30]">Soon</p>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-2 ml-6">
-                            <Button 
-                              size="sm"
-                              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
-                              onClick={() => window.location.href = `/maintenance`}
-                            >
-                              Service
-                            </Button>
-                            <Button 
-                              size="sm"
-                              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
-                              onClick={async () => {
-                                const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
-                                if (newMileage && !isNaN(Number(newMileage))) {
-                                  try {
-                                    await fetch(`/api/motorcycles/${motorcycle.id}`, {
-                                      method: 'PUT',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ mileage: Number(newMileage) })
-                                    });
-                                    window.location.reload();
-                                  } catch (error) {
-                                    alert('Failed to update mileage. Please try again.');
-                                  }
-                                }
-                              }}
-                            >
-                              Mile
-                            </Button>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEditMotorcycle(motorcycle)}>
-                                  <Wrench className="mr-2 h-4 w-4" />
-                                  Edit Details
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => setMotorcycleToDelete(motorcycle.id)}
-                                  className="text-red-600"
-                                >
-                                  <span className="mr-2">🗑️</span>
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
+          <div className="space-y-4">
+            {motorcycles.map((motorcycle) => (
+              <motion.div
+                key={motorcycle.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg viewBox="0 0 100 100" className="w-8 h-8 text-white fill-current">
+                            <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
+                          </svg>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right side - Profile & Ranking (40%) */}
-            <div className="w-2/5">
-              <Card className="bg-gradient-to-br from-[#FF3B30]/10 to-[#FF3B30]/5 border-[#FF3B30]/20 h-fit sticky top-6">
-                <CardContent className="p-6">
-                  {/* User Profile Section */}
-                  <div className="flex flex-col items-center mb-6">
-                    <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center mb-3 overflow-hidden">
-                      <div className="w-full h-full bg-gradient-to-br from-[#FF3B30] to-[#FF3B30]/80 flex items-center justify-center text-white font-bold text-2xl">
-                        {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
-                      </div>
-                    </div>
-                    <h3 className="text-lg font-semibold text-[#1A1A1A] text-center">{user?.fullName || user?.username || "User"}</h3>
-                    <p className="text-sm text-gray-600 text-center">Rider Profile</p>
-                  </div>
-
-                  {/* Rank Information */}
-                  <div className="text-center mb-6">
-                    <div className="text-6xl mb-3">{currentRank.insignia}</div>
-                    <h4 className="font-bold text-xl text-[#1A1A1A] mb-2">{currentRank.name}</h4>
-                    <p className="text-sm text-gray-600 mb-4">{currentRank.description}</p>
-                    <div className="flex items-center justify-center space-x-2 mb-4">
-                      <Gauge className="h-4 w-4 text-[#FF3B30]" />
-                      <span className="text-sm font-medium">{totalMileage.toLocaleString()} total miles</span>
-                    </div>
-                  </div>
-
-                  {/* Progress to Next Rank */}
-                  {nextRank && (
-                    <div className="border-t border-gray-200 pt-6">
-                      <div className="text-center mb-4">
-                        <p className="text-sm text-gray-500 mb-2">Next Rank</p>
-                        <p className="font-semibold text-[#1A1A1A] mb-2">{nextRank.name}</p>
-                        <div className="flex items-center justify-center space-x-2 mb-4">
-                          <TrendingUp className="h-4 w-4 text-[#FF3B30]" />
-                          <span className="text-sm font-medium text-[#FF3B30]">
-                            {milesToNext.toLocaleString()} miles to go
-                          </span>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-lg text-[#1A1A1A] truncate">{motorcycle.name}</h3>
+                          <p className="text-gray-500 text-sm truncate">{motorcycle.make} {motorcycle.model}</p>
                         </div>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-                        <div 
-                          className="bg-[#FF3B30] h-4 rounded-full transition-all duration-500"
-                          style={{ 
-                            width: `${Math.min(100, ((totalMileage - currentRank.minMiles) / (nextRank.minMiles - currentRank.minMiles)) * 100)}%` 
+                      
+                      <div className="flex items-center gap-6 text-center">
+                        <div>
+                          <p className="text-gray-500 text-xs mb-1">Miles</p>
+                          <p className="text-lg font-bold text-[#1A1A1A]">
+                            {motorcycle.mileage?.toLocaleString() || "0"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 text-xs mb-1">Service</p>
+                          <p className="text-sm font-semibold text-[#FF3B30]">Soon</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 ml-6">
+                        <Button 
+                          size="sm"
+                          className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
+                          onClick={() => window.location.href = `/maintenance`}
+                        >
+                          Service
+                        </Button>
+                        <Button 
+                          size="sm"
+                          className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
+                          onClick={async () => {
+                            const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
+                            if (newMileage && !isNaN(Number(newMileage))) {
+                              try {
+                                await fetch(`/api/motorcycles/${motorcycle.id}`, {
+                                  method: 'PUT',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ mileage: Number(newMileage) })
+                                });
+                                window.location.reload();
+                              } catch (error) {
+                                alert('Failed to update mileage. Please try again.');
+                              }
+                            }
                           }}
-                        ></div>
+                        >
+                          Mile
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditMotorcycle(motorcycle)}>
+                              <Wrench className="mr-2 h-4 w-4" />
+                              Edit Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setMotorcycleToDelete(motorcycle.id)}
+                              className="text-red-600"
+                            >
+                              <span className="mr-2">🗑️</span>
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      <p className="text-xs text-gray-500 text-center">
-                        Progress to {nextRank.name}
-                      </p>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         )}
 
