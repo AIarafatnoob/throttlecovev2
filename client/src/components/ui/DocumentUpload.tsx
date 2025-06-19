@@ -179,7 +179,7 @@ const DocumentUploadDialog = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <motion.div
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
+          className="fixed bottom-6 left-6 z-50"
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -229,7 +229,7 @@ const DocumentUploadDialog = () => {
           </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
           {DOCUMENT_TYPES.map((docType) => {
             const uploadedDoc = getDocumentForType(docType.key);
             const isUploading = uploadingType === docType.key;
@@ -239,23 +239,25 @@ const DocumentUploadDialog = () => {
                 key={docType.key}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                transition={{ duration: 0.2 }}
               >
-                <Card className={`border-2 transition-all duration-300 ${
-                  uploadedDoc 
-                    ? "border-green-200 bg-green-50" 
-                    : docType.required 
-                      ? "border-red-200 bg-red-50" 
-                      : "border-gray-200 hover:border-[#FF3B30]/30"
+                <Card className={`bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden h-full ${
+                  uploadedDoc?.status === 'expired' ? 'ring-2 ring-red-200' :
+                  uploadedDoc?.status === 'expiring' ? 'ring-2 ring-yellow-200' :
+                  uploadedDoc ? 'ring-2 ring-green-200' : ''
                 }`}>
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 h-full flex flex-col">
+                    {/* Header Section */}
                     <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3 flex-1">
-                        <div className="text-2xl flex-shrink-0">{docType.icon}</div>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-12 h-12 bg-[#FF3B30] rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl">
+                          {docType.icon}
+                        </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-[#1A1A1A] text-sm">{docType.name}</h3>
-                          <p className="text-xs text-gray-500 mt-1">{docType.description}</p>
-                          <div className="flex items-center flex-wrap gap-2 mt-2">
+                          <h3 className="font-bold text-base text-[#1A1A1A] truncate leading-tight">{docType.name}</h3>
+                          <p className="text-gray-500 text-xs truncate">{docType.description}</p>
+                          <div className="flex items-center flex-wrap gap-1 mt-1">
                             {docType.required && (
                               <Badge variant="destructive" className="text-xs">Required</Badge>
                             )}
@@ -269,7 +271,7 @@ const DocumentUploadDialog = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeDocument(uploadedDoc.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0 h-8 w-8 p-0 rounded-xl"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -277,131 +279,139 @@ const DocumentUploadDialog = () => {
                     </div>
 
                     {uploadedDoc ? (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                          <div className="flex items-center space-x-3 flex-1 min-w-0">
-                            <FileText className="h-5 w-5 text-[#FF3B30] flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <p className="font-medium text-sm truncate">{uploadedDoc.name}</p>
-                              <p className="text-xs text-gray-500">
-                                Uploaded {uploadedDoc.uploadDate.toLocaleDateString()}
-                              </p>
-                              {uploadedDoc.expiryDate && (
-                                <p className={`text-xs mt-1 ${
-                                  uploadedDoc.status === 'expired' ? 'text-red-600' : 
-                                  uploadedDoc.status === 'expiring' ? 'text-yellow-600' : 'text-green-600'
-                                }`}>
-                                  {uploadedDoc.status === 'expired' ? 'Expired' : 'Expires'}: {uploadedDoc.expiryDate.toLocaleDateString()}
-                                </p>
-                              )}
+                      <div className="space-y-3 flex-1">
+                        {/* Document Status Section */}
+                        <div className="bg-gray-50 rounded-2xl p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center space-x-2">
+                              <FileText className="h-4 w-4 text-[#FF3B30]" />
+                              <span className="text-sm font-medium text-[#1A1A1A]">Document Ready</span>
                             </div>
-                          </div>
-                          <div className="flex space-x-2 flex-shrink-0">
                             <Button 
                               size="sm" 
                               variant="outline" 
-                              className="rounded-full"
+                              className="rounded-full h-8 w-8 p-0"
                               onClick={() => handleViewDocument(uploadedDoc)}
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-3 w-3" />
                             </Button>
                           </div>
+                          <p className="text-xs text-gray-500 truncate">{uploadedDoc.name}</p>
+                          <p className="text-xs text-gray-400">
+                            Added {uploadedDoc.uploadDate.toLocaleDateString()}
+                          </p>
                         </div>
-                        
-                        {/* Expiry Date Input for documents with expiry */}
+
+                        {/* Expiry Status */}
+                        {uploadedDoc.expiryDate && (
+                          <div className={`rounded-2xl p-3 ${
+                            uploadedDoc.status === 'expired' ? 'bg-red-50 border border-red-200' :
+                            uploadedDoc.status === 'expiring' ? 'bg-yellow-50 border border-yellow-200' :
+                            'bg-green-50 border border-green-200'
+                          }`}>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <Calendar className="h-4 w-4" />
+                              <span className="text-sm font-medium">
+                                {uploadedDoc.status === 'expired' ? 'Expired' : 
+                                 uploadedDoc.status === 'expiring' ? 'Expiring Soon' : 'Valid'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600">
+                              {uploadedDoc.status === 'expired' ? 'Expired' : 'Expires'}: {uploadedDoc.expiryDate.toLocaleDateString()}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Quick Expiry Update */}
                         {docType.hasExpiry && (
-                          <div className="bg-gray-50 p-3 rounded-lg">
-                            <Label htmlFor={`expiry-${docType.key}`} className="text-sm font-medium mb-2 block">
-                              {uploadedDoc.expiryDate ? 'Update Expiry Date' : 'Set Expiry Date'}
+                          <div className="space-y-2">
+                            <Label htmlFor={`expiry-${docType.key}`} className="text-xs font-medium text-gray-600">
+                              Update Expiry Date
                             </Label>
                             <Input
                               id={`expiry-${docType.key}`}
                               type="date"
                               value={expiryDates[docType.key] || (uploadedDoc.expiryDate ? uploadedDoc.expiryDate.toISOString().split('T')[0] : '')}
                               onChange={(e) => handleExpiryDateChange(docType.key, e.target.value)}
-                              className="text-sm"
+                              className="text-sm h-8"
                             />
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="space-y-3">
-                        {/* File Upload Area */}
-                        <Label htmlFor={`file-${docType.key}`}>
-                          <div className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300 ${
-                            isUploading 
-                              ? "border-[#FF3B30] bg-[#FF3B30]/5" 
-                              : "border-gray-300 hover:border-[#FF3B30] hover:bg-[#FF3B30]/5"
-                          }`}>
-                            {isUploading ? (
-                              <div className="flex flex-col items-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF3B30] mb-2"></div>
-                                <p className="text-sm text-[#FF3B30]">Uploading...</p>
-                              </div>
-                            ) : (
-                              <>
-                                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                                <p className="text-sm text-gray-600 font-medium">
-                                  Click to upload {docType.name}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                  PDF, JPG, PNG up to 10MB
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        </Label>
-                        <Input
-                          id={`file-${docType.key}`}
-                          type="file"
-                          className="hidden"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              if (file.size > 10 * 1024 * 1024) {
-                                toast({
-                                  title: "File too large",
-                                  description: "Please select a file smaller than 10MB.",
-                                  variant: "destructive",
-                                });
-                                return;
+                      <div className="space-y-3 flex-1">
+                        {/* Combined Upload & Expiry Section */}
+                        <div className="space-y-3">
+                          {/* File Upload Area */}
+                          <Label htmlFor={`file-${docType.key}`}>
+                            <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 ${
+                              isUploading 
+                                ? "border-[#FF3B30] bg-[#FF3B30]/5" 
+                                : "border-gray-300 hover:border-[#FF3B30] hover:bg-[#FF3B30]/5"
+                            }`}>
+                              {isUploading ? (
+                                <div className="flex flex-col items-center">
+                                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FF3B30] mb-2"></div>
+                                  <p className="text-xs text-[#FF3B30] font-medium">Uploading...</p>
+                                </div>
+                              ) : (
+                                <>
+                                  <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                                  <p className="text-sm text-gray-600 font-medium">Upload Document</p>
+                                  <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                                </>
+                              )}
+                            </div>
+                          </Label>
+                          <Input
+                            id={`file-${docType.key}`}
+                            type="file"
+                            className="hidden"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 10 * 1024 * 1024) {
+                                  toast({
+                                    title: "File too large",
+                                    description: "Please select a file smaller than 10MB.",
+                                    variant: "destructive",
+                                  });
+                                  return;
+                                }
+                                setUploadingType(docType.key);
+                                setTimeout(() => {
+                                  handleFileUpload(docType.key, file);
+                                }, 1500);
                               }
-                              setUploadingType(docType.key);
-                              // Simulate upload delay
-                              setTimeout(() => {
-                                handleFileUpload(docType.key, file);
-                              }, 1500);
-                            }
-                          }}
-                          ref={(el) => fileInputRefs.current[docType.key] = el}
-                        />
+                            }}
+                            ref={(el) => fileInputRefs.current[docType.key] = el}
+                          />
+                          
+                          {/* Integrated Expiry Date Input */}
+                          {docType.hasExpiry && (
+                            <div className="bg-gray-50 rounded-2xl p-3">
+                              <Label htmlFor={`new-expiry-${docType.key}`} className="text-xs font-medium mb-2 block text-gray-600">
+                                <Calendar className="h-3 w-3 inline mr-1" />
+                                Set Expiry Date (Optional)
+                              </Label>
+                              <Input
+                                id={`new-expiry-${docType.key}`}
+                                type="date"
+                                value={expiryDates[docType.key] || ''}
+                                onChange={(e) => handleExpiryDateChange(docType.key, e.target.value)}
+                                className="text-sm h-8 bg-white"
+                                min={new Date().toISOString().split('T')[0]}
+                              />
+                            </div>
+                          )}
+                        </div>
                         
-                        {/* Expiry Date Input for new uploads */}
-                        {docType.hasExpiry && (
-                          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                            <Label htmlFor={`new-expiry-${docType.key}`} className="text-sm font-medium mb-2 block text-blue-900">
-                              <Calendar className="h-4 w-4 inline mr-1" />
-                              Set Expiry Date (Optional)
-                            </Label>
-                            <Input
-                              id={`new-expiry-${docType.key}`}
-                              type="date"
-                              value={expiryDates[docType.key] || ''}
-                              onChange={(e) => handleExpiryDateChange(docType.key, e.target.value)}
-                              className="text-sm bg-white"
-                              min={new Date().toISOString().split('T')[0]}
-                            />
-                            <p className="text-xs text-blue-700 mt-1">
-                              Setting expiry helps track document validity
-                            </p>
-                          </div>
-                        )}
-                        
-                        {docType.required && !uploadedDoc && (
-                          <div className="flex items-center space-x-2 text-amber-600 text-sm bg-amber-50 p-2 rounded-lg">
-                            <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                            <span>Required for legal riding in Bangladesh</span>
+                        {/* Status Footer */}
+                        {docType.required && (
+                          <div className="flex items-center space-x-2 text-amber-700 text-xs bg-amber-50 p-2 rounded-xl border border-amber-200">
+                            <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                            <span>Required for legal riding</span>
                           </div>
                         )}
                       </div>
