@@ -465,14 +465,22 @@ const NewGarage = () => {
                           const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
                           if (newMileage && !isNaN(Number(newMileage))) {
                             try {
-                              await fetch(`/api/motorcycles/${motorcycle.id}`, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ mileage: Number(newMileage) })
+                              await apiRequest("PUT", `/api/motorcycles/${motorcycle.id}`, { 
+                                ...motorcycle, 
+                                mileage: Number(newMileage) 
                               });
-                              window.location.reload();
+                              // Invalidate queries to refresh data without page reload
+                              queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+                              toast({
+                                title: "Mileage Updated",
+                                description: `Updated mileage to ${Number(newMileage).toLocaleString()} miles`,
+                              });
                             } catch (error) {
-                              alert('Failed to update mileage. Please try again.');
+                              toast({
+                                title: "Error",
+                                description: "Failed to update mileage. Please try again.",
+                                variant: "destructive",
+                              });
                             }
                           }
                         }}
