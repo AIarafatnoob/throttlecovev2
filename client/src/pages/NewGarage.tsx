@@ -8,7 +8,7 @@ import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotor
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { getUserRank, getNextRank, getMilesToNextRank } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
 import { useAuth } from "@/hooks/useAuth";
@@ -247,21 +247,31 @@ const NewGarage = () => {
                 
                 <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 w-full lg:w-auto justify-around lg:justify-end">
                   <div className="text-center">
-                    <div className="text-2xl sm:text-3xl lg:text-4xl mb-1 sm:mb-2">{currentRank.insignia}</div>
+                    <div className="relative mb-2">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-white text-lg sm:text-2xl font-bold">
+                          {currentRank.insignia}
+                        </span>
+                      </div>
+                      {/* Rank patch border */}
+                      <div className="absolute -top-1 -left-1 w-14 h-14 sm:w-18 sm:h-18 border-2 border-yellow-400 rounded-full"></div>
+                    </div>
                     <p className="text-gray-500 text-xs mb-1">Rank</p>
-                    <p className="text-sm sm:text-lg font-bold text-[#1A1A1A]">{currentRank.name}</p>
+                    <p className="text-sm sm:text-base font-bold text-[#1A1A1A]">{currentRank.name}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-gray-500 text-xs mb-1">Total Miles</p>
-                    <p className="text-sm sm:text-lg font-bold text-[#1A1A1A]">
+                    <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
                       {totalMileage.toLocaleString()}
                     </p>
+                    <p className="text-gray-400 text-xs">miles</p>
                   </div>
                   <div className="text-center">
                     <p className="text-gray-500 text-xs mb-1">Progress</p>
-                    <p className="text-xs sm:text-sm font-semibold text-[#FF3B30]">
+                    <p className="text-sm sm:text-base font-semibold text-[#FF3B30]">
                       {nextRank ? `${milesToNext.toLocaleString()} to ${nextRank.name}` : "Max Rank"}
                     </p>
+                    <p className="text-gray-400 text-xs">miles to go</p>
                   </div>
                 </div>
               </div>
@@ -283,18 +293,38 @@ const NewGarage = () => {
             
             {/* Floating Add Bike Button */}
             <motion.div
-              className="fixed bottom-6 right-6 z-50"
+              className="fixed bottom-6 right-6 z-50 group"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Button 
-                onClick={handleAddMotorcycle} 
-                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-              >
-                <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
-              </Button>
+              <div className="relative">
+                <Button 
+                  onClick={handleAddMotorcycle} 
+                  className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+                >
+                  <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+                </Button>
+                {/* Slide-out text */}
+                <motion.div
+                  className="absolute right-full top-1/2 -translate-y-1/2 mr-3 bg-[#1A1A1A] text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none"
+                  initial={{ x: 10, opacity: 0 }}
+                  animate={{ 
+                    x: 0, 
+                    opacity: 0,
+                    transition: { duration: 0.3 }
+                  }}
+                  whileHover={{ 
+                    opacity: 1,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <span className="text-sm font-medium">Add New Bike</span>
+                  {/* Arrow */}
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-l-[#1A1A1A] border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+                </motion.div>
+              </div>
             </motion.div>
           </>
         ) : (
@@ -406,18 +436,38 @@ const NewGarage = () => {
 
         {/* Floating Add Bike Button */}
         <motion.div
-          className="fixed bottom-6 right-6 z-50"
+          className="fixed bottom-6 right-6 z-50 group"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <Button 
-            onClick={handleAddMotorcycle} 
-            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          >
-            <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
-          </Button>
+          <div className="relative">
+            <Button 
+              onClick={handleAddMotorcycle} 
+              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+            >
+              <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+            </Button>
+            {/* Slide-out text */}
+            <motion.div
+              className="absolute right-full top-1/2 -translate-y-1/2 mr-3 bg-[#1A1A1A] text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none"
+              initial={{ x: 10, opacity: 0 }}
+              animate={{ 
+                x: 0, 
+                opacity: 0,
+                transition: { duration: 0.3 }
+              }}
+              whileHover={{ 
+                opacity: 1,
+                transition: { duration: 0.2 }
+              }}
+            >
+              <span className="text-sm font-medium">Add New Bike</span>
+              {/* Arrow */}
+              <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-l-[#1A1A1A] border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+            </motion.div>
+          </div>
         </motion.div>
 
         <AddMotorcycleDialog 
