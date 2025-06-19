@@ -179,17 +179,38 @@ const DocumentUploadDialog = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <motion.div
-          className="fixed bottom-6 left-6 z-50"
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Button
-            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            size="lg"
+            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            size="sm"
           >
-            <FileText className="h-5 w-5 mr-2" />
-            Documents ({stats.completed}/{stats.total})
+            <div className="flex items-center space-x-2">
+              <FileText className="h-4 w-4" />
+              <div className="flex space-x-1">
+                {DOCUMENT_TYPES.map((docType) => {
+                  const doc = getDocumentForType(docType.key);
+                  const dotColor = doc 
+                    ? doc.status === 'expired' 
+                      ? 'bg-red-400' 
+                      : doc.status === 'expiring' 
+                        ? 'bg-yellow-400' 
+                        : 'bg-green-400'
+                    : 'bg-gray-400';
+                  
+                  return (
+                    <div
+                      key={docType.key}
+                      className={`w-2 h-2 rounded-full ${dotColor} transition-colors duration-300`}
+                      title={docType.name}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </Button>
         </motion.div>
       </DialogTrigger>
