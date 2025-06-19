@@ -51,6 +51,19 @@
     background: #e5342a;
   }
 
+  /* Ensure navbar pill maintains rounded shape */
+  .navbar-pill {
+    border-radius: 9999px !important;
+    overflow: hidden;
+  }
+
+  /* Prevent content overflow in pills */
+  .pill-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* Sticky navigation styles */
   .sticky-nav {
     position: fixed;
