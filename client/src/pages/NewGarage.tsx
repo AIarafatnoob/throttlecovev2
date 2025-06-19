@@ -156,6 +156,8 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
 const NewGarage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
+  const [isDocumentDialogOpen, setIsDocumentDialogOpen] = useState(false);
+  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
