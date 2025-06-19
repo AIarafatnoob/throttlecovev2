@@ -9,7 +9,7 @@ import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from 
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { getUserRank, getNextRank, getMilesToNextRank } from "@/utils/ranking";
+import { getUserRank, getNextRank, getMilesToNextRank, getTierColor } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -237,28 +237,31 @@ const NewGarage = () => {
                       {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-lg sm:text-xl text-[#1A1A1A] truncate">
-                      {user?.fullName || user?.username || "User"}
-                    </h3>
-                    <p className="text-gray-500 text-xs sm:text-sm truncate">Rider Profile</p>
+                  <div className="min-w-0 flex items-center gap-2">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-lg sm:text-xl text-[#1A1A1A] truncate">
+                          {user?.fullName || user?.username || "User"}
+                        </h3>
+                        {/* Rank Patch beside name */}
+                        <div className="relative">
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 ${getTierColor(currentRank.tier)} rounded-xl flex items-center justify-center shadow-md`}>
+                            <span className="text-white text-sm sm:text-lg font-bold">
+                              {currentRank.patch}
+                            </span>
+                          </div>
+                          {/* Tier indicator */}
+                          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                            <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-gray-500 text-xs sm:text-sm truncate">{currentRank.name} • {currentRank.tier}</p>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 w-full lg:w-auto justify-around lg:justify-end">
-                  <div className="text-center">
-                    <div className="relative mb-2">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
-                        <span className="text-white text-lg sm:text-2xl font-bold">
-                          {currentRank.insignia}
-                        </span>
-                      </div>
-                      {/* Rank patch border */}
-                      <div className="absolute -top-1 -left-1 w-14 h-14 sm:w-18 sm:h-18 border-2 border-yellow-400 rounded-full"></div>
-                    </div>
-                    <p className="text-gray-500 text-xs mb-1">Rank</p>
-                    <p className="text-sm sm:text-base font-bold text-[#1A1A1A]">{currentRank.name}</p>
-                  </div>
                   <div className="text-center">
                     <p className="text-gray-500 text-xs mb-1">Total Miles</p>
                     <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
@@ -269,9 +272,22 @@ const NewGarage = () => {
                   <div className="text-center">
                     <p className="text-gray-500 text-xs mb-1">Progress</p>
                     <p className="text-sm sm:text-base font-semibold text-[#FF3B30]">
-                      {nextRank ? `${milesToNext.toLocaleString()} to ${nextRank.name}` : "Max Rank"}
+                      {nextRank ? `${milesToNext.toLocaleString()} to ${nextRank.name}` : "Apex Achieved"}
                     </p>
-                    <p className="text-gray-400 text-xs">miles to go</p>
+                    <p className="text-gray-400 text-xs">
+                      {nextRank ? "miles to go" : "Max rank reached"}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-gray-500 text-xs mb-1">Current Rank</p>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 ${getTierColor(currentRank.tier)} rounded-2xl flex items-center justify-center shadow-lg`}>
+                        <span className="text-white text-lg sm:text-2xl font-bold">
+                          {currentRank.patch}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 font-medium">{currentRank.tier}</p>
+                    </div>
                   </div>
                 </div>
               </div>
