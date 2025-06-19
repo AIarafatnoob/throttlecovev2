@@ -258,14 +258,97 @@ const NewGarage = () => {
           <div className="flex gap-6">
             {/* Left side - Vehicle Cards (60%) */}
             <div className="w-3/5">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 {motorcycles.map((motorcycle) => (
-                  <ExpandableMotorcycleCard
+                  <motion.div
                     key={motorcycle.id}
-                    motorcycle={motorcycle}
-                    onEdit={handleEditMotorcycle}
-                    onDelete={(id) => setMotorcycleToDelete(id)}
-                  />
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -2 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Card className="bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                              <svg viewBox="0 0 100 100" className="w-8 h-8 text-white fill-current">
+                                <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
+                              </svg>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-bold text-lg text-[#1A1A1A] truncate">{motorcycle.name}</h3>
+                              <p className="text-gray-500 text-sm truncate">{motorcycle.make} {motorcycle.model}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-6 text-center">
+                            <div>
+                              <p className="text-gray-500 text-xs mb-1">Miles</p>
+                              <p className="text-lg font-bold text-[#1A1A1A]">
+                                {motorcycle.mileage?.toLocaleString() || "0"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-gray-500 text-xs mb-1">Service</p>
+                              <p className="text-sm font-semibold text-[#FF3B30]">Soon</p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2 ml-6">
+                            <Button 
+                              size="sm"
+                              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
+                              onClick={() => window.location.href = `/maintenance`}
+                            >
+                              Service
+                            </Button>
+                            <Button 
+                              size="sm"
+                              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-4"
+                              onClick={async () => {
+                                const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
+                                if (newMileage && !isNaN(Number(newMileage))) {
+                                  try {
+                                    await fetch(`/api/motorcycles/${motorcycle.id}`, {
+                                      method: 'PUT',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ mileage: Number(newMileage) })
+                                    });
+                                    window.location.reload();
+                                  } catch (error) {
+                                    alert('Failed to update mileage. Please try again.');
+                                  }
+                                }
+                              }}
+                            >
+                              Mile
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditMotorcycle(motorcycle)}>
+                                  <Wrench className="mr-2 h-4 w-4" />
+                                  Edit Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => setMotorcycleToDelete(motorcycle.id)}
+                                  className="text-red-600"
+                                >
+                                  <span className="mr-2">🗑️</span>
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </div>

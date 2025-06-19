@@ -78,11 +78,11 @@ const ModernNavBar = () => {
                 Logout
               </Button>
             ) : (
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden w-16">
                 <Link href="/register">
                   <Button 
                     size="sm" 
-                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-all duration-300 ease-in-out transform translate-x-[50%] hover:translate-x-0 relative z-10 text-right hover:text-center"
+                    className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white text-xs sm:text-sm px-3 sm:px-4 whitespace-nowrap transition-all duration-300 ease-in-out transform -translate-x-[60%] hover:translate-x-0 relative z-10"
                   >
                     Join
                   </Button>
@@ -92,10 +92,12 @@ const ModernNavBar = () => {
           </div>
         </div>
 
-        {/* User garage text below navbar */}
+        {/* User garage text below navbar - centered with the navigation pill */}
         {user && (
-          <div className="text-center py-2 border-t border-gray-100">
-            <span className="text-sm text-gray-600">{user.fullName || user.username}'s Garage</span>
+          <div className="flex justify-center py-2 border-t border-gray-100">
+            <div className="flex items-center justify-center bg-gray-100 rounded-full px-4 py-1">
+              <span className="text-sm text-gray-600">{user.fullName || user.username}'s Garage</span>
+            </div>
           </div>
         )}
       </div>
