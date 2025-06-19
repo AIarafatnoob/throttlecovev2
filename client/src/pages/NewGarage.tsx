@@ -226,17 +226,12 @@ const NewGarage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        {/* Profile Section */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center bg-[#1A1A1A] rounded-full px-6 py-3 shadow-lg mb-4">
-            <div className="w-10 h-10 bg-[#FF3B30] rounded-full flex items-center justify-center mr-4">
-              <span className="text-white font-bold text-lg">
-                {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <span className="text-white font-semibold text-lg">
-              {user?.fullName || user?.username || "User"}'s Garage
-            </span>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Your Garage</h1>
+            <p className="text-gray-600">
+              Manage your motorcycles and track their maintenance schedules
+            </p>
           </div>
           
           <Button onClick={handleAddMotorcycle} className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-6">

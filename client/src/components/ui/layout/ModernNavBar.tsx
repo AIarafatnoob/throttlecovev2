@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const ModernNavBar = () => {
   const [location] = useLocation();
@@ -70,18 +70,14 @@ const ModernNavBar = () => {
 
           <div className="flex-shrink-0 relative">
             {user ? (
-              <div className="group relative">
-                <Button
-                  onClick={handleLogout}
-                  size="sm"
-                  className="rounded-full bg-[#1A1A1A] hover:bg-[#FF3B30] text-white text-xs sm:text-sm transition-all duration-300 ease-in-out transform group-hover:px-4 px-2 shadow-lg hover:shadow-xl relative overflow-hidden"
-                >
-                  <ArrowLeft className="h-4 w-4 group-hover:opacity-0 transition-opacity duration-300" />
-                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    LOGOUT
-                  </span>
-                </Button>
-              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="rounded-full border-gray-300 text-gray-600 hover:bg-[#FF3B30] hover:text-white hover:border-[#FF3B30] text-xs sm:text-sm px-2 sm:px-4"
+              >
+                Logout
+              </Button>
             ) : (
               <div className="relative">
                 <Link href="/register">
@@ -101,6 +97,15 @@ const ModernNavBar = () => {
             )}
           </div>
         </div>
+
+        {/* User garage text below navbar - centered with the navigation pill */}
+        {user && (
+          <div className="flex justify-center py-2 border-t border-gray-100">
+            <div className="flex items-center justify-center bg-gray-100 rounded-full px-4 py-1">
+              <span className="text-sm text-gray-600">{user.fullName || user.username}'s Garage</span>
+            </div>
+          </div>
+        )}
       </div>
 
 
