@@ -50,6 +50,15 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #e5342a;
   }
+
+  /* Sticky navigation styles */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    background-color: rgba(26, 26, 26, 0.95);
+  }
   
   /* Define responsive padding values */
   .p-standard {

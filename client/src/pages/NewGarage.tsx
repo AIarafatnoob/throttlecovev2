@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
-import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from "lucide-react";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,7 +38,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
   // Calculate next service date (mock data for now)
   const nextServiceDate = new Date();
   nextServiceDate.setDate(nextServiceDate.getDate() + 30);
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
                 <p className="text-gray-500 text-sm">{motorcycle.make} {motorcycle.model}</p>
               </div>
             </div>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -126,7 +126,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ mileage: Number(newMileage) })
                     });
-                    
+
                     // Refresh the page to show updated mileage
                     window.location.reload();
                   } catch (error) {
@@ -159,7 +159,10 @@ const NewGarage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  
+  const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
+
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
   });
@@ -169,25 +172,25 @@ const NewGarage = () => {
   const currentRank = getUserRank(totalMileage);
   const nextRank = getNextRank(totalMileage);
   const milesToNext = getMilesToNextRank(totalMileage);
-  
+
   const handleAddMotorcycle = () => {
     setIsAddDialogOpen(true);
   };
-  
+
   const handleEditMotorcycle = (motorcycle: Motorcycle) => {
     toast({
       title: "Coming Soon",
       description: "Motorcycle editing feature will be available soon!",
     });
   };
-  
+
   const handleDeleteMotorcycle = async () => {
     if (!motorcycleToDelete) return;
-    
+
     try {
       await apiRequest("DELETE", `/api/motorcycles/${motorcycleToDelete}`, undefined);
       queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
-      
+
       toast({
         title: "Motorcycle deleted",
         description: "Your motorcycle has been removed from the garage.",
@@ -200,6 +203,39 @@ const NewGarage = () => {
       });
     } finally {
       setMotorcycleToDelete(null);
+    }
+  };
+
+    const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Error", 
+          description: "File size must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePicture(e.target?.result as string);
+        toast({
+          title: "Profile Picture Updated",
+          description: "Your profile picture has been updated.",
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -232,11 +268,30 @@ const NewGarage = () => {
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
                 <div className="flex items-center gap-4 flex-shrink-0">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#FF3B30] rounded-2xl flex items-center justify-center">
-                    <span className="text-white font-bold text-lg sm:text-2xl">
-                      {(user?.fullName || user?.username || "U").charAt(0).toUpperCase()}
-                    </span>
+                  <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center"
+                      onClick={() => profileInputRef.current?.click()}>
+                      {profilePicture ? (
+                          <img 
+                              src={profilePicture} 
+                              alt="Profile" 
+                              className="w-full h-full object-cover"
+                          />
+                      ) : (
+                          <div className="text-white font-bold text-lg sm:text-2xl">
+                              {user?.fullName?.[0] || user?.username?.[0] || 'U'}
+                          </div>
+                      )}
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Camera className="w-6 h-6 text-white" />
+                      </div>
                   </div>
+                  <input
+                      ref={profileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfilePictureUpload}
+                      className="hidden"
+                  />
                   <div className="min-w-0 flex items-center gap-2">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -260,7 +315,7 @@ const NewGarage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col w-full lg:w-auto gap-4">
                   <div className="flex items-center justify-center">
                     <div className="text-center">
@@ -271,7 +326,7 @@ const NewGarage = () => {
                       <p className="text-gray-400 text-sm mt-1">miles traveled</p>
                     </div>
                   </div>
-                  
+
                   {/* Progress Bar with Rank Dots */}
                   <div className="w-full px-4">
                     <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
@@ -282,14 +337,14 @@ const NewGarage = () => {
                           width: `${Math.min((totalMileage / 100000) * 100, 100)}%` 
                         }}
                       />
-                      
+
                       {/* Rank dots */}
                       <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-1">
                         {bikerRanks.map((rank, index) => {
                           const position = (rank.minMiles / 100000) * 100;
                           const isAchieved = totalMileage >= rank.minMiles;
                           const isCurrent = currentRank.id === rank.id;
-                          
+
                           return (
                             <div
                               key={rank.id}
@@ -317,7 +372,7 @@ const NewGarage = () => {
                         })}
                       </div>
                     </div>
-                    
+
                     {/* Progress info */}
                     <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
                       <span>Rookie Rider</span>
@@ -344,7 +399,7 @@ const NewGarage = () => {
                 Add your first motorcycle to start tracking maintenance, mileage, and service schedules
               </p>
             </div>
-            
+
             {/* Floating Add Bike Button */}
             <motion.div
               className="fixed bottom-6 right-6 z-50 group"
@@ -406,7 +461,7 @@ const NewGarage = () => {
                           <p className="text-gray-500 text-xs sm:text-sm truncate">{motorcycle.make} {motorcycle.model}</p>
                         </div>
                       </div>
-                      
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl flex-shrink-0">

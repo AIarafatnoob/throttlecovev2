@@ -104,8 +104,8 @@ const ModernNavBar = () => {
       </div>
 
       {/* Sticky nav pill that follows scroll */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden sm:block">
-        <div className="flex items-center bg-[#1A1A1A] rounded-full px-6 py-3 shadow-lg">
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden sm:block transition-all duration-300">
+        <div className="flex items-center bg-[#1A1A1A] rounded-full px-6 py-3 shadow-lg backdrop-blur-sm">
           <Link href="/" className="flex items-center gap-3 mr-6">
             <div className="w-8 h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-current">
