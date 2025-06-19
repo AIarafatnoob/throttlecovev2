@@ -268,31 +268,18 @@ const NewGarage = () => {
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
                 <div className="flex items-center gap-4 flex-shrink-0 w-full">
-                  {/* Profile Picture on the left */}
-                  <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center"
-                      onClick={() => profileInputRef.current?.click()}>
-                      {profilePicture ? (
-                          <img 
-                              src={profilePicture} 
-                              alt="Profile" 
-                              className="w-full h-full object-cover"
-                          />
-                      ) : (
-                          <div className="text-white font-bold text-lg sm:text-2xl">
-                              {user?.fullName?.[0] || user?.username?.[0] || 'U'}
-                          </div>
-                      )}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Camera className="w-6 h-6 text-white" />
-                      </div>
+                  {/* Rank Patch on the left */}
+                  <div className="relative">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
+                      <span className="text-white text-lg sm:text-2xl font-bold">
+                        {currentRank.patch}
+                      </span>
+                    </div>
+                    {/* Tier indicator */}
+                    <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                      <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                    </div>
                   </div>
-                  <input
-                      ref={profileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePictureUpload}
-                      className="hidden"
-                  />
                   
                   {/* User Name and Rank Info centered */}
                   <div className="flex-1 text-center">
@@ -304,18 +291,31 @@ const NewGarage = () => {
                         <p className="text-gray-500 text-xs sm:text-sm truncate">{currentRank.name} • {currentRank.tier}</p>
                       </div>
                       
-                      {/* Rank Patch on the right */}
-                      <div className="relative">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
-                          <span className="text-white text-sm sm:text-lg font-bold">
-                            {currentRank.patch}
-                          </span>
-                        </div>
-                        {/* Tier indicator */}
-                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
-                          <div className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${getTierColor(currentRank.tier)} rounded-full`}></div>
-                        </div>
+                      {/* Profile Picture on the right of name/rank */}
+                      <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center"
+                          onClick={() => profileInputRef.current?.click()}>
+                          {profilePicture ? (
+                              <img 
+                                  src={profilePicture} 
+                                  alt="Profile" 
+                                  className="w-full h-full object-cover"
+                              />
+                          ) : (
+                              <div className="text-white font-bold text-lg sm:text-2xl">
+                                  {user?.fullName?.[0] || user?.username?.[0] || 'U'}
+                              </div>
+                          )}
+                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Camera className="w-6 h-6 text-white" />
+                          </div>
                       </div>
+                      <input
+                          ref={profileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleProfilePictureUpload}
+                          className="hidden"
+                      />
                     </div>
                   </div>
                 </div>
