@@ -1,264 +1,245 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
-} from "@/components/ui/dialog";
-import { 
-  Upload, 
-  FileText, 
-  Shield, 
-  Car, 
-  X, 
-  Download,
-  Eye,
-  Calendar
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { FileText, Upload, Download, Eye, X, Check, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Document {
   id: string;
   name: string;
-  type: 'license' | 'insurance' | 'registration' | 'other';
-  file: File;
+  type: 'license' | 'registration' | 'insurance' | 'pollution' | 'tax' | 'roadworthy';
+  file: File | null;
   uploadDate: Date;
   expiryDate?: Date;
+  isRequired: boolean;
 }
 
-interface DocumentUploadProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const documentTypes = [
-  { id: 'license', label: 'Driving License', icon: Shield, color: 'bg-blue-100 text-blue-800' },
-  { id: 'insurance', label: 'Insurance Papers', icon: Car, color: 'bg-green-100 text-green-800' },
-  { id: 'registration', label: 'Registration', icon: FileText, color: 'bg-purple-100 text-purple-800' },
-  { id: 'other', label: 'Other Documents', icon: FileText, color: 'bg-gray-100 text-gray-800' }
+const DOCUMENT_TYPES = [
+  { key: 'license', name: 'Driving License', required: true, icon: '🪪' },
+  { key: 'registration', name: 'Registration Certificate (RC)', required: true, icon: '📋' },
+  { key: 'insurance', name: 'Vehicle Insurance Certificate', required: true, icon: '🛡️' },
+  { key: 'pollution', name: 'Pollution Under Control (PUC)', required: true, icon: '🌱' },
+  { key: 'tax', name: 'Tax Token', required: false, icon: '💰' },
+  { key: 'roadworthy', name: 'Road Worthiness Certificate', required: false, icon: '✅' },
 ];
 
-const DocumentUpload = ({ open, onOpenChange }: DocumentUploadProps) => {
+const DocumentUploadDialog = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [selectedType, setSelectedType] = useState<string>('license');
-  const [dragActive, setDragActive] = useState(false);
+  const [uploadingType, setUploadingType] = useState<string | null>(null);
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
+  const handleFileUpload = (type: string, file: File) => {
+    const newDoc: Document = {
+      id: Date.now().toString(),
+      name: file.name,
+      type: type as Document['type'],
+      file: file,
+      uploadDate: new Date(),
+      isRequired: DOCUMENT_TYPES.find(dt => dt.key === type)?.required || false
+    };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFiles(e.dataTransfer.files);
-    }
-  };
-
-  const handleFiles = (files: FileList) => {
-    Array.from(files).forEach(file => {
-      if (file.type.includes('pdf') || file.type.includes('image')) {
-        const newDoc: Document = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          type: selectedType as any,
-          file: file,
-          uploadDate: new Date()
-        };
-        setDocuments(prev => [...prev, newDoc]);
-      }
-    });
+    setDocuments(prev => [...prev.filter(d => d.type !== type), newDoc]);
+    setUploadingType(null);
   };
 
   const removeDocument = (id: string) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== id));
+    setDocuments(prev => prev.filter(d => d.id !== id));
   };
 
-  const getTypeInfo = (type: string) => {
-    return documentTypes.find(t => t.id === type) || documentTypes[3];
+  const getDocumentForType = (type: string) => {
+    return documents.find(d => d.type === type);
   };
+
+  const getCompletionStats = () => {
+    const required = DOCUMENT_TYPES.filter(dt => dt.required);
+    const uploaded = required.filter(dt => getDocumentForType(dt.key));
+    return { completed: uploaded.length, total: required.length };
+  };
+
+  const stats = getCompletionStats();
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <motion.div
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Button
+            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            size="lg"
+          >
+            <FileText className="h-5 w-5 mr-2" />
+            Documents ({stats.completed}/{stats.total})
+          </Button>
+        </motion.div>
+      </DialogTrigger>
+      
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#1A1A1A] flex items-center gap-2">
-            <FileText className="h-6 w-6 text-[#FF3B30]" />
-            Document Manager
+          <DialogTitle className="text-2xl font-bold text-[#1A1A1A] mb-2">
+            Vehicle Documents Manager
           </DialogTitle>
-          <DialogDescription>
-            Upload and organize your important motorcycle-related documents
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600">
+              Keep all your essential riding documents in one secure place
+            </p>
+            <Badge 
+              variant={stats.completed === stats.total ? "default" : "secondary"}
+              className={stats.completed === stats.total ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
+            >
+              {stats.completed === stats.total ? "Complete" : `${stats.completed}/${stats.total} Required`}
+            </Badge>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          {/* Document Type Selection */}
-          <div className="lg:col-span-1">
-            <h3 className="font-semibold mb-4">Document Type</h3>
-            <div className="space-y-2">
-              {documentTypes.map((type) => {
-                const IconComponent = type.icon;
-                return (
-                  <Button
-                    key={type.id}
-                    variant={selectedType === type.id ? "default" : "outline"}
-                    className={`w-full justify-start gap-3 ${
-                      selectedType === type.id 
-                        ? "bg-[#FF3B30] hover:bg-[#FF3B30]/90" 
-                        : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => setSelectedType(type.id)}
-                  >
-                    <IconComponent className="h-4 w-4" />
-                    {type.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {DOCUMENT_TYPES.map((docType) => {
+            const uploadedDoc = getDocumentForType(docType.key);
+            const isUploading = uploadingType === docType.key;
 
-          {/* Upload Area */}
-          <div className="lg:col-span-2">
-            <h3 className="font-semibold mb-4">Upload Documents</h3>
-            
-            {/* Drag & Drop Zone */}
-            <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                dragActive 
-                  ? "border-[#FF3B30] bg-[#FF3B30]/5" 
-                  : "border-gray-300 hover:border-[#FF3B30]/50"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg font-medium text-gray-700 mb-2">
-                Drop files here or click to upload
-              </p>
-              <p className="text-sm text-gray-500 mb-4">
-                Supports PDF, JPG, PNG files up to 10MB
-              </p>
-              
-              <Input
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                className="hidden"
-                id="file-upload"
-                onChange={(e) => e.target.files && handleFiles(e.target.files)}
-              />
-              <Label htmlFor="file-upload">
-                <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90" asChild>
-                  <span>Select Files</span>
-                </Button>
-              </Label>
-            </div>
-          </div>
-        </div>
+            return (
+              <motion.div
+                key={docType.key}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className={`border-2 transition-all duration-300 ${
+                  uploadedDoc 
+                    ? "border-green-200 bg-green-50" 
+                    : docType.required 
+                      ? "border-red-200 bg-red-50" 
+                      : "border-gray-200 hover:border-[#FF3B30]/30"
+                }`}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">{docType.icon}</div>
+                        <div>
+                          <h3 className="font-semibold text-[#1A1A1A]">{docType.name}</h3>
+                          <div className="flex items-center space-x-2 mt-1">
+                            {docType.required && (
+                              <Badge variant="destructive" className="text-xs">Required</Badge>
+                            )}
+                            {uploadedDoc && (
+                              <Badge className="bg-green-100 text-green-800 text-xs">
+                                <Check className="h-3 w-3 mr-1" />
+                                Uploaded
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {uploadedDoc && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeDocument(uploadedDoc.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
 
-        {/* Uploaded Documents */}
-        {documents.length > 0 && (
-          <div className="mt-8">
-            <h3 className="font-semibold mb-4">Uploaded Documents ({documents.length})</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <AnimatePresence>
-                {documents.map((doc) => {
-                  const typeInfo = getTypeInfo(doc.type);
-                  const IconComponent = typeInfo.icon;
-                  
-                  return (
-                    <motion.div
-                      key={doc.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Card className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 bg-gray-100 rounded-lg">
-                                <IconComponent className="h-5 w-5 text-[#FF3B30]" />
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm truncate max-w-[150px]">
-                                  {doc.name}
-                                </h4>
-                                <Badge className={typeInfo.color} variant="secondary">
-                                  {typeInfo.label}
-                                </Badge>
-                              </div>
+                    {uploadedDoc ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                          <div className="flex items-center space-x-3">
+                            <FileText className="h-5 w-5 text-[#FF3B30]" />
+                            <div>
+                              <p className="font-medium text-sm">{uploadedDoc.name}</p>
+                              <p className="text-xs text-gray-500">
+                                Uploaded {uploadedDoc.uploadDate.toLocaleDateString()}
+                              </p>
                             </div>
-                            
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeDocument(doc.id)}
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
-                            >
-                              <X className="h-4 w-4" />
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button size="sm" variant="outline" className="rounded-full">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="rounded-full">
+                              <Download className="h-4 w-4" />
                             </Button>
                           </div>
-                          
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              {doc.uploadDate.toLocaleDateString()}
-                            </span>
-                            <div className="flex gap-2">
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                <Eye className="h-3 w-3" />
-                              </Button>
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                <Download className="h-3 w-3" />
-                              </Button>
-                            </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <Label htmlFor={`file-${docType.key}`}>
+                          <div className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300 ${
+                            isUploading 
+                              ? "border-[#FF3B30] bg-[#FF3B30]/5" 
+                              : "border-gray-300 hover:border-[#FF3B30] hover:bg-[#FF3B30]/5"
+                          }`}>
+                            <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              PDF, JPG, PNG up to 10MB
+                            </p>
                           </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+                        </Label>
+                        <Input
+                          id={`file-${docType.key}`}
+                          type="file"
+                          className="hidden"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setUploadingType(docType.key);
+                              // Simulate upload delay
+                              setTimeout(() => {
+                                handleFileUpload(docType.key, file);
+                              }, 1000);
+                            }
+                          }}
+                        />
+                        
+                        {docType.required && !uploadedDoc && (
+                          <div className="flex items-center space-x-2 text-amber-600 text-sm">
+                            <AlertCircle className="h-4 w-4" />
+                            <span>This document is required for legal riding</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-start space-x-3">
+            <div className="text-blue-500 mt-1">
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-1">Quick Access Tip</h4>
+              <p className="text-sm text-blue-700">
+                All documents are stored securely and can be quickly accessed during traffic stops or inspections. 
+                Keep your device handy while riding for instant document presentation.
+              </p>
             </div>
           </div>
-        )}
-
-        <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button 
-            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90"
-            onClick={() => {
-              // Save documents logic would go here
-              onOpenChange(false);
-            }}
-            disabled={documents.length === 0}
-          >
-            Save Documents ({documents.length})
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default DocumentUpload;
+export default DocumentUploadDialog;
