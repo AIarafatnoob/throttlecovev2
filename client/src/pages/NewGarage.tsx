@@ -8,6 +8,7 @@ import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotor
 import DocumentUploadDialog from "@/components/ui/DocumentUpload";
 
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -580,6 +581,139 @@ const NewGarage = () => {
                         Update Miles
                       </Button>
                     </div>
+
+                    {/* Expanded Details Section */}
+                    {expandedMotorcycleId === motorcycle.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-6 pt-6 border-t border-gray-100 space-y-4"
+                      >
+                        {/* Vehicle Documents */}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
+                              <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                              Documents
+                            </h4>
+                            <Button size="sm" variant="outline" className="text-xs h-7 rounded-xl">
+                              <Settings className="h-3 w-3 mr-1" />
+                              Manage
+                            </Button>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 gap-2">
+                            {[
+                              { id: 1, name: "Registration", icon: "📋", status: "valid" },
+                              { id: 2, name: "Insurance", icon: "🛡️", status: "expiring" },
+                              { id: 3, name: "Service Record", icon: "🔧", status: "valid" }
+                            ].map((doc) => (
+                              <div 
+                                key={doc.id}
+                                className="flex items-center justify-between p-2 bg-gray-50 rounded-xl border"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm">{doc.icon}</span>
+                                  <div>
+                                    <p className="font-medium text-xs text-[#1A1A1A]">{doc.name}</p>
+                                    <p className="text-xs text-gray-500">Updated recently</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Badge className={`text-xs ${
+                                    doc.status === "valid" ? "bg-green-100 text-green-800" :
+                                    doc.status === "expiring" ? "bg-yellow-100 text-yellow-800" :
+                                    "bg-red-100 text-red-800"
+                                  }`}>
+                                    {doc.status}
+                                  </Badge>
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                    <Eye className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Maintenance Overview */}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
+                              <Wrench className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                              Maintenance
+                            </h4>
+                            <Button size="sm" variant="outline" className="text-xs h-7 rounded-xl">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              Schedule
+                            </Button>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <div className="p-3 bg-green-50 rounded-xl border border-green-200">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium text-xs text-green-800">Next Service Due</p>
+                                  <p className="text-xs text-green-600">Oil change at {(motorcycle.mileage || 0) + 3000} miles</p>
+                                </div>
+                                <Badge className="bg-green-100 text-green-800 text-xs">
+                                  {3000 - ((motorcycle.mileage || 0) % 3000)} miles
+                                </Badge>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="text-center p-3 bg-gray-50 rounded-xl">
+                                <p className="text-xs text-gray-500 mb-1">Service Records</p>
+                                <p className="font-bold text-lg text-[#1A1A1A]">0</p>
+                              </div>
+                              <div className="text-center p-3 bg-gray-50 rounded-xl">
+                                <p className="text-xs text-gray-500 mb-1">Upcoming</p>
+                                <p className="font-bold text-lg text-[#1A1A1A]">1</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Recent Activity */}
+                        <div>
+                          <h4 className="font-semibold text-[#1A1A1A] mb-3 flex items-center text-sm">
+                            <MapPin className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                            Recent Activity
+                          </h4>
+                          
+                          <div className="space-y-2">
+                            <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-xl">
+                              <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
+                              <div>
+                                <p className="text-xs font-medium text-[#1A1A1A]">Added to garage</p>
+                                <p className="text-xs text-gray-500">{new Date(motorcycle.createdAt).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-center py-3">
+                              <p className="text-xs text-gray-500 mb-2">No recent rides recorded</p>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-xs h-7 rounded-xl"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toast({
+                                    title: "Coming Soon",
+                                    description: "Ride logging feature will be available soon!",
+                                  });
+                                }}
+                              >
+                                Log First Ride
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
