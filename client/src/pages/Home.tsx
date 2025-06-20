@@ -182,8 +182,7 @@ const Home = () => {
                     {/* Subtle background accent */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm"></div>
                   </h2>
-                  {/* Underline accent */}
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#1A1A1A] via-[#FF3B30] to-[#1A1A1A] rounded-full"></div>
+
                 </div>
                 
                 {/* Right decorative elements */}
