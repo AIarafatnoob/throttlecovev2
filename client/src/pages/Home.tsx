@@ -163,13 +163,35 @@ const Home = () => {
             transition={{ duration: 0.5 }}
           >
             {/* Site Name */}
-            <div className="flex items-center justify-center mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="h-px bg-gray-300 w-12"></div>
-                <h2 className="text-2xl font-bold font-header text-[#1A1A1A] tracking-wider">
-                  ThrottleCove
-                </h2>
-                <div className="h-px bg-gray-300 w-12"></div>
+            <div className="flex items-center justify-center mb-8">
+              <div className="relative flex items-center">
+                {/* Left decorative elements */}
+                <div className="flex items-center space-x-1 mr-6">
+                  <div className="w-8 h-px bg-gradient-to-r from-transparent to-[#FF3B30]"></div>
+                  <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
+                  <div className="w-4 h-px bg-[#FF3B30]"></div>
+                </div>
+                
+                {/* Brand name with modern styling */}
+                <div className="relative">
+                  <h2 className="text-3xl font-black text-[#1A1A1A] tracking-tight uppercase relative">
+                    <span className="relative z-10">
+                      Throttle
+                      <span className="text-[#FF3B30]">Cove</span>
+                    </span>
+                    {/* Subtle background accent */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm"></div>
+                  </h2>
+                  {/* Underline accent */}
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#1A1A1A] via-[#FF3B30] to-[#1A1A1A] rounded-full"></div>
+                </div>
+                
+                {/* Right decorative elements */}
+                <div className="flex items-center space-x-1 ml-6">
+                  <div className="w-4 h-px bg-[#FF3B30]"></div>
+                  <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
+                  <div className="w-8 h-px bg-gradient-to-l from-transparent to-[#FF3B30]"></div>
+                </div>
               </div>
             </div>
 
