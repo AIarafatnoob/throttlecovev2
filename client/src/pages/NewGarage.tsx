@@ -6,8 +6,8 @@ import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
 import DocumentUploadDialog from "@/components/ui/DocumentUpload";
-import VehicleDetailsDialog from "@/components/ui/motorcycle/VehicleDetailsDialog";
-import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User } from "lucide-react";
+
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -159,8 +159,7 @@ const NewGarage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
   const [isDocumentDialogOpen, setIsDocumentDialogOpen] = useState(false);
-  const [selectedMotorcycle, setSelectedMotorcycle] = useState<Motorcycle | null>(null);
-  const [isVehicleDetailsOpen, setIsVehicleDetailsOpen] = useState(false);
+  const [expandedMotorcycleId, setExpandedMotorcycleId] = useState<number | null>(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -190,9 +189,8 @@ const NewGarage = () => {
     });
   };
 
-  const handleViewMotorcycle = (motorcycle: Motorcycle) => {
-    setSelectedMotorcycle(motorcycle);
-    setIsVehicleDetailsOpen(true);
+  const handleToggleExpand = (motorcycleId: number) => {
+    setExpandedMotorcycleId(expandedMotorcycleId === motorcycleId ? null : motorcycleId);
   };
 
   const handleDeleteMotorcycle = async () => {
@@ -460,10 +458,10 @@ const NewGarage = () => {
                 transition={{ duration: 0.2 }}
               >
                 <Card 
-                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden h-full cursor-pointer"
-                  onClick={() => handleViewMotorcycle(motorcycle)}
+                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden cursor-pointer"
+                  onClick={() => handleToggleExpand(motorcycle.id)}
                 >
-                  <CardContent className="p-4 sm:p-6 h-full flex flex-col">
+                  <CardContent className="p-4 sm:p-6 flex flex-col">
                     {/* Header Section */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -493,11 +491,11 @@ const NewGarage = () => {
                           <DropdownMenuItem 
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleViewMotorcycle(motorcycle);
+                              handleToggleExpand(motorcycle.id);
                             }}
                           >
                             <span className="mr-2">👁️</span>
-                            View Details
+                            {expandedMotorcycleId === motorcycle.id ? 'Collapse' : 'Expand'} Details
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={(e) => {
@@ -636,11 +634,7 @@ const NewGarage = () => {
 
         <DocumentUploadDialog />
 
-        <VehicleDetailsDialog 
-          motorcycle={selectedMotorcycle}
-          open={isVehicleDetailsOpen}
-          onOpenChange={setIsVehicleDetailsOpen}
-        />
+
 
         <AlertDialog open={motorcycleToDelete !== null} onOpenChange={() => setMotorcycleToDelete(null)}>
           <AlertDialogContent>
