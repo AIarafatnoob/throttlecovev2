@@ -69,12 +69,11 @@ const VehicleDetailsDialog = ({ motorcycle, open, onOpenChange }: VehicleDetails
           </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Left Column: Vehicle Info & Stats */}
-          <div className="space-y-4">
-            {/* Vehicle Image & Basic Info */}
-            <Card className="overflow-hidden">
-              <div className="aspect-video bg-gray-100 flex items-center justify-center">
+        <div className="space-y-6">
+          {/* Profile Header Section */}
+          <div className="text-center pb-4">
+            <div className="relative inline-block mb-4">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center mx-auto">
                 {motorcycle.imageUrl ? (
                   <img 
                     src={motorcycle.imageUrl} 
@@ -82,155 +81,165 @@ const VehicleDetailsDialog = ({ motorcycle, open, onOpenChange }: VehicleDetails
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-center p-4">
-                    <div className="w-12 h-12 bg-[#FF3B30] rounded-xl flex items-center justify-center mx-auto mb-2">
-                      <svg viewBox="0 0 100 100" className="w-6 h-6 text-white fill-current">
-                        <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm text-gray-500">No photo available</p>
+                  <div className="w-12 h-12 bg-[#FF3B30] rounded-2xl flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" className="w-6 h-6 text-white fill-current">
+                      <path d="M15 70 C15 60, 25 50, 35 50 L65 50 C75 50, 85 60, 85 70 C85 80, 75 90, 65 90 L35 90 C25 90, 15 80, 15 70 Z M30 40 L70 40 C75 40, 80 35, 80 30 C80 25, 75 20, 70 20 L30 20 C25 20, 20 25, 20 30 C20 35, 25 40, 30 40 Z M45 30 L55 30 L50 40 Z" />
+                    </svg>
                   </div>
                 )}
               </div>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-bold text-lg text-[#1A1A1A]">{motorcycle.name}</h3>
-                  <Badge className={getStatusColor(motorcycle.status)}>
-                    {motorcycle.status}
-                  </Badge>
-                </div>
-                <p className="text-gray-600">{motorcycle.make} {motorcycle.model}</p>
-                <p className="text-sm text-gray-500">{motorcycle.year} • {motorcycle.engineSize}</p>
-              </CardContent>
-            </Card>
+              <Badge className={`${getStatusColor(motorcycle.status)} absolute -bottom-1 left-1/2 transform -translate-x-1/2`}>
+                {motorcycle.status}
+              </Badge>
+            </div>
+            <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{motorcycle.name}</h3>
+            <p className="text-sm text-gray-500">{motorcycle.make} {motorcycle.model} • {motorcycle.year}</p>
+          </div>
 
-            {/* Compact Stats Grid */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <Gauge className="h-4 w-4 text-[#FF3B30] mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Mileage</p>
-                <p className="font-bold text-sm text-[#1A1A1A]">{motorcycle.mileage?.toLocaleString() || 0}</p>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-gradient-to-br from-teal-400 to-teal-500 rounded-2xl p-4 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-teal-100 text-sm">Total Mileage</p>
+                  <p className="text-2xl font-bold">{(motorcycle.mileage || 0).toLocaleString()}</p>
+                  <p className="text-teal-100 text-xs">Miles</p>
+                </div>
+                <Gauge className="h-8 w-8 text-teal-100" />
               </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <Calendar className="h-4 w-4 text-[#FF3B30] mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Added</p>
-                <p className="font-bold text-sm text-[#1A1A1A]">{new Date(motorcycle.createdAt).toLocaleDateString()}</p>
-              </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <Wrench className="h-4 w-4 text-[#FF3B30] mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Service</p>
-                <p className="font-bold text-sm text-[#1A1A1A]">Due</p>
+            </div>
+            <div className="bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-2xl p-4 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-cyan-100 text-sm">Engine Size</p>
+                  <p className="text-2xl font-bold">{motorcycle.engineSize}</p>
+                  <p className="text-cyan-100 text-xs">Displacement</p>
+                </div>
+                <Settings className="h-8 w-8 text-cyan-100" />
               </div>
             </div>
           </div>
 
-          {/* Right Column: Documents & Maintenance */}
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Left Column: Documents */}
+            <div className="space-y-4">
+
             {/* Vehicle Documents */}
             <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-[#1A1A1A] flex items-center">
                     <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
                     Documents
                   </h4>
-                  <Button size="sm" variant="outline" className="text-xs h-7">
+                  <Button size="sm" variant="outline" className="text-xs">
                     <Settings className="h-3 w-3 mr-1" />
                     Manage
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-2">
+                <div className="space-y-3">
                   {mockDocuments.map((doc) => (
                     <div 
                       key={doc.id}
-                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border"
+                      className="flex items-center space-x-3 p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow"
                     >
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm">{doc.icon}</span>
-                        <div>
-                          <p className="font-medium text-xs text-[#1A1A1A]">{doc.name}</p>
-                          <Badge className={`${getDocumentStatusColor(doc.status)} text-xs`}>
-                            {doc.status}
-                          </Badge>
+                      <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center">
+                        <span className="text-lg">{doc.icon}</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-sm text-[#1A1A1A]">{doc.name}</p>
+                            <p className="text-xs text-gray-500">Updated recently</p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge className={`${getDocumentStatusColor(doc.status)} text-xs`}>
+                              {doc.status}
+                            </Badge>
+                            <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                        <Eye className="h-3 w-3" />
-                      </Button>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
+            </div>
 
-            {/* Maintenance Overview */}
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
-                    <Wrench className="h-4 w-4 mr-2 text-[#FF3B30]" />
-                    Maintenance
-                  </h4>
-                  <Button size="sm" variant="outline" className="text-xs h-7">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    Schedule
-                  </Button>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="p-2 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-xs text-green-800">Next Service Due</p>
-                        <p className="text-xs text-green-600">Oil change at {(motorcycle.mileage || 0) + 3000} miles</p>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800 text-xs">
-                        {3000 - ((motorcycle.mileage || 0) % 3000)} miles
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="text-center p-2 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Records</p>
-                      <p className="font-bold text-lg text-[#1A1A1A]">0</p>
-                    </div>
-                    <div className="text-center p-2 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Upcoming</p>
-                      <p className="font-bold text-lg text-[#1A1A1A]">1</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardContent className="p-3">
-                <h4 className="font-semibold text-[#1A1A1A] mb-2 flex items-center text-sm">
-                  <MapPin className="h-4 w-4 mr-2 text-[#FF3B30]" />
-                  Activity
-                </h4>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg">
-                    <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
-                    <div>
-                      <p className="text-xs font-medium text-[#1A1A1A]">Added to garage</p>
-                      <p className="text-xs text-gray-500">{new Date(motorcycle.createdAt).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center py-3">
-                    <p className="text-xs text-gray-500 mb-2">No recent rides recorded</p>
-                    <Button size="sm" variant="outline" className="text-xs h-7">
-                      Log First Ride
+            {/* Right Column: Maintenance & Activity */}
+            <div className="space-y-4">
+              {/* Maintenance Overview */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-semibold text-[#1A1A1A] flex items-center">
+                      <Wrench className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                      Maintenance
+                    </h4>
+                    <Button size="sm" variant="outline" className="text-xs">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Schedule
                     </Button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  <div className="space-y-3">
+                    <div className="p-3 bg-green-50 rounded-xl border border-green-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-sm text-green-800">Next Service Due</p>
+                          <p className="text-xs text-green-600">Oil change at {(motorcycle.mileage || 0) + 3000} miles</p>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800 text-xs">
+                          {3000 - ((motorcycle.mileage || 0) % 3000)} miles
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <p className="text-xs text-gray-500 mb-1">Service Records</p>
+                        <p className="font-bold text-xl text-[#1A1A1A]">0</p>
+                      </div>
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <p className="text-xs text-gray-500 mb-1">Upcoming</p>
+                        <p className="font-bold text-xl text-[#1A1A1A]">1</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Activity */}
+              <Card>
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-[#1A1A1A] mb-4 flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                    Recent Activity
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 p-3 bg-white rounded-xl border border-gray-100">
+                      <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-[#1A1A1A]">Motorcycle added to garage</p>
+                        <p className="text-xs text-gray-500">{new Date(motorcycle.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-500 mb-3">No recent rides or services recorded</p>
+                      <Button size="sm" variant="outline" className="text-xs">
+                        Log First Ride
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </DialogContent>
