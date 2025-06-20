@@ -162,6 +162,17 @@ const Home = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
+            {/* Site Name */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="h-px bg-gray-300 w-12"></div>
+                <h2 className="text-2xl font-bold font-header text-[#1A1A1A] tracking-wider">
+                  ThrottleCove
+                </h2>
+                <div className="h-px bg-gray-300 w-12"></div>
+              </div>
+            </div>
+
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto relative mb-8">
               <div className="relative">
