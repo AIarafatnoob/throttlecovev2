@@ -6,6 +6,7 @@ import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
 import DocumentUploadDialog from "@/components/ui/DocumentUpload";
+import VehicleDetailsDialog from "@/components/ui/motorcycle/VehicleDetailsDialog";
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -158,6 +159,8 @@ const NewGarage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
   const [isDocumentDialogOpen, setIsDocumentDialogOpen] = useState(false);
+  const [selectedMotorcycle, setSelectedMotorcycle] = useState<Motorcycle | null>(null);
+  const [isVehicleDetailsOpen, setIsVehicleDetailsOpen] = useState(false);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -185,6 +188,11 @@ const NewGarage = () => {
       title: "Coming Soon",
       description: "Motorcycle editing feature will be available soon!",
     });
+  };
+
+  const handleViewMotorcycle = (motorcycle: Motorcycle) => {
+    setSelectedMotorcycle(motorcycle);
+    setIsVehicleDetailsOpen(true);
   };
 
   const handleDeleteMotorcycle = async () => {
@@ -451,7 +459,10 @@ const NewGarage = () => {
                 whileHover={{ y: -4, scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <Card className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden h-full">
+                <Card 
+                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden h-full cursor-pointer"
+                  onClick={() => handleViewMotorcycle(motorcycle)}
+                >
                   <CardContent className="p-4 sm:p-6 h-full flex flex-col">
                     {/* Header Section */}
                     <div className="flex items-start justify-between mb-4">
@@ -469,17 +480,39 @@ const NewGarage = () => {
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl flex-shrink-0">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 w-8 p-0 rounded-xl flex-shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEditMotorcycle(motorcycle)}>
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewMotorcycle(motorcycle);
+                            }}
+                          >
+                            <span className="mr-2">👁️</span>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditMotorcycle(motorcycle);
+                            }}
+                          >
                             <Wrench className="mr-2 h-4 w-4" />
                             Edit Details
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => setMotorcycleToDelete(motorcycle.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMotorcycleToDelete(motorcycle.id);
+                            }}
                             className="text-red-600"
                           >
                             <span className="mr-2">🗑️</span>
@@ -602,6 +635,12 @@ const NewGarage = () => {
         />
 
         <DocumentUploadDialog />
+
+        <VehicleDetailsDialog 
+          motorcycle={selectedMotorcycle}
+          open={isVehicleDetailsOpen}
+          onOpenChange={setIsVehicleDetailsOpen}
+        />
 
         <AlertDialog open={motorcycleToDelete !== null} onOpenChange={() => setMotorcycleToDelete(null)}>
           <AlertDialogContent>
