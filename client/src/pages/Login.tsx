@@ -1,4 +1,4 @@
-import DevLoginButton from "@/components/DevLoginButton"
+import DevLoginButton from "@/components/ui/Devloginbutton"
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { 
@@ -134,6 +134,8 @@ const Login = () => {
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
               
+              {process.env.NODE_ENV === "development" && <DevLoginButton />}
+              
               <p className="text-sm text-center text-gray-600">
                 Don't have an account?{" "}
                 <Link href="/register">
@@ -141,7 +143,7 @@ const Login = () => {
                     Register
                   </a>
                 </Link>
-              </p>
+              </p></p>
             </CardFooter>
           </form>
         </Card>

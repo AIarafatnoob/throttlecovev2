@@ -8,11 +8,12 @@ import { ArrowRight, LogOut } from "lucide-react";
 import logo from "@/assets/tclogov2r2.svg"
 
 const ModernNavBar = () => {
+  const { user, clearUser } = useAuth();
   const [location] = useLocation();
+  const { toast } = useToast();
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { user, setUser } = useAuth();
-  const { toast } = useToast();
+  const { setUser } = useAuth();
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -29,19 +30,26 @@ const ModernNavBar = () => {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
+    const setIsLoading = useState(false)[1];
+    setIsLoading(true);
     try {
-      await apiRequest("POST", "/api/auth/logout", {});
-      setUser(null);
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
+      // If this is a dev user, just clear locally
+      if (user?.id === "dev-001") {
+        clearUser();
+        window.location.href = "/";
+        return;
+      }
+
+      await apiRequest("POST", "/api/auth/logout");
+      window.location.href = "/";
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to log out. Please try again.",
+        description: "Failed to logout",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,7 +134,7 @@ const ModernNavBar = () => {
       </div>
 
       {/* Sticky nav pill that follows scroll */}
-      
+
     </nav>
   );
 };

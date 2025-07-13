@@ -4,6 +4,7 @@ import { User } from '@shared/schema';
 interface AuthState {
   user: User | null;
   setUser: (user: User | null) => void;
+  clearUser: () => void;
 }
 
 export const useAuth = create<AuthState>((set) => {
@@ -20,6 +21,10 @@ export const useAuth = create<AuthState>((set) => {
         localStorage.removeItem("user");
       }
       set({ user });
+    },
+    clearUser: () => {
+      localStorage.removeItem("user");
+      set({ user: null });
     },
   };
 });
