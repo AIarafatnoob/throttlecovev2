@@ -33,18 +33,30 @@ const ModernNavBar = () => {
       // If this is a dev user, just clear locally
       if (user?.id === "dev-001") {
         clearUser();
-        window.location.href = "/";
+        toast({
+          title: "Logged out",
+          description: "You have been logged out successfully",
+        });
+        window.location.href = "/login";
         return;
       }
 
+      // For regular users, call the logout API
       await apiRequest("POST", "/api/auth/logout");
-      window.location.href = "/";
-    } catch (error) {
+      clearUser();
       toast({
-        title: "Error",
-        description: "Failed to logout",
-        variant: "destructive",
+        title: "Logged out",
+        description: "You have been logged out successfully",
       });
+      window.location.href = "/login";
+    } catch (error) {
+      // Even if API fails, clear user locally
+      clearUser();
+      toast({
+        title: "Logged out",
+        description: "You have been logged out",
+      });
+      window.location.href = "/login";
     }
   };
 
