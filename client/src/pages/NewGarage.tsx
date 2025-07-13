@@ -7,7 +7,7 @@ import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog"
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
 import DocumentUploadDialog from "@/components/ui/DocumentUpload";
 
-import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye } from "lucide-react";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -459,8 +459,7 @@ const NewGarage = () => {
                 transition={{ duration: 0.2 }}
               >
                 <Card 
-                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden cursor-pointer"
-                  onClick={() => handleToggleExpand(motorcycle.id)}
+                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden"
                 >
                   <CardContent className="p-4 sm:p-6 flex flex-col">
                     {/* Header Section */}
@@ -489,15 +488,6 @@ const NewGarage = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleExpand(motorcycle.id);
-                            }}
-                          >
-                            <span className="mr-2">👁️</span>
-                            {expandedMotorcycleId === motorcycle.id ? 'Collapse' : 'Expand'} Details
-                          </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={(e) => {
                               e.stopPropagation();
@@ -582,6 +572,22 @@ const NewGarage = () => {
                       </Button>
                     </div>
 
+                    {/* Centered Arrow Button */}
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 transition-colors"
+                        onClick={() => handleToggleExpand(motorcycle.id)}
+                      >
+                        {expandedMotorcycleId === motorcycle.id ? (
+                          <ChevronUp className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-gray-500" />
+                        )}
+                      </Button>
+                    </div>
+
                     {/* Expanded Details Section */}
                     {expandedMotorcycleId === motorcycle.id && (
                       <motion.div
@@ -638,80 +644,7 @@ const NewGarage = () => {
                           </div>
                         </div>
 
-                        {/* Maintenance Overview */}
-                        <div>
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
-                              <Wrench className="h-4 w-4 mr-2 text-[#FF3B30]" />
-                              Maintenance
-                            </h4>
-                            <Button size="sm" variant="outline" className="text-xs h-7 rounded-xl">
-                              <Calendar className="h-3 w-3 mr-1" />
-                              Schedule
-                            </Button>
-                          </div>
-                          
-                          <div className="space-y-3">
-                            <div className="p-3 bg-green-50 rounded-xl border border-green-200">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium text-xs text-green-800">Next Service Due</p>
-                                  <p className="text-xs text-green-600">Oil change at {(motorcycle.mileage || 0) + 3000} miles</p>
-                                </div>
-                                <Badge className="bg-green-100 text-green-800 text-xs">
-                                  {3000 - ((motorcycle.mileage || 0) % 3000)} miles
-                                </Badge>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="text-center p-3 bg-gray-50 rounded-xl">
-                                <p className="text-xs text-gray-500 mb-1">Service Records</p>
-                                <p className="font-bold text-lg text-[#1A1A1A]">0</p>
-                              </div>
-                              <div className="text-center p-3 bg-gray-50 rounded-xl">
-                                <p className="text-xs text-gray-500 mb-1">Upcoming</p>
-                                <p className="font-bold text-lg text-[#1A1A1A]">1</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
 
-                        {/* Recent Activity */}
-                        <div>
-                          <h4 className="font-semibold text-[#1A1A1A] mb-3 flex items-center text-sm">
-                            <MapPin className="h-4 w-4 mr-2 text-[#FF3B30]" />
-                            Recent Activity
-                          </h4>
-                          
-                          <div className="space-y-2">
-                            <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-xl">
-                              <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
-                              <div>
-                                <p className="text-xs font-medium text-[#1A1A1A]">Added to garage</p>
-                                <p className="text-xs text-gray-500">{new Date(motorcycle.createdAt).toLocaleDateString()}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="text-center py-3">
-                              <p className="text-xs text-gray-500 mb-2">No recent rides recorded</p>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="text-xs h-7 rounded-xl"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toast({
-                                    title: "Coming Soon",
-                                    description: "Ride logging feature will be available soon!",
-                                  });
-                                }}
-                              >
-                                Log First Ride
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
                       </motion.div>
                     )}
                   </CardContent>
