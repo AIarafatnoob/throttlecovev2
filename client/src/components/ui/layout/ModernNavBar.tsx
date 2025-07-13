@@ -114,7 +114,7 @@ const ModernNavBar = () => {
                   className="rounded-full bg-[#1A1A1A] hover:bg-[#FF3B30] text-white text-xs sm:text-sm transition-all duration-300 ease-in-out transform group-hover:px-4 px-2 shadow-lg hover:shadow-xl relative overflow-hidden"
                 >
                   <LogOut className="h-4 w-4 group-hover:opacity-0 transition-opacity duration-300" />
-                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs">
                     LOGOUT
                   </span>
                 </Button>

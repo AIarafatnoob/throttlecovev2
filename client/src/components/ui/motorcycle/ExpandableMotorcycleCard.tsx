@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp } from "lucide-react";
+import { MoreVertical, Calendar, Gauge, ChevronDown, ChevronUp } from "lucide-react";
 import { Motorcycle } from "@shared/schema";
 import { motion } from "framer-motion";
 import {
@@ -86,9 +86,21 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
                 {motorcycle.year} {motorcycle.make} {motorcycle.model}
               </p>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-2"
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
             <div className="text-center">
               <div className="flex items-center justify-center mb-1">
                 <Gauge className="h-4 w-4 text-gray-400" />
@@ -106,13 +118,6 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
                   : 'Never'}
               </p>
               <p className="text-gray-500 text-xs">Last Ride</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-1">
-                <Wrench className="h-4 w-4 text-gray-400" />
-              </div>
-              <p className="font-medium text-[#FF3B30]">Soon</p>
-              <p className="text-gray-500 text-xs">Service</p>
             </div>
           </div>
 
@@ -145,15 +150,6 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
           )}
 
           <div className="flex gap-2">
-            <Button 
-              className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
-              onClick={() => {
-                // Navigate to maintenance scheduler
-                window.location.href = `/maintenance`;
-              }}
-            >
-              Service
-            </Button>
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
               onClick={async () => {
