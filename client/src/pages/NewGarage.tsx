@@ -449,7 +449,7 @@ const NewGarage = () => {
             </motion.div>
           </>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 pb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 pb-20">
             {motorcycles.map((motorcycle) => (
               <motion.div
                 key={motorcycle.id}
@@ -572,20 +572,22 @@ const NewGarage = () => {
                       </Button>
                     </div>
 
-                    {/* Centered Arrow Button */}
-                    <div className="flex justify-center mt-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 transition-colors"
-                        onClick={() => handleToggleExpand(motorcycle.id)}
-                      >
-                        {expandedMotorcycleId === motorcycle.id ? (
-                          <ChevronUp className="h-4 w-4 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 text-gray-500" />
-                        )}
-                      </Button>
+                    {/* Centered Arrow Button - Positioned at bottom */}
+                    <div className="relative">
+                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-4 z-10">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="h-10 w-10 p-0 rounded-full bg-white hover:bg-gray-50 border-2 border-gray-200 shadow-md transition-all duration-200 hover:shadow-lg"
+                          onClick={() => handleToggleExpand(motorcycle.id)}
+                        >
+                          {expandedMotorcycleId === motorcycle.id ? (
+                            <ChevronUp className="h-5 w-5 text-gray-600" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-600" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
 
                     {/* Expanded Details Section */}
@@ -665,7 +667,7 @@ const NewGarage = () => {
           <div className="relative">
             <Button 
               onClick={handleAddMotorcycle} 
-              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+              className="bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
             >
               <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
             </Button>
