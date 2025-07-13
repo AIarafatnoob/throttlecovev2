@@ -13,7 +13,6 @@ const ModernNavBar = () => {
   const { toast } = useToast();
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { setUser } = useAuth();
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -30,8 +29,6 @@ const ModernNavBar = () => {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
-    const setIsLoading = useState(false)[1];
-    setIsLoading(true);
     try {
       // If this is a dev user, just clear locally
       if (user?.id === "dev-001") {
@@ -48,8 +45,6 @@ const ModernNavBar = () => {
         description: "Failed to logout",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
