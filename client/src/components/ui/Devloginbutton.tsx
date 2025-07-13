@@ -7,13 +7,17 @@ const DevLoginButton = () => {
   const [, navigate] = useLocation();
 
   const handleDevLogin = () => {
-    const fakeUser = {
-      id: "dev-001",
-      fullName: "Developer User",
-      email: "dev@example.com",
+    const arafatUser = {
+      id: 1,
+      username: "arafat_dev",
+      fullName: "Arafat",
+      email: "arafat@throttlecove.dev",
+      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      createdAt: new Date(),
+      password: "" // Not used in frontend
     };
 
-    setUser(fakeUser);
+    setUser(arafatUser);
     navigate("/garage");
   };
 

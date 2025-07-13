@@ -28,19 +28,8 @@ function App() {
   useEffect(() => {
     if (data) {
       setUser(data);
-    } else if (!isLoading && !error) {
-      // Set a demo user for development
-      setUser({
-        id: 1,
-        username: "demo",
-        password: "",
-        fullName: "Demo User", 
-        email: "demo@throttlecove.com",
-        avatarUrl: null,
-        createdAt: new Date()
-      });
     }
-  }, [data, setUser, isLoading, error]);
+  }, [data, setUser]);
   
   // Use the AuthenticatedRoute component to protect routes
   const AuthenticatedRoute = ({ component: Component, ...rest }: any) => {

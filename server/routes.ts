@@ -73,6 +73,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.isAuthenticated()) {
       return next();
     }
+    
+    // Dev mode bypass - simulate authenticated user "Arafat"
+    if (process.env.NODE_ENV === "development") {
+      req.user = {
+        id: 1,
+        username: "arafat_dev",
+        fullName: "Arafat",
+        email: "arafat@throttlecove.dev",
+        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        createdAt: new Date(),
+        password: "dev"
+      };
+      return next();
+    }
+    
     res.status(401).json({ message: "Unauthorized" });
   };
   
@@ -119,6 +134,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.isAuthenticated()) {
       return res.json(req.user);
     }
+    
+    // Dev mode bypass - return mock user "Arafat"
+    if (process.env.NODE_ENV === "development") {
+      const arafatUser = {
+        id: 1,
+        username: "arafat_dev",
+        fullName: "Arafat",
+        email: "arafat@throttlecove.dev",
+        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        createdAt: new Date()
+      };
+      return res.json(arafatUser);
+    }
+    
     res.status(401).json({ message: "Not authenticated" });
   });
   
