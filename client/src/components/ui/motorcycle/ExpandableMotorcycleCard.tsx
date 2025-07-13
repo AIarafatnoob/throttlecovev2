@@ -78,7 +78,7 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
         
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
-            <div>
+            <div className="flex-1">
               <h3 className="text-xl font-bold font-header mb-1">
                 {motorcycle.name || `${motorcycle.make} ${motorcycle.model}`}
               </h3>
@@ -90,7 +90,7 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-2"
+              className="p-2 ml-2"
             >
               {isExpanded ? (
                 <ChevronUp className="h-4 w-4" />
