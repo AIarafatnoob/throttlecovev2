@@ -136,16 +136,19 @@ const Home = () => {
             <Link href="/garage">
               <Button 
                 className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 transition-all text-white px-6 py-5 rounded-full font-medium text-lg group"
+                asChild
               >
-                OPEN YOUR GARAGE
-                <motion.div
-                  className="inline-block ml-2"
-                  initial={{ rotate: 0 }}
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TrafficCone className="h-5 w-5" />
-                </motion.div>
+                <span>
+                  OPEN YOUR GARAGE
+                  <motion.div
+                    className="inline-block ml-2"
+                    initial={{ rotate: 0 }}
+                    whileHover={{ rotate: 180 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <TrafficCone className="h-5 w-5" />
+                  </motion.div>
+                </span>
               </Button>
             </Link>
           </motion.div>
@@ -324,9 +327,12 @@ const Home = () => {
               <Button 
                 variant="outline" 
                 className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium rounded-full"
+                asChild
               >
-                View Full Catalog
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span>
+                  View Full Catalog
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </span>
               </Button>
             </Link>
           </motion.div>

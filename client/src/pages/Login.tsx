@@ -105,10 +105,8 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password">Password</Label>
-                  <Link href="/forgot-password">
-                    <a className="text-xs text-[#007AFF] hover:underline">
-                      Forgot password?
-                    </a>
+                  <Link href="/forgot-password" className="text-xs text-[#007AFF] hover:underline">
+                    Forgot password?
                   </Link>
                 </div>
                 <Input
@@ -138,21 +136,17 @@ const Login = () => {
               
               <p className="text-sm text-center text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/register">
-                  <a className="text-[#FF3B30] hover:underline">
-                    Register
-                  </a>
+                <Link href="/register" className="text-[#FF3B30] hover:underline">
+                  Register
                 </Link>
-              </p></p>
+              </p>
             </CardFooter>
           </form>
         </Card>
         
         <div className="mt-4 text-center">
-          <Link href="/">
-            <a className="text-sm text-gray-600 hover:text-[#1A1A1A]">
-              ← Back to home
-            </a>
+          <Link href="/" className="text-sm text-gray-600 hover:text-[#1A1A1A]">
+            ← Back to home
           </Link>
         </div>
       </div>

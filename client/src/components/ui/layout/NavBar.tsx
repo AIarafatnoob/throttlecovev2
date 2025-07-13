@@ -150,13 +150,13 @@ const NavBar = () => {
             ) : (
               <div className="flex space-x-2">
                 <Link href="/login">
-                  <Button variant="ghost" className="text-white hover:text-[#FF3B30]">
-                    Login
+                  <Button variant="ghost" className="text-white hover:text-[#FF3B30]" asChild>
+                    <span>Login</span>
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-[#FF3B30] hover:bg-opacity-90 text-white">
-                    Sign Up
+                  <Button className="bg-[#FF3B30] hover:bg-opacity-90 text-white" asChild>
+                    <span>Sign Up</span>
                   </Button>
                 </Link>
               </div>
