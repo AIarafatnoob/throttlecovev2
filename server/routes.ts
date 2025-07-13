@@ -1,11 +1,12 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from './storage.js';
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 import {
   insertUserSchema,
@@ -13,8 +14,10 @@ import {
   insertMaintenanceRecordSchema,
   insertMaintenanceScheduleSchema,
   insertRideSchema,
-  insertRiderRelationshipSchema
-} from "@shared/schema";
+  insertRiderRelationshipSchema,
+  loginSchema,
+  registerSchema
+} from "../shared/schema.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session setup
@@ -29,7 +32,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }),
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      secure: process.env.NODE_ENV === "production"
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
     }
   }));
   
@@ -45,7 +49,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return done(null, false, { message: "Invalid username or password" });
       }
       
-      if (user.password !== password) { // In a real app, use bcrypt to compare passwords
+      // Compare hashed password
+      const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!isValidPassword) {
         return done(null, false, { message: "Invalid username or password" });
       }
       
@@ -73,409 +79,275 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.isAuthenticated()) {
       return next();
     }
-    
-    // Dev mode bypass - simulate authenticated user "Arafat"
-    if (process.env.NODE_ENV === "development") {
-      req.user = {
-        id: 1,
-        username: "arafat_dev",
-        fullName: "Arafat",
-        email: "arafat@throttlecove.dev",
-        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date(),
-        password: "dev"
-      };
-      return next();
-    }
-    
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ error: "Authentication required" });
   };
-  
-  // Auth routes
-  app.post("/api/auth/login", passport.authenticate("local"), (req, res) => {
-    res.json(req.user);
-  });
-  
-  app.post("/api/auth/register", async (req, res) => {
+
+  // ============================================================================
+  // AUTHENTICATION ROUTES
+  // ============================================================================
+
+  // Register new user
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
-      
-      // Check if username already exists
-      const existingUser = await storage.getUserByUsername(userData.username);
-      if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+      const { username, password, fullName, email } = req.body;
+
+      if (!username || !password || !fullName || !email) {
+        return res.status(400).json({ error: "All fields are required" });
       }
-      
-      const user = await storage.createUser(userData);
+
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const user = await storage.createUser({
+        username,
+        passwordHash,
+        fullName,
+        email,
+      });
+
       req.login(user, (err) => {
         if (err) {
-          return res.status(500).json({ message: "Login failed after registration" });
+          return res.status(500).json({ error: "Login failed after registration" });
         }
-        return res.status(201).json(user);
+        res.json({ 
+          user: {
+            id: user.id,
+            username: user.username,
+            fullName: user.fullName,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+          }
+        });
       });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Registration failed" });
+      console.error('Registration error:', error);
+      res.status(500).json({ error: "Registration failed" });
     }
   });
-  
-  app.post("/api/auth/logout", (req, res) => {
+
+  // Login user
+  app.post("/api/auth/login", (req: Request, res: Response, next: any) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.json({
+          user: {
+            id: user.id,
+            username: user.username,
+            fullName: user.fullName,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+          }
+        });
+      });
+    })(req, res, next);
+  });
+
+  // Logout user
+  app.post("/api/auth/logout", (req: Request, res: Response) => {
     req.logout((err) => {
       if (err) {
-        return res.status(500).json({ message: "Logout failed" });
+        return res.status(500).json({ error: "Logout failed" });
       }
       res.json({ message: "Logged out successfully" });
     });
   });
-  
-  app.get("/api/auth/session", (req, res) => {
+
+  // Get current session/user
+  app.get("/api/auth/session", (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
-      return res.json(req.user);
-    }
-    
-    // Dev mode bypass - return mock user "Arafat"
-    if (process.env.NODE_ENV === "development") {
-      const arafatUser = {
-        id: 1,
-        username: "arafat_dev",
-        fullName: "Arafat",
-        email: "arafat@throttlecove.dev",
-        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      };
-      return res.json(arafatUser);
-    }
-    
-    res.status(401).json({ message: "Not authenticated" });
-  });
-  
-  // User routes
-  app.get("/api/users/me", isAuthenticated, (req, res) => {
-    res.json(req.user);
-  });
-  
-  // Motorcycle routes
-  app.get("/api/motorcycles", isAuthenticated, async (req, res) => {
-    const userId = (req.user as any).id;
-    const motorcycles = await storage.getMotorcyclesByUserId(userId);
-    res.json(motorcycles);
-  });
-  
-  app.post("/api/motorcycles", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const motorcycleData = insertMotorcycleSchema.parse({
-        ...req.body,
-        userId
+      const user = req.user as any;
+      res.json({
+        id: user.id,
+        username: user.username,
+        fullName: user.fullName,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
       });
-      
+    } else {
+      res.status(401).json({ error: "Not authenticated" });
+    }
+  });
+
+  // ============================================================================
+  // MOTORCYCLE ROUTES
+  // ============================================================================
+
+  // Get all motorcycles for user
+  app.get("/api/motorcycles", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const motorcycles = await storage.getMotorcyclesByUserId(req.user.id);
+      res.json(motorcycles);
+    } catch (error) {
+      console.error('Get motorcycles error:', error);
+      res.status(500).json({ error: "Failed to fetch motorcycles" });
+    }
+  });
+
+  // Create new motorcycle
+  app.post("/api/motorcycles", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const motorcycleData = { ...req.body, userId: req.user.id };
       const motorcycle = await storage.createMotorcycle(motorcycleData);
       res.status(201).json(motorcycle);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create motorcycle" });
+      console.error('Create motorcycle error:', error);
+      res.status(500).json({ error: "Failed to create motorcycle" });
     }
   });
-  
-  app.get("/api/motorcycles/:id", isAuthenticated, async (req, res) => {
-    const userId = (req.user as any).id;
-    const motorcycleId = parseInt(req.params.id);
-    
-    const motorcycle = await storage.getMotorcycle(motorcycleId);
-    
-    if (!motorcycle) {
-      return res.status(404).json({ message: "Motorcycle not found" });
-    }
-    
-    if (motorcycle.userId !== userId) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-    
-    res.json(motorcycle);
-  });
-  
-  app.put("/api/motorcycles/:id", isAuthenticated, async (req, res) => {
+
+  // Get motorcycle by ID
+  app.get("/api/motorcycles/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const userId = (req.user as any).id;
-      const motorcycleId = parseInt(req.params.id);
-      
-      const motorcycle = await storage.getMotorcycle(motorcycleId);
-      
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
+      const motorcycle = await storage.getMotorcycle(parseInt(req.params.id));
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
       }
+      res.json(motorcycle);
+    } catch (error) {
+      console.error('Get motorcycle error:', error);
+      res.status(500).json({ error: "Failed to fetch motorcycle" });
+    }
+  });
+
+  // Update motorcycle
+  app.put("/api/motorcycles/:id", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const motorcycle = await storage.getMotorcycle(id);
       
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
       }
-      
-      const updatedMotorcycle = await storage.updateMotorcycle(motorcycleId, req.body);
+
+      const updatedMotorcycle = await storage.updateMotorcycle(id, req.body);
       res.json(updatedMotorcycle);
     } catch (error) {
-      res.status(500).json({ message: "Failed to update motorcycle" });
+      console.error('Update motorcycle error:', error);
+      res.status(500).json({ error: "Failed to update motorcycle" });
     }
   });
-  
-  app.delete("/api/motorcycles/:id", isAuthenticated, async (req, res) => {
+
+  // Delete motorcycle
+  app.delete("/api/motorcycles/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const userId = (req.user as any).id;
+      const id = parseInt(req.params.id);
+      const motorcycle = await storage.getMotorcycle(id);
+      
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
+      }
+
+      await storage.deleteMotorcycle(id);
+      res.json({ message: "Motorcycle deleted successfully" });
+    } catch (error) {
+      console.error('Delete motorcycle error:', error);
+      res.status(500).json({ error: "Failed to delete motorcycle" });
+    }
+  });
+
+  // ============================================================================
+  // MAINTENANCE ROUTES
+  // ============================================================================
+
+  // Get maintenance records for motorcycle
+  app.get("/api/motorcycles/:id/maintenance", isAuthenticated, async (req: any, res: Response) => {
+    try {
       const motorcycleId = parseInt(req.params.id);
-      
       const motorcycle = await storage.getMotorcycle(motorcycleId);
       
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
       }
-      
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      await storage.deleteMotorcycle(motorcycleId);
-      res.status(204).end();
+
+      const records = await storage.getMaintenanceRecordsByMotorcycleId(motorcycleId);
+      res.json(records);
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete motorcycle" });
+      console.error('Get maintenance records error:', error);
+      res.status(500).json({ error: "Failed to fetch maintenance records" });
     }
   });
-  
-  // Maintenance record routes
-  app.get("/api/motorcycles/:motorcycleId/maintenance", isAuthenticated, async (req, res) => {
+
+  // Create maintenance record
+  app.post("/api/motorcycles/:id/maintenance", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const userId = (req.user as any).id;
-      const motorcycleId = parseInt(req.params.motorcycleId);
-      
+      const motorcycleId = parseInt(req.params.id);
       const motorcycle = await storage.getMotorcycle(motorcycleId);
       
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
       }
-      
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const maintenanceRecords = await storage.getMaintenanceRecordsByMotorcycleId(motorcycleId);
-      res.json(maintenanceRecords);
+
+      const recordData = { ...req.body, motorcycleId };
+      const record = await storage.createMaintenanceRecord(recordData);
+      res.status(201).json(record);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get maintenance records" });
+      console.error('Create maintenance record error:', error);
+      res.status(500).json({ error: "Failed to create maintenance record" });
     }
   });
-  
-  app.post("/api/motorcycles/:motorcycleId/maintenance", isAuthenticated, async (req, res) => {
+
+  // ============================================================================
+  // RIDE ROUTES
+  // ============================================================================
+
+  // Get rides for user
+  app.get("/api/rides", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const userId = (req.user as any).id;
-      const motorcycleId = parseInt(req.params.motorcycleId);
-      
-      const motorcycle = await storage.getMotorcycle(motorcycleId);
-      
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
-      }
-      
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const maintenanceData = insertMaintenanceRecordSchema.parse({
-        ...req.body,
-        motorcycleId
-      });
-      
-      const maintenanceRecord = await storage.createMaintenanceRecord(maintenanceData);
-      res.status(201).json(maintenanceRecord);
+      const rides = await storage.getRidesByUserId(req.user.id);
+      res.json(rides);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create maintenance record" });
+      console.error('Get rides error:', error);
+      res.status(500).json({ error: "Failed to fetch rides" });
     }
   });
-  
-  app.put("/api/maintenance/:id", isAuthenticated, async (req, res) => {
+
+  // Create new ride
+  app.post("/api/rides", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const userId = (req.user as any).id;
-      const maintenanceId = parseInt(req.params.id);
-      
-      const maintenance = await storage.getMaintenanceRecord(maintenanceId);
-      
-      if (!maintenance) {
-        return res.status(404).json({ message: "Maintenance record not found" });
-      }
-      
-      const motorcycle = await storage.getMotorcycle(maintenance.motorcycleId);
-      
-      if (motorcycle?.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const updatedMaintenance = await storage.updateMaintenanceRecord(maintenanceId, req.body);
-      res.json(updatedMaintenance);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to update maintenance record" });
-    }
-  });
-  
-  // Maintenance schedule routes
-  app.get("/api/motorcycles/:motorcycleId/schedule", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const motorcycleId = parseInt(req.params.motorcycleId);
-      
-      const motorcycle = await storage.getMotorcycle(motorcycleId);
-      
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
-      }
-      
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const schedules = await storage.getMaintenanceSchedulesByMotorcycleId(motorcycleId);
-      res.json(schedules);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to get maintenance schedules" });
-    }
-  });
-  
-  app.post("/api/motorcycles/:motorcycleId/schedule", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const motorcycleId = parseInt(req.params.motorcycleId);
-      
-      const motorcycle = await storage.getMotorcycle(motorcycleId);
-      
-      if (!motorcycle) {
-        return res.status(404).json({ message: "Motorcycle not found" });
-      }
-      
-      if (motorcycle.userId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const scheduleData = insertMaintenanceScheduleSchema.parse({
-        ...req.body,
-        motorcycleId
-      });
-      
-      const schedule = await storage.createMaintenanceSchedule(scheduleData);
-      res.status(201).json(schedule);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create maintenance schedule" });
-    }
-  });
-  
-  // Ride routes
-  app.get("/api/rides", isAuthenticated, async (req, res) => {
-    const userId = (req.user as any).id;
-    const rides = await storage.getRidesByUserId(userId);
-    res.json(rides);
-  });
-  
-  app.post("/api/rides", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const rideData = insertRideSchema.parse({
-        ...req.body,
-        userId
-      });
-      
+      const rideData = { ...req.body, userId: req.user.id };
       const ride = await storage.createRide(rideData);
       res.status(201).json(ride);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create ride" });
+      console.error('Create ride error:', error);
+      res.status(500).json({ error: "Failed to create ride" });
     }
   });
-  
-  // Friends routes
-  app.get("/api/friends", isAuthenticated, async (req, res) => {
-    const userId = (req.user as any).id;
-    const relationships = await storage.getRiderRelationshipsByUserId(userId);
-    
-    // Get all friend IDs
-    const friendIds = relationships
-      .filter(rel => rel.status === "accepted")
-      .map(rel => rel.userId === userId ? rel.friendId : rel.userId);
-    
-    // Get friend profiles
-    const friendPromises = friendIds.map(id => storage.getUser(id));
-    const friends = await Promise.all(friendPromises);
-    
-    // Filter out undefined values and remove password field
-    const friendsFiltered = friends
-      .filter(Boolean)
-      .map(friend => {
-        const { password, ...userData } = friend!;
-        return userData;
-      });
-    
-    res.json(friendsFiltered);
+
+  // ============================================================================
+  // HEALTH AND STATUS ROUTES
+  // ============================================================================
+
+  // API status endpoint
+  app.get("/api/status", (req: Request, res: Response) => {
+    res.json({
+      status: "operational",
+      timestamp: new Date().toISOString(),
+      version: "1.0.0",
+      services: {
+        auth: "operational",
+        vehicles: "operational",
+        storage: "operational",
+      },
+    });
   });
-  
-  app.post("/api/friends/request", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const { friendId } = req.body;
-      
-      if (userId === friendId) {
-        return res.status(400).json({ message: "Cannot add yourself as a friend" });
-      }
-      
-      const friend = await storage.getUser(friendId);
-      if (!friend) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      const relationshipData = insertRiderRelationshipSchema.parse({
-        userId,
-        friendId,
-        status: "pending"
-      });
-      
-      const relationship = await storage.createRiderRelationship(relationshipData);
-      res.status(201).json(relationship);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create friend request" });
-    }
-  });
-  
-  app.put("/api/friends/request/:id", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).id;
-      const relationshipId = parseInt(req.params.id);
-      const { status } = req.body;
-      
-      const relationship = await storage.getRiderRelationship(relationshipId);
-      
-      if (!relationship) {
-        return res.status(404).json({ message: "Relationship not found" });
-      }
-      
-      if (relationship.friendId !== userId) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const updatedRelationship = await storage.updateRiderRelationship(relationshipId, { status });
-      res.json(updatedRelationship);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to update friend request" });
-    }
-  });
-  
+
+  // Create HTTP server
   const httpServer = createServer(app);
   
+  console.log('API routes registered successfully');
   return httpServer;
 }

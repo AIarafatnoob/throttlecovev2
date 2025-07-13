@@ -73,10 +73,10 @@ export class MemStorage implements IStorage {
     this.rides = new Map();
     this.riderRelationships = new Map();
     
-    // Add demo user
+    // Add demo user with hashed password
     this.createUser({
       username: "demo",
-      password: "password",
+      passwordHash: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // "password"
       fullName: "Demo User",
       email: "demo@throttlecove.com",
       avatarUrl: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80"

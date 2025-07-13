@@ -1,12 +1,39 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from 'cors';
+import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeDatabase, checkDatabaseHealth } from './database.js';
+import { config } from './config.js';
+import { logger, requestLogger } from './utils/logger.js';
+import { 
+  securityHeaders,
+  apiRateLimit,
+  requestTimeout,
+  corsOptions 
+} from './middleware/security.js';
 
+// Initialize Express app
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
+// Trust proxy for accurate IP addresses
+app.set('trust proxy', 1);
+
+// Security middleware
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+app.use(compression());
+app.use(requestTimeout());
+
+// Parse JSON with size limit
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Rate limiting for API routes
+app.use('/api', apiRateLimit);
+
+// Request logging middleware
+app.use((req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
@@ -19,6 +46,18 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+    
+    // Enhanced logging
+    requestLogger.info('Request completed', {
+      method: req.method,
+      url: req.url,
+      statusCode: res.statusCode,
+      duration,
+      ip: req.ip,
+      userAgent: req.get('User-Agent'),
+    });
+
+    // Keep original format for API endpoints
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
@@ -36,35 +75,107 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  const server = await registerRoutes(app);
+// Health check endpoint
+app.get("/health", async (req, res) => {
+  try {
+    const dbHealth = await checkDatabaseHealth();
+    
+    const health = {
+      status: dbHealth ? "healthy" : "unhealthy",
+      timestamp: new Date().toISOString(),
+      environment: config.NODE_ENV,
+      version: process.env.npm_package_version || '1.0.0',
+      database: dbHealth ? "connected" : "disconnected",
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+    };
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+    const statusCode = dbHealth ? 200 : 503;
+    res.status(statusCode).json(health);
+  } catch (error) {
+    logger.error('Health check failed:', error);
+    res.status(503).json({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      error: "Health check failed",
+    });
   }
+});
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+(async () => {
+  try {
+    // Initialize database first
+    try {
+      await initializeDatabase();
+      logger.info('Database initialized successfully');
+    } catch (error) {
+      logger.warn('Database initialization failed, continuing without database:', error);
+    }
+
+    // Register API routes
+    const server = await registerRoutes(app);
+
+    // Global error handler
+    app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+      logger.error('Unhandled error:', {
+        error: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method,
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      // Don't expose internal errors in production
+      const isDevelopment = config.NODE_ENV === 'development';
+      
+      res.status(err.status || err.statusCode || 500).json({
+        error: isDevelopment ? err.message : 'Internal server error',
+        ...(isDevelopment && { stack: err.stack }),
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    // Setup Vite in development or serve static files in production
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // Graceful shutdown handlers
+    process.on('SIGTERM', () => {
+      logger.info('SIGTERM received, shutting down gracefully');
+      server.close(() => {
+        logger.info('Process terminated');
+        process.exit(0);
+      });
+    });
+
+    process.on('SIGINT', () => {
+      logger.info('SIGINT received, shutting down gracefully');
+      server.close(() => {
+        logger.info('Process terminated');
+        process.exit(0);
+      });
+    });
+
+    // Start server
+    const port = config.PORT;
+    server.listen({
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    }, () => {
+      logger.info(`Server running on port ${port}`, {
+        environment: config.NODE_ENV,
+        port,
+      });
+      log(`serving on port ${port}`);
+    });
+
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
 })();
