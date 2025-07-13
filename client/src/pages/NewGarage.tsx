@@ -514,11 +514,11 @@ const NewGarage = () => {
                     {/* Stats Section */}
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 flex-1">
                       <div className="text-center bg-gray-50 rounded-2xl p-3 sm:p-4">
-                        <p className="text-gray-500 text-xs mb-1">Total Miles</p>
+                        <p className="text-gray-500 text-xs mb-1">Total KM</p>
                         <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
-                          {motorcycle.mileage?.toLocaleString() || "0"}
+                          {motorcycle.mileage ? Math.round(motorcycle.mileage * 1.60934).toLocaleString() : "0"}
                         </p>
-                        <p className="text-gray-400 text-xs">MI</p>
+                        <p className="text-gray-400 text-xs">KM</p>
                       </div>
                       <div className="text-center bg-gray-50 rounded-2xl p-3 sm:p-4">
                         <p className="text-gray-500 text-xs mb-1">Next Service</p>
@@ -544,23 +544,26 @@ const NewGarage = () => {
                         variant="outline" 
                         className="border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
                         onClick={async () => {
-                          const newMileage = prompt(`Current mileage: ${motorcycle.mileage || 0}. Enter new mileage:`);
-                          if (newMileage && !isNaN(Number(newMileage))) {
+                          const currentKm = motorcycle.mileage ? Math.round(motorcycle.mileage * 1.60934) : 0;
+                          const newKilometers = prompt(`Current kilometers: ${currentKm}. Enter new kilometers:`);
+                          if (newKilometers && !isNaN(Number(newKilometers))) {
                             try {
+                              // Convert KM back to miles for storage
+                              const milesValue = Math.round(Number(newKilometers) / 1.60934);
                               await apiRequest("PUT", `/api/motorcycles/${motorcycle.id}`, { 
                                 ...motorcycle, 
-                                mileage: Number(newMileage) 
+                                mileage: milesValue 
                               });
                               // Invalidate queries to refresh data without page reload
                               queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
                               toast({
-                                title: "Mileage Updated",
-                                description: `Updated mileage to ${Number(newMileage).toLocaleString()} miles`,
+                                title: "Kilometers Updated",
+                                description: `Updated kilometers to ${Number(newKilometers).toLocaleString()} km`,
                               });
                             } catch (error) {
                               toast({
                                 title: "Error",
-                                description: "Failed to update mileage. Please try again.",
+                                description: "Failed to update kilometers. Please try again.",
                                 variant: "destructive",
                               });
                             }
@@ -568,13 +571,13 @@ const NewGarage = () => {
                         }}
                       >
                         <Gauge className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        Update Miles
+                        Update KM
                       </Button>
                     </div>
 
-                    {/* Centered Arrow Button - Positioned at bottom */}
+                    {/* Centered Arrow Button - 50% hanging outside card */}
                     <div className="relative">
-                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-4 z-10">
+                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-5 z-10">
                         <Button
                           variant="default"
                           size="sm"
@@ -667,7 +670,7 @@ const NewGarage = () => {
           <div className="relative">
             <Button 
               onClick={handleAddMotorcycle} 
-              className="bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
             >
               <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
             </Button>
