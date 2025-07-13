@@ -1,14 +1,32 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, LogOut } from "lucide-react";
+import logo from "@/assets/tclogov2r2.svg"
 
 const ModernNavBar = () => {
   const [location] = useLocation();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { user, setUser } = useAuth();
   const { toast } = useToast();
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setShowNavbar(false); // scrolling down
+      } else {
+        setShowNavbar(true); // scrolling up
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const handleLogout = async () => {
     try {
@@ -36,18 +54,22 @@ const ModernNavBar = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <nav className={`bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
+        showNavbar ? "translate-y-0" : "-translate-y-full"
+      }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex justify-between items-center min-h-[60px] w-full gap-2">
           <div className="flex items-center bg-[#1A1A1A] rounded-full px-3 sm:px-6 lg:px-8 py-2 sm:py-3 shadow-lg mx-auto min-w-fit max-w-fit justify-center">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 mr-3 sm:mr-6">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-5 sm:h-5 text-white fill-current">
-                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-                </svg>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center">
+                  <img
+                    src={logo}
+                    alt="ThrottleCove Logo"
+                    className="object-contain w-full h-full"
+                  />
               </div>
               <span className="text-base sm:text-lg font-semibold text-white hidden sm:block">
-                Throttle<span className="text-[#FF3B30] font-bold">Cove</span>
+                THROTTLE<span className="text-[#FF3B30] font-bold">Cove</span>
               </span>
             </Link>
 
@@ -104,36 +126,7 @@ const ModernNavBar = () => {
       </div>
 
       {/* Sticky nav pill that follows scroll */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden sm:block transition-all duration-300 sticky-nav">
-        <div className="flex items-center bg-[#1A1A1A] rounded-full px-6 py-3 shadow-lg backdrop-blur-sm">
-          <Link href="/" className="flex items-center gap-3 mr-6">
-            <div className="w-8 h-8 bg-[#FF3B30] rounded-full flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-current">
-                <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-              </svg>
-            </div>
-            <span className="text-lg font-semibold text-white">
-              Throttle<span className="text-[#FF3B30] font-bold">Cove</span>
-            </span>
-          </Link>
-
-          <div className="flex items-center space-x-1">
-            {navLinks.filter(link => link.name !== 'Admin').map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 whitespace-nowrap ${
-                  location === link.path
-                    ? "bg-[#FF3B30] text-white"
-                    : "text-gray-300 hover:text-white hover:bg-gray-700"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      
     </nav>
   );
 };

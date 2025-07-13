@@ -1,3 +1,5 @@
+import logoh from "@/assets/tclogov2h2.svg";
+import neonga from "@/assets/nwhero2.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,8 +8,6 @@ import { Link } from "wouter";
 import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import tcLogo from "@assets/image_1750267062334.png";
-import PartsCarousel from "@/components/ui/PartsCarousel";
 
 // Sample motorcycle data
 const motorcycles = [
@@ -102,7 +102,7 @@ const Home = () => {
       <section className="bg-[#1A1A1A] text-white relative h-[45vh] md:h-[55vh] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
         <motion.img 
-          src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80" 
+          src={neonga} 
           alt="Bike in garage" 
           className="absolute inset-0 w-full h-full object-cover"
           initial={{ scale: 1.05 }}
@@ -124,8 +124,8 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Track your bikes, schedule maintenance, connect with riders, and pamper your 
-            <span className="font-semibold text-[#FF3B30]"> THROTTLE</span> machines
+            Command the road. Master your maintenance, ride with legends, and treat your machine like royalty -
+            <span className="font-bold text-[#FF3B30]"> THROTTLE</span> UP
           </motion.p>
           <motion.div 
             className="mt-6"
@@ -135,7 +135,7 @@ const Home = () => {
           >
             <Link href="/garage">
               <Button 
-                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 transition-all text-white px-6 py-5 rounded font-medium text-lg group"
+                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 transition-all text-white px-6 py-5 rounded-full font-medium text-lg group"
               >
                 OPEN YOUR GARAGE
                 <motion.div
@@ -162,35 +162,15 @@ const Home = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            {/* Site Name */}
-            <div className="flex items-center justify-center mb-8">
-              <div className="relative flex items-center">
-                {/* Left decorative elements */}
-                <div className="flex items-center space-x-1 mr-6">
-                  <div className="w-8 h-px bg-gradient-to-r from-transparent to-[#FF3B30]"></div>
-                  <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
-                  <div className="w-4 h-px bg-[#FF3B30]"></div>
-                </div>
-                
-                {/* Brand name with modern styling */}
-                <div className="relative">
-                  <h2 className="text-3xl font-black text-[#1A1A1A] tracking-tight uppercase relative">
-                    <span className="relative z-10">
-                      Throttle
-                      <span className="text-[#FF3B30]">Cove</span>
-                    </span>
-                    {/* Subtle background accent */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm"></div>
-                  </h2>
-
-                </div>
-                
-                {/* Right decorative elements */}
-                <div className="flex items-center space-x-1 ml-6">
-                  <div className="w-4 h-px bg-[#FF3B30]"></div>
-                  <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
-                  <div className="w-8 h-px bg-gradient-to-l from-transparent to-[#FF3B30]"></div>
-                </div>
+            {/* Site Logo Centered */}
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <img
+                  src={logoh}
+                  alt="ThrottleCove Logo"
+                  className="h-14 sm:h-20 w-auto object-contain relative z-10"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm" />
               </div>
             </div>
 
