@@ -191,21 +191,7 @@ const NewGarage = () => {
   const [isOverFooter, setIsOverFooter] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
   
-  // Document upload modal state
-  const [isDocumentUploadOpen, setIsDocumentUploadOpen] = useState(false);
-  const [selectedDocumentType, setSelectedDocumentType] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [documentDescription, setDocumentDescription] = useState("");
-  const [expirationDate, setExpirationDate] = useState("");
-  const [vehicleForDocument, setVehicleForDocument] = useState("");
-  
-  // Mock document storage - in real app this would be in database
-  const [uploadedDocuments, setUploadedDocuments] = useState<{[key: string]: boolean}>({
-    registration: true,
-    service: true,
-    license: false,
-    insurance: false
-  });
+
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
@@ -373,88 +359,7 @@ const NewGarage = () => {
     console.log("SOS ACTIVATED - Emergency services notified");
   };
 
-  // Document access handler
-  const handleDocumentAccess = (documentType: string) => {
-    if (documentType === 'all') {
-      // Navigate to all documents view
-      window.location.href = '/documents/view/all';
-      return;
-    }
 
-    // Check if document already exists/uploaded
-    if (uploadedDocuments[documentType]) {
-      // Document exists - navigate directly to document viewer
-      window.location.href = `/documents/view/${documentType}`;
-    } else {
-      // Document doesn't exist - open upload form modal
-      setSelectedDocumentType(documentType);
-      setIsDocumentUploadOpen(true);
-      toast({
-        title: "Upload Required",
-        description: `No ${documentType} documents found. Please upload your document.`,
-      });
-    }
-  };
-
-  // Document upload handlers
-  const handleDocumentFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        toast({
-          title: "File too large",
-          description: "Please select a file smaller than 10MB",
-          variant: "destructive",
-        });
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
-
-  const handleDocumentUpload = async () => {
-    if (!selectedFile || !selectedDocumentType || !vehicleForDocument) {
-      toast({
-        title: "Missing information",
-        description: "Please fill in all required fields and select a file",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Simulate upload process
-    toast({
-      title: "Uploading document...",
-      description: "Please wait while we process your document",
-    });
-
-    // Simulate API call
-    setTimeout(() => {
-      // Save document to state (in real app this would save to database)
-      setUploadedDocuments(prev => ({
-        ...prev,
-        [selectedDocumentType]: true
-      }));
-      
-      toast({
-        title: "Document uploaded successfully!",
-        description: `${selectedDocumentType} document has been saved for your vehicle`,
-      });
-      
-      // Reset form and close modal
-      setSelectedFile(null);
-      setSelectedDocumentType("");
-      setVehicleForDocument("");
-      setDocumentDescription("");
-      setExpirationDate("");
-      setIsDocumentUploadOpen(false);
-      
-      // Navigate to document viewer after upload
-      setTimeout(() => {
-        window.location.href = `/documents/view/${selectedDocumentType}`;
-      }, 1000);
-    }, 2000);
-  };
 
   const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -620,7 +525,6 @@ const NewGarage = () => {
 
                       return buttons.map((button) => {
                         const isCenter = button.isCenter;
-                        const isAvailable = button.key === 'all' || uploadedDocuments[button.key];
                         
                         return (
                           <button 
@@ -628,10 +532,8 @@ const NewGarage = () => {
                             className={`relative ${
                               isCenter 
                                 ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
-                                : `w-12 h-12 ${isAvailable ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-500 hover:bg-gray-600'}`
+                                : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
                             } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
-                            onClick={() => handleDocumentAccess(button.key)}
-                            title={isAvailable ? `View ${button.title}` : `Upload ${button.title}`}
                           >
                             {isCenter ? (
                               <>
@@ -640,12 +542,6 @@ const NewGarage = () => {
                               </>
                             ) : (
                               <span className="text-white text-lg">{button.icon}</span>
-                            )}
-                            {!isAvailable && !isCenter && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                            )}
-                            {isAvailable && !isCenter && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                             )}
                           </button>
                         );
@@ -1061,105 +957,7 @@ const NewGarage = () => {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Document Upload Modal */}
-        <Dialog open={isDocumentUploadOpen} onOpenChange={setIsDocumentUploadOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-[#FF3B30]" />
-                Upload {selectedDocumentType?.charAt(0).toUpperCase() + selectedDocumentType?.slice(1)} Document
-              </DialogTitle>
-              <DialogDescription>
-                Upload your {selectedDocumentType} document for easy access and management.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4 py-4">
-              {/* Document Type Display */}
-              <div className="space-y-2">
-                <Label htmlFor="document-type">Document Type</Label>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium text-[#1A1A1A]">
-                    {selectedDocumentType?.charAt(0).toUpperCase() + selectedDocumentType?.slice(1)}
-                  </span>
-                </div>
-              </div>
 
-              {/* Vehicle Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="vehicle">Vehicle *</Label>
-                <Select value={vehicleForDocument} onValueChange={setVehicleForDocument}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vehicle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {motorcycles?.map((motorcycle) => (
-                      <SelectItem key={motorcycle.id} value={motorcycle.id.toString()}>
-                        {motorcycle.year} {motorcycle.make} {motorcycle.model}
-                      </SelectItem>
-                    ))}
-                    <SelectItem value="all">All Vehicles</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <Label htmlFor="file">Document File *</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#FF3B30] transition-colors">
-                  <input
-                    type="file"
-                    id="file"
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                    onChange={handleDocumentFileSelect}
-                    className="hidden"
-                  />
-                  <label htmlFor="file" className="cursor-pointer">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-1">
-                      {selectedFile ? selectedFile.name : "Click to upload or drag and drop"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PDF, DOC, DOCX, JPG, PNG (max 10MB)
-                    </p>
-                  </label>
-                </div>
-              </div>
-
-              {/* Expiration Date */}
-              <div className="space-y-2">
-                <Label htmlFor="expiration">Expiration Date (if applicable)</Label>
-                <Input
-                  type="date"
-                  id="expiration"
-                  value={expirationDate}
-                  onChange={(e) => setExpirationDate(e.target.value)}
-                />
-              </div>
-
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Add any additional notes about this document..."
-                  value={documentDescription}
-                  onChange={(e) => setDocumentDescription(e.target.value)}
-                  rows={2}
-                />
-              </div>
-
-              {/* Upload Button */}
-              <Button 
-                onClick={handleDocumentUpload}
-                className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90"
-                disabled={!selectedFile || !vehicleForDocument}
-              >
-                Upload Document
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
 
       </div>
     </div>
