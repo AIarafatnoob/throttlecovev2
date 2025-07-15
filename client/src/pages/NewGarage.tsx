@@ -601,13 +601,13 @@ const NewGarage = () => {
               {/* SNS-Style Profile Layout */}
               <div className="flex flex-col space-y-6">
                 {/* Header Row - Profile Picture + Action Buttons */}
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-between">
                   {/* Left side - empty for balance */}
-                  <div className="w-20 sm:w-24 lg:w-28"></div>
+                  <div className="w-16"></div>
                   
-                  {/* Center - Extra Large Profile Picture */}
+                  {/* Center - Large Profile Picture */}
                   <div className="relative">
-                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-xl ring-4 ring-white"
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
                         onClick={() => profileInputRef.current?.click()}>
                         {profilePicture ? (
                             <img 
@@ -616,12 +616,12 @@ const NewGarage = () => {
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <div className="text-white font-bold text-3xl sm:text-4xl lg:text-5xl">
+                            <div className="text-white font-bold text-2xl sm:text-3xl">
                                 {user?.fullName?.[0] || user?.username?.[0] || 'U'}
                             </div>
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                            <Camera className="w-8 h-8 text-white" />
+                            <Camera className="w-6 h-6 text-white" />
                         </div>
                     </div>
                     <input
@@ -633,32 +633,32 @@ const NewGarage = () => {
                     />
                   </div>
                   
-                  {/* Right side - Larger Rank Badge */}
+                  {/* Right side - Rank Badge */}
                   <RankDetailsModal totalKilometers={totalKilometers}>
                     <div className="relative cursor-pointer transition-transform hover:scale-105">
-                      <div className={`w-18 h-18 sm:w-20 sm:h-20 lg:w-24 lg:h-24 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-xl ring-4 ring-white`}>
-                        <span className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold">
+                      <div className={`w-14 h-14 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg ring-2 ring-white`}>
+                        <span className="text-white text-xl sm:text-2xl font-bold">
                           {currentRank.patch}
                         </span>
                       </div>
                       {/* Tier indicator */}
-                      <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center shadow-md">
-                        <div className={`w-3 h-3 sm:w-4 sm:h-4 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                        <div className={`w-2 h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
                       </div>
                     </div>
                   </RankDetailsModal>
                 </div>
 
                 {/* User Info - Centered */}
-                <div className="text-center space-y-6">
-                  <div className="space-y-3">
-                    <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A1A]">
+                <div className="text-center space-y-4">
+                  <div className="space-y-2">
+                    <h1 className="font-bold text-2xl sm:text-3xl text-[#1A1A1A]">
                       {user?.fullName || user?.username || "User"}
                     </h1>
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="text-gray-600 text-base sm:text-lg font-medium">{currentRank.name}</span>
-                      <span className="text-gray-400 text-lg">•</span>
-                      <span className="text-gray-500 text-base sm:text-lg">{currentRank.tier}</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-gray-600 text-sm font-medium">{currentRank.name}</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-500 text-sm">{currentRank.tier}</span>
                     </div>
                   </div>
 
@@ -698,15 +698,14 @@ const NewGarage = () => {
                               document ? `border-2 ${getBorderColor()}` : ''
                             }`}
                             style={{
-                              borderWidth: document ? '3px' : '0',
-                              borderStyle: document ? 'dashed' : 'none',
+                              borderWidth: document ? '1px' : '0',
+                              borderStyle: document ? 'solid' : 'none',
                               borderColor: document ? (
                                 !document.expiryDate ? 'rgb(34 197 94)' : // green-500
                                 Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 0 ? 'rgb(239 68 68)' : // red-500
                                 Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 30 ? 'rgb(234 179 8)' : // yellow-500
                                 'rgb(34 197 94)' // green-500
-                              ) : 'transparent',
-                              strokeDasharray: document ? '8 16' : 'none'
+                              ) : 'transparent'
                             }}
                           >
                             {isCenter ? (
