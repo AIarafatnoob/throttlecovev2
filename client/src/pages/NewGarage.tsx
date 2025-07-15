@@ -383,126 +383,157 @@ const NewGarage = () => {
                   SOS {Math.ceil((100 - sosProgress) / 20)}s
                 </div>
               )}
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
-                <div className="flex items-center gap-4 flex-shrink-0 w-full">
-                  {/* Profile Picture on the left */}
-                  <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center"
-                      onClick={() => profileInputRef.current?.click()}>
-                      {profilePicture ? (
-                          <img 
-                              src={profilePicture} 
-                              alt="Profile" 
-                              className="w-full h-full object-cover"
-                          />
-                      ) : (
-                          <div className="text-white font-bold text-lg sm:text-2xl">
-                              {user?.fullName?.[0] || user?.username?.[0] || 'U'}
-                          </div>
-                      )}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Camera className="w-6 h-6 text-white" />
-                      </div>
-                  </div>
-                  <input
-                      ref={profileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePictureUpload}
-                      className="hidden"
-                  />
+              {/* SNS-Style Profile Layout */}
+              <div className="flex flex-col space-y-6">
+                {/* Header Row - Profile Picture + Action Buttons */}
+                <div className="flex items-center justify-between">
+                  {/* Left side - empty for balance */}
+                  <div className="w-16"></div>
                   
-                  {/* User Name and Rank Info centered */}
-                  <div className="flex-1 text-center">
-                    <div>
-                      <h3 className="font-bold text-lg sm:text-xl text-[#1A1A1A] truncate">
-                        {user?.fullName || user?.username || "User"}
-                      </h3>
-                      <p className="text-gray-500 text-xs sm:text-sm truncate">{currentRank.name} • {currentRank.tier}</p>
+                  {/* Center - Large Profile Picture */}
+                  <div className="relative">
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
+                        onClick={() => profileInputRef.current?.click()}>
+                        {profilePicture ? (
+                            <img 
+                                src={profilePicture} 
+                                alt="Profile" 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="text-white font-bold text-2xl sm:text-3xl">
+                                {user?.fullName?.[0] || user?.username?.[0] || 'U'}
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                            <Camera className="w-6 h-6 text-white" />
+                        </div>
                     </div>
+                    <input
+                        ref={profileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePictureUpload}
+                        className="hidden"
+                    />
                   </div>
                   
-                  {/* Rank Patch on the right - Clickable */}
+                  {/* Right side - Rank Badge */}
                   <RankDetailsModal totalKilometers={totalKilometers}>
                     <div className="relative cursor-pointer transition-transform hover:scale-105">
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
-                        <span className="text-white text-lg sm:text-2xl font-bold">
+                      <div className={`w-14 h-14 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg ring-2 ring-white`}>
+                        <span className="text-white text-xl sm:text-2xl font-bold">
                           {currentRank.patch}
                         </span>
                       </div>
                       {/* Tier indicator */}
-                      <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
-                        <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                        <div className={`w-2 h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
                       </div>
                     </div>
                   </RankDetailsModal>
                 </div>
 
-                <div className="flex flex-col w-full lg:w-auto gap-4">
-                  <div className="flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-gray-500 text-sm mb-2">Total KM</p>
-                      <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-                        {totalKilometers.toLocaleString()}
+                {/* User Info - Centered */}
+                <div className="text-center space-y-2">
+                  <h1 className="font-bold text-2xl sm:text-3xl text-[#1A1A1A]">
+                    {user?.fullName || user?.username || "User"}
+                  </h1>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-gray-600 text-sm font-medium">{currentRank.name}</span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-500 text-sm">{currentRank.tier}</span>
+                  </div>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Total KM - Primary Stat */}
+                  <div className="col-span-1 sm:col-span-3 text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6">
+                    <p className="text-gray-500 text-sm mb-2 font-medium">Total Distance</p>
+                    <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] mb-1">
+                      {totalKilometers.toLocaleString()}
+                    </p>
+                    <p className="text-gray-400 text-sm">kilometers traveled</p>
+                  </div>
+                  
+                  {/* Secondary Stats */}
+                  <div className="text-center bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-500 text-xs mb-1">Vehicles</p>
+                    <p className="text-2xl font-bold text-[#1A1A1A]">{motorcycles?.length || 0}</p>
+                  </div>
+                  
+                  <div className="text-center bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-500 text-xs mb-1">Rank Level</p>
+                    <p className="text-2xl font-bold text-[#FF3B30]">{currentRank.id}/20</p>
+                  </div>
+                  
+                  <div className="text-center bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-500 text-xs mb-1">Progress</p>
+                    <p className="text-2xl font-bold text-green-600">{((totalKilometers / 300000) * 100).toFixed(0)}%</p>
+                  </div>
+                </div>
+
+                {/* Progress Bar with Enhanced Design */}
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Ranking Progress</p>
+                    {nextRank ? (
+                      <p className="text-xs text-gray-500">
+                        <span className="font-medium text-[#FF3B30]">{kmToNext.toLocaleString()} km</span> to reach <span className="font-medium">{nextRank.name}</span>
                       </p>
-                      <p className="text-gray-400 text-sm mt-1">kilometers traveled</p>
+                    ) : (
+                      <p className="text-xs text-green-600 font-medium">🏆 Maximum Rank Achieved!</p>
+                    )}
+                  </div>
+                  
+                  <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
+                    {/* Progress fill */}
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full transition-all duration-700 ease-out"
+                      style={{ 
+                        width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
+                      }}
+                    />
+
+                    {/* Progress rank indicators */}
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-2">
+                      {progressRanks.map((rank, index) => {
+                        const isAchieved = totalKilometers >= rank.minKm;
+                        const isCurrent = currentRank.id === rank.id;
+
+                        return (
+                          <div
+                            key={rank.id}
+                            className={`relative w-3 h-3 rounded-full border transition-all duration-300 ${
+                              isCurrent
+                                ? 'bg-[#FF3B30] border-white shadow-md scale-150 z-10'
+                                : isAchieved
+                                ? 'bg-white border-gray-300 shadow-sm'
+                                : 'bg-gray-300 border-gray-400'
+                            }`}
+                            style={{ 
+                              position: 'absolute',
+                              left: `${33.33 * index}%`,
+                              transform: 'translateX(-50%)'
+                            }}
+                            title={`${rank.name} - ${rank.minKm.toLocaleString()} km`}
+                          >
+                            {isCurrent && (
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A] text-white px-2 py-1 rounded text-xs whitespace-nowrap z-20">
+                                {rank.name}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-
-                  {/* Progress Bar with Current, Next 2 Levels */}
-                  <div className="w-full px-4">
-                    <div className="relative bg-gray-200 rounded-full h-4 overflow-hidden">
-                      {/* Progress fill based on current level progress */}
-                      <div 
-                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-red-500 rounded-full transition-all duration-500"
-                        style={{ 
-                          width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
-                        }}
-                      />
-
-                      {/* Progress rank dots - only showing current and next 2 levels */}
-                      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-1">
-                        {progressRanks.map((rank, index) => {
-                          const position = (rank.minKm / 300000) * 100;
-                          const isAchieved = totalKilometers >= rank.minKm;
-                          const isCurrent = currentRank.id === rank.id;
-                          const positionPercent = Math.min(position, 95);
-
-                          return (
-                            <div
-                              key={rank.id}
-                              className={`relative w-4 h-4 rounded-full border-2 transition-all duration-300 ${
-                                isCurrent
-                                  ? 'bg-[#FF3B30] border-white shadow-lg scale-125'
-                                  : isAchieved
-                                  ? 'bg-white border-gray-300'
-                                  : 'bg-gray-300 border-gray-400'
-                              }`}
-                              style={{ 
-                                position: 'absolute',
-                                left: `${33.33 * index}%`,
-                                transform: 'translateX(-50%)'
-                              }}
-                              title={`${rank.name} - ${rank.minKm.toLocaleString()} km`}
-                            >
-                              {isCurrent && (
-                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A] text-white px-2 py-1 rounded text-xs whitespace-nowrap">
-                                  {rank.name}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Progress info */}
-                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-                      <span>{progressRanks[0]?.name || "Rookie Rider"}</span>
-                      <span className="text-[#FF3B30] font-medium">
-                        {nextRank ? `${kmToNext.toLocaleString()} km to ${nextRank.name}` : "Max Rank Achieved!"}
-                      </span>
-                      <span>{progressRanks[2]?.name || "Apex Nomad"}</span>
-                    </div>
+                  
+                  {/* Progress labels */}
+                  <div className="flex justify-between items-center text-xs text-gray-500">
+                    <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
+                    <span className="font-medium">{progressRanks[2]?.name || "Apex Nomad"}</span>
                   </div>
                 </div>
               </div>
