@@ -283,26 +283,31 @@ const NewGarage = () => {
 
   // SOS functionality handlers
   const startSOS = () => {
-    setSosActive(true);
-    setSosProgress(0);
+    if (sosActive) return;
     
-    // Haptic feedback - vibrate if available
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-    
-    // Start progress animation
-    sosIntervalRef.current = setInterval(() => {
-      setSosProgress(prev => {
-        const next = prev + 2; // 2% every 100ms = 5 seconds total
-        return next >= 100 ? 100 : next;
-      });
-    }, 100);
-    
-    // Set timeout for SOS activation
+    // Add 800ms delay to prevent accidental triggers during normal interactions
     sosTimeoutRef.current = setTimeout(() => {
-      triggerSOS();
-    }, 5000);
+      setSosActive(true);
+      setSosProgress(0);
+      
+      // Haptic feedback - vibrate if available
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+      
+      // Start progress animation
+      sosIntervalRef.current = setInterval(() => {
+        setSosProgress(prev => {
+          const next = prev + 2; // 2% every 100ms = 5 seconds total
+          return next >= 100 ? 100 : next;
+        });
+      }, 100);
+      
+      // Set timeout for SOS activation (5 seconds after delay)
+      const triggerTimeout = setTimeout(() => {
+        triggerSOS();
+      }, 5000);
+    }, 800);
   };
   
   const cancelSOS = () => {
@@ -412,21 +417,20 @@ const NewGarage = () => {
                 msUserSelect: 'none',
               }}
             >
-              {/* SOS Gradient Overlay */}
+              {/* SOS Gradient Overlay - Card Shape */}
               {sosActive && (
                 <div 
-                  className="absolute inset-0 pointer-events-none rounded-3xl transition-all duration-150"
+                  className="absolute inset-0 pointer-events-none rounded-3xl transition-all duration-200"
                   style={{
-                    background: `radial-gradient(circle at center, rgba(255, 59, 48, ${sosProgress / 100 * 0.8}) ${100 - sosProgress}%, rgba(255, 255, 255, 0) ${100 - sosProgress + 5}%)`,
+                    background: `linear-gradient(135deg, 
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.9}) 0%, 
+                      rgba(255, 99, 99, ${sosProgress / 100 * 0.7}) 25%, 
+                      rgba(255, 149, 149, ${sosProgress / 100 * 0.5}) 50%, 
+                      rgba(255, 199, 199, ${sosProgress / 100 * 0.3}) 75%, 
+                      rgba(255, 255, 255, 0) 100%)`,
+                    border: `2px solid rgba(255, 59, 48, ${sosProgress / 100 * 0.8})`,
                   }}
                 />
-              )}
-              
-              {/* SOS Progress Indicator */}
-              {sosActive && (
-                <div className="absolute top-4 right-4 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
-                  SOS {Math.ceil((100 - sosProgress) / 20)}s
-                </div>
               )}
               {/* SNS-Style Profile Layout */}
               <div className="flex flex-col space-y-6">
