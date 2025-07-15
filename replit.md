@@ -6,6 +6,13 @@ ThrottleCove is a modern vehicle management web application designed to be a com
 
 ## Recent Changes
 
+### Dynamic Button Colors & SNS-Inspired Profile Layout (July 2025)
+- Implemented dynamic color system for floating buttons (black over content, red over footer)
+- Redesigned profile card with SNS-inspired layout featuring centered profile picture
+- Added automatic scroll detection for button color changes
+- Enhanced user hierarchy display with prominent name, rank badge, and stats grid
+- Improved visual feedback with smooth color transitions and better contrast
+
 ### Complete Project Documentation (July 2025)
 - Created comprehensive project recreation guide (`COMPLETE_PROJECT_DOCUMENTATION.md`)
 - Documented entire system architecture and technology stack

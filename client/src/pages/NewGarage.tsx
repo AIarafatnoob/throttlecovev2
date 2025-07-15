@@ -199,8 +199,23 @@ const NewGarage = () => {
   // Dynamic button color detection
   useEffect(() => {
     const checkButtonPosition = () => {
-      const footerElement = document.querySelector('[data-footer]');
-      if (!footerElement) return;
+      // Look for existing footer (likely with black background)
+      const footerElement = document.querySelector('footer') || 
+                          document.querySelector('[class*="footer"]') ||
+                          document.querySelector('[style*="background-color: rgb(0, 0, 0)"]') ||
+                          document.querySelector('[class*="bg-black"]');
+      
+      if (!footerElement) {
+        // If no footer found, check if we're near bottom of page
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
+        
+        // Consider we're over "footer area" if within 200px of bottom
+        setIsOverFooter(distanceFromBottom < 200);
+        return;
+      }
       
       const footerRect = footerElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
@@ -897,10 +912,7 @@ const NewGarage = () => {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Footer element for button color detection */}
-        <div data-footer className="h-32 mt-16 bg-gray-100 flex items-center justify-center">
-          <p className="text-gray-500 text-sm">ThrottleCove - Your Digital Garage</p>
-        </div>
+
       </div>
     </div>
   );
