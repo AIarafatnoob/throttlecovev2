@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
+import DocumentVault from "@/components/ui/DocumentVault";
 
 
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp, Upload } from "lucide-react";
@@ -191,6 +192,13 @@ const NewGarage = () => {
   const [isOverFooter, setIsOverFooter] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
   
+  // Vault functionality states
+  const [isVaultOpen, setIsVaultOpen] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [vaultTextOpacity, setVaultTextOpacity] = useState(0);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  
 
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
@@ -208,6 +216,63 @@ const NewGarage = () => {
       }
     };
   }, []);
+
+  // Add global event listeners for vault functionality
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      
+      const containerWidth = 200; // Maximum slide distance
+      const deltaX = Math.min(0, Math.max(-containerWidth, e.clientX - window.innerWidth + 100));
+      setButtonPosition(deltaX);
+      
+      // Calculate vault text opacity based on position
+      const opacity = Math.abs(deltaX) / containerWidth;
+      setVaultTextOpacity(Math.min(opacity, 1));
+    };
+
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      
+      const touch = e.touches[0];
+      const containerWidth = 200; // Maximum slide distance
+      const deltaX = Math.min(0, Math.max(-containerWidth, touch.clientX - window.innerWidth + 100));
+      setButtonPosition(deltaX);
+      
+      // Calculate vault text opacity based on position
+      const opacity = Math.abs(deltaX) / containerWidth;
+      setVaultTextOpacity(Math.min(opacity, 1));
+    };
+
+    const handleGlobalEnd = () => {
+      if (!isDragging) return;
+      
+      setIsDragging(false);
+      
+      // If slid more than 80px, open vault
+      if (Math.abs(buttonPosition) > 80) {
+        setIsVaultOpen(true);
+      }
+      
+      // Reset position
+      setButtonPosition(0);
+      setVaultTextOpacity(0);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('touchmove', handleGlobalTouchMove);
+      document.addEventListener('mouseup', handleGlobalEnd);
+      document.addEventListener('touchend', handleGlobalEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('mouseup', handleGlobalEnd);
+      document.removeEventListener('touchend', handleGlobalEnd);
+    };
+  }, [isDragging, buttonPosition]);
 
   // Dynamic button color detection
   useEffect(() => {
@@ -259,6 +324,21 @@ const NewGarage = () => {
 
   const handleAddMotorcycle = () => {
     setIsAddDialogOpen(true);
+  };
+
+  // Vault functionality handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleVaultClose = () => {
+    setIsVaultOpen(false);
   };
 
   const handleEditMotorcycle = (motorcycle: Motorcycle) => {
@@ -641,33 +721,48 @@ const NewGarage = () => {
               </p>
             </div>
 
-            {/* Floating Add Bike Button */}
+            {/* Floating Add Bike Button with Vault Functionality */}
             <motion.div
+              ref={buttonRef}
               className="fixed bottom-6 right-6 z-50 group"
               initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              animate={{ 
+                scale: 1,
+                x: buttonPosition,
+                transition: { duration: 0.3 }
+              }}
+              whileHover={{ scale: isDragging ? 1 : 1.1 }}
+              whileTap={{ scale: isDragging ? 1 : 0.9 }}
             >
               <div className="relative">
+                {/* Vault Text - slides out behind button */}
+                <motion.div
+                  className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
+                  style={{ 
+                    opacity: vaultTextOpacity,
+                    transform: `translateY(-50%) translateX(${Math.min(0, buttonPosition / 3)}px)`
+                  }}
+                >
+                  <span className="text-sm font-medium">🔒 Open Vault</span>
+                  {/* Arrow */}
+                  <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
+                </motion.div>
+
                 <Button 
-                  onClick={handleAddMotorcycle} 
-                  className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0`}
+                  onClick={isDragging ? undefined : handleAddMotorcycle}
+                  onMouseDown={handleMouseDown}
+                  onTouchStart={handleTouchStart}
+                  className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0 cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+                  style={{ touchAction: 'none' }}
                 >
                   <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
                 </Button>
-                {/* Slide-out text */}
+
+                {/* Add New Bike hover text */}
                 <motion.div
                   className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
-                  initial={{ x: 10, opacity: 0 }}
-                  animate={{ 
-                    x: 0, 
-                    opacity: 0,
-                    transition: { duration: 0.3 }
-                  }}
-                  whileHover={{ 
-                    opacity: 1,
-                    transition: { duration: 0.2 }
+                  style={{
+                    opacity: vaultTextOpacity > 0 ? 0 : undefined // Hide when vault text is showing
                   }}
                 >
                   <span className="text-sm font-medium">Add New Bike</span>
@@ -888,33 +983,48 @@ const NewGarage = () => {
           </div>
         )}
 
-        {/* Floating Add Bike Button */}
+        {/* Floating Add Bike Button with Vault Functionality */}
         <motion.div
+          ref={buttonRef}
           className="fixed bottom-6 right-6 z-50 group"
           initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          animate={{ 
+            scale: 1,
+            x: buttonPosition,
+            transition: { duration: 0.3 }
+          }}
+          whileHover={{ scale: isDragging ? 1 : 1.1 }}
+          whileTap={{ scale: isDragging ? 1 : 0.9 }}
         >
           <div className="relative">
+            {/* Vault Text - slides out behind button */}
+            <motion.div
+              className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
+              style={{ 
+                opacity: vaultTextOpacity,
+                transform: `translateY(-50%) translateX(${Math.min(0, buttonPosition / 3)}px)`
+              }}
+            >
+              <span className="text-sm font-medium">🔒 Open Vault</span>
+              {/* Arrow */}
+              <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
+            </motion.div>
+
             <Button 
-              onClick={handleAddMotorcycle} 
-              className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0`}
+              onClick={isDragging ? undefined : handleAddMotorcycle}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+              className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0 cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+              style={{ touchAction: 'none' }}
             >
               <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
             </Button>
-            {/* Slide-out text */}
+
+            {/* Add New Bike hover text */}
             <motion.div
               className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
-              initial={{ x: 10, opacity: 0 }}
-              animate={{ 
-                x: 0, 
-                opacity: 0,
-                transition: { duration: 0.3 }
-              }}
-              whileHover={{ 
-                opacity: 1,
-                transition: { duration: 0.2 }
+              style={{
+                opacity: vaultTextOpacity > 0 ? 0 : undefined // Hide when vault text is showing
               }}
             >
               <span className="text-sm font-medium">Add New Bike</span>
@@ -954,6 +1064,12 @@ const NewGarage = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Document Vault */}
+        <DocumentVault 
+          isOpen={isVaultOpen} 
+          onClose={handleVaultClose} 
+        />
 
 
 
