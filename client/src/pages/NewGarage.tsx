@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -169,10 +169,28 @@ const NewGarage = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
+  
+  // SOS functionality state
+  const [sosActive, setSosActive] = useState(false);
+  const [sosProgress, setSosProgress] = useState(0);
+  const sosTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
   });
+
+  // Cleanup SOS timers on unmount
+  useEffect(() => {
+    return () => {
+      if (sosTimeoutRef.current) {
+        clearTimeout(sosTimeoutRef.current);
+      }
+      if (sosIntervalRef.current) {
+        clearInterval(sosIntervalRef.current);
+      }
+    };
+  }, []);
 
   // Calculate total kilometers for ranking (convert from miles to km)
   const totalKilometers = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage ? Math.round(bike.mileage * 1.60934) : 0), 0) || 0;
@@ -216,6 +234,65 @@ const NewGarage = () => {
     } finally {
       setMotorcycleToDelete(null);
     }
+  };
+
+  // SOS functionality handlers
+  const startSOS = () => {
+    setSosActive(true);
+    setSosProgress(0);
+    
+    // Haptic feedback - vibrate if available
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+    
+    // Start progress animation
+    sosIntervalRef.current = setInterval(() => {
+      setSosProgress(prev => {
+        const next = prev + 2; // 2% every 100ms = 5 seconds total
+        return next >= 100 ? 100 : next;
+      });
+    }, 100);
+    
+    // Set timeout for SOS activation
+    sosTimeoutRef.current = setTimeout(() => {
+      triggerSOS();
+    }, 5000);
+  };
+  
+  const cancelSOS = () => {
+    setSosActive(false);
+    setSosProgress(0);
+    
+    if (sosTimeoutRef.current) {
+      clearTimeout(sosTimeoutRef.current);
+      sosTimeoutRef.current = null;
+    }
+    
+    if (sosIntervalRef.current) {
+      clearInterval(sosIntervalRef.current);
+      sosIntervalRef.current = null;
+    }
+  };
+  
+  const triggerSOS = () => {
+    // Stronger haptic feedback for SOS activation
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200]);
+    }
+    
+    // Show SOS activated notification
+    toast({
+      title: "🚨 SOS Activated",
+      description: "Emergency alert has been triggered. Help is on the way!",
+      variant: "destructive",
+    });
+    
+    // Reset state
+    cancelSOS();
+    
+    // Here you would typically send the SOS signal to emergency services
+    console.log("SOS ACTIVATED - Emergency services notified");
   };
 
     const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,7 +354,35 @@ const NewGarage = () => {
         {/* Profile Section */}
         <div className="flex flex-col items-center mb-8">
           <Card className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden w-full max-w-7xl mb-4">
-            <CardContent className="p-4 sm:p-6 lg:p-8">
+            <CardContent 
+              className="p-4 sm:p-6 lg:p-8 relative"
+              onMouseDown={startSOS}
+              onMouseUp={cancelSOS}
+              onMouseLeave={cancelSOS}
+              onTouchStart={startSOS}
+              onTouchEnd={cancelSOS}
+              style={{
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                msUserSelect: 'none',
+              }}
+            >
+              {/* SOS Gradient Overlay */}
+              {sosActive && (
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-3xl transition-all duration-150"
+                  style={{
+                    background: `radial-gradient(circle at center, rgba(255, 59, 48, ${sosProgress / 100 * 0.8}) ${100 - sosProgress}%, rgba(255, 255, 255, 0) ${100 - sosProgress + 5}%)`,
+                  }}
+                />
+              )}
+              
+              {/* SOS Progress Indicator */}
+              {sosActive && (
+                <div className="absolute top-4 right-4 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                  SOS {Math.ceil((100 - sosProgress) / 20)}s
+                </div>
+              )}
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
                 <div className="flex items-center gap-4 flex-shrink-0 w-full">
                   {/* Profile Picture on the left */}
