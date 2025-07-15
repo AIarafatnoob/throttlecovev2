@@ -299,14 +299,15 @@ const NewGarage = () => {
       sosIntervalRef.current = setInterval(() => {
         setSosProgress(prev => {
           const next = prev + 2; // 2% every 100ms = 5 seconds total
-          return next >= 100 ? 100 : next;
+          if (next >= 100) {
+            // Only trigger SOS when progress reaches 100%
+            clearInterval(sosIntervalRef.current!);
+            triggerSOS();
+            return 100;
+          }
+          return next;
         });
       }, 100);
-      
-      // Set timeout for SOS activation (5 seconds after delay)
-      const triggerTimeout = setTimeout(() => {
-        triggerSOS();
-      }, 5000);
     }, 800);
   };
   
@@ -507,40 +508,50 @@ const NewGarage = () => {
                   </div>
                   
                   {/* Document Quick Access */}
-                  {motorcycles && motorcycles.length > 0 && (
-                    <div className="bg-gray-50 rounded-2xl p-4">
-                      <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center">
-                        <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
-                        Quick Document Access
-                      </h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
-                          <div className="text-center">
-                            <div className="text-2xl mb-1">📋</div>
-                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">License</p>
-                          </div>
-                        </button>
-                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
-                          <div className="text-center">
-                            <div className="text-2xl mb-1">🛡️</div>
-                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Insurance</p>
-                          </div>
-                        </button>
-                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
-                          <div className="text-center">
-                            <div className="text-2xl mb-1">🔧</div>
-                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Service</p>
-                          </div>
-                        </button>
-                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
-                          <div className="text-center">
-                            <div className="text-2xl mb-1">📁</div>
-                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">All Docs</p>
-                          </div>
-                        </button>
-                      </div>
+                  <div className="bg-gray-50 rounded-2xl p-4">
+                    <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center">
+                      <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                      Quick Document Access
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button 
+                        className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group"
+                        onClick={() => toast({ title: "License Documents", description: "License document management coming soon!" })}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">📋</div>
+                          <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">License</p>
+                        </div>
+                      </button>
+                      <button 
+                        className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group"
+                        onClick={() => toast({ title: "Insurance Documents", description: "Insurance document management coming soon!" })}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">🛡️</div>
+                          <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Insurance</p>
+                        </div>
+                      </button>
+                      <button 
+                        className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group"
+                        onClick={() => toast({ title: "Service Records", description: "Service record management coming soon!" })}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">🔧</div>
+                          <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Service</p>
+                        </div>
+                      </button>
+                      <button 
+                        className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group"
+                        onClick={() => toast({ title: "All Documents", description: "Document library coming soon!" })}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">📁</div>
+                          <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">All Docs</p>
+                        </div>
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Progress Bar with Enhanced Design */}
