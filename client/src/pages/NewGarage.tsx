@@ -517,10 +517,8 @@ const NewGarage = () => {
                     {(() => {
                       const buttons = [
                         { key: 'insurance', icon: '🛡️', title: 'Insurance' },
-                        { key: 'service', icon: '🔧', title: 'Service' },
                         { key: 'license', icon: '📋', title: 'License', isCenter: true },
-                        { key: 'registration', icon: '📋', title: 'Registration' },
-                        { key: 'all', icon: '📁', title: 'All Documents' }
+                        { key: 'registration', icon: '📋', title: 'Registration' }
                       ];
 
                       return buttons.map((button) => {
