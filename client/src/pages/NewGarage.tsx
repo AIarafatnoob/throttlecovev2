@@ -180,17 +180,17 @@ const NewGarage = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
-
+  
   // SOS functionality state
   const [sosActive, setSosActive] = useState(false);
   const [sosProgress, setSosProgress] = useState(0);
   const sosTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  
   // Dynamic button color state
   const [isOverFooter, setIsOverFooter] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
-
+  
 
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
@@ -217,23 +217,23 @@ const NewGarage = () => {
                           document.querySelector('[class*="footer"]') ||
                           document.querySelector('[style*="background-color: rgb(0, 0, 0)"]') ||
                           document.querySelector('[class*="bg-black"]');
-
+      
       if (!footerElement) {
         // If no footer found, check if we're near bottom of page
         const documentHeight = document.documentElement.scrollHeight;
         const windowHeight = window.innerHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
-
+        
         // Consider we're over "footer area" if within 200px of bottom
         setIsOverFooter(distanceFromBottom < 200);
         return;
       }
-
+      
       const footerRect = footerElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const buttonBottomPosition = windowHeight - 80; // Button is 80px from bottom
-
+      
       // Check if button would be over footer area
       const isButtonOverFooter = buttonBottomPosition > footerRect.top && footerRect.top < windowHeight;
       setIsOverFooter(isButtonOverFooter);
@@ -297,17 +297,17 @@ const NewGarage = () => {
   // SOS functionality handlers
   const startSOS = () => {
     if (sosActive) return;
-
+    
     // Add 800ms delay to prevent accidental triggers during normal interactions
     sosTimeoutRef.current = setTimeout(() => {
       setSosActive(true);
       setSosProgress(0);
-
+      
       // Haptic feedback - vibrate if available
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
-
+      
       // Start progress animation
       sosIntervalRef.current = setInterval(() => {
         setSosProgress(prev => {
@@ -323,38 +323,38 @@ const NewGarage = () => {
       }, 100);
     }, 800);
   };
-
+  
   const cancelSOS = () => {
     setSosActive(false);
     setSosProgress(0);
-
+    
     if (sosTimeoutRef.current) {
       clearTimeout(sosTimeoutRef.current);
       sosTimeoutRef.current = null;
     }
-
+    
     if (sosIntervalRef.current) {
       clearInterval(sosIntervalRef.current);
       sosIntervalRef.current = null;
     }
   };
-
+  
   const triggerSOS = () => {
     // Stronger haptic feedback for SOS activation
     if (navigator.vibrate) {
       navigator.vibrate([200, 100, 200, 100, 200]);
     }
-
+    
     // Show SOS activated notification
     toast({
       title: "🚨 SOS Activated",
       description: "Emergency alert has been triggered. Help is on the way!",
       variant: "destructive",
     });
-
+    
     // Reset state
     cancelSOS();
-
+    
     // Here you would typically send the SOS signal to emergency services
     console.log("SOS ACTIVATED - Emergency services notified");
   };
@@ -454,7 +454,7 @@ const NewGarage = () => {
                 <div className="flex items-center justify-between">
                   {/* Left side - empty for balance */}
                   <div className="w-16"></div>
-
+                  
                   {/* Center - Large Profile Picture */}
                   <div className="relative">
                     <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
@@ -482,7 +482,7 @@ const NewGarage = () => {
                         className="hidden"
                     />
                   </div>
-
+                  
                   {/* Right side - Rank Badge */}
                   <RankDetailsModal totalKilometers={totalKilometers}>
                     <div className="relative cursor-pointer transition-transform hover:scale-105">
@@ -513,22 +513,40 @@ const NewGarage = () => {
                   </div>
 
                   {/* Document Quick Access Buttons */}
-                  <div className="flex justify-center gap-3">
-                    <Button 
-                      size="sm"
-                      className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
-                      onClick={() => window.location.href = `/maintenance`}
-                    >
-                      🛡️🔧Service
-                    </Button>
-                    <Button 
-                      size="sm"
-                      variant="outline" 
-                      className="border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
-                      onClick={() => window.location.href = `/documents/all`}
-                    >
-                      📋License📋📁
-                    </Button>
+                  <div className="flex items-center justify-center gap-3 px-4">
+                    {(() => {
+                      const buttons = [
+                        { key: 'insurance', icon: '🛡️', title: 'Insurance' },
+                        { key: 'service', icon: '🔧', title: 'Service' },
+                        { key: 'license', icon: '📋', title: 'License', isCenter: true },
+                        { key: 'registration', icon: '📋', title: 'Registration' },
+                        { key: 'all', icon: '📁', title: 'All Documents' }
+                      ];
+
+                      return buttons.map((button) => {
+                        const isCenter = button.isCenter;
+                        
+                        return (
+                          <button 
+                            key={button.key}
+                            className={`relative ${
+                              isCenter 
+                                ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
+                                : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
+                            } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
+                          >
+                            {isCenter ? (
+                              <>
+                                <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
+                                <span className="text-white text-sm font-medium">{button.title}</span>
+                              </>
+                            ) : (
+                              <span className="text-white text-lg">{button.icon}</span>
+                            )}
+                          </button>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
 
@@ -542,7 +560,7 @@ const NewGarage = () => {
                     </p>
                     <p className="text-gray-400 text-sm">kilometers traveled</p>
                   </div>
-
+                  
 
                 </div>
 
@@ -558,7 +576,7 @@ const NewGarage = () => {
                       <p className="text-xs text-green-600 font-medium">🏆 Maximum Rank Achieved!</p>
                     )}
                   </div>
-
+                  
                   <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
                     {/* Progress fill */}
                     <div 
@@ -601,7 +619,7 @@ const NewGarage = () => {
                       })}
                     </div>
                   </div>
-
+                  
                   {/* Progress labels */}
                   <div className="flex justify-between items-center text-xs text-gray-500">
                     <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
@@ -827,7 +845,7 @@ const NewGarage = () => {
                               Manage
                             </Button>
                           </div>
-
+                          
                           <div className="grid grid-cols-1 gap-2">
                             {[
                               { id: 1, name: "Registration", icon: "📋", status: "valid" },
