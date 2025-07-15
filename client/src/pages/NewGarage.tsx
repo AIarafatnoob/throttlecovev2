@@ -375,25 +375,23 @@ const NewGarage = () => {
 
   // Document access handler
   const handleDocumentAccess = (documentType: string) => {
+    if (documentType === 'all') {
+      // Navigate to all documents view
+      window.location.href = '/documents/view/all';
+      return;
+    }
+
     // Check if document already exists/uploaded
     if (uploadedDocuments[documentType]) {
-      // Document exists - show document viewer
-      toast({
-        title: `${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
-        description: "Viewing current document...",
-      });
-      
-      // Show document viewer directly
-      setTimeout(() => {
-        window.location.href = `/documents/view/${documentType}`;
-      }, 1000);
+      // Document exists - navigate directly to document viewer
+      window.location.href = `/documents/view/${documentType}`;
     } else {
       // Document doesn't exist - open upload form modal
       setSelectedDocumentType(documentType);
       setIsDocumentUploadOpen(true);
       toast({
-        title: "No Documents Found",
-        description: `No ${documentType} documents found. Opening upload form...`,
+        title: "Upload Required",
+        description: `No ${documentType} documents found. Please upload your document.`,
       });
     }
   };
@@ -450,6 +448,11 @@ const NewGarage = () => {
       setDocumentDescription("");
       setExpirationDate("");
       setIsDocumentUploadOpen(false);
+      
+      // Navigate to document viewer after upload
+      setTimeout(() => {
+        window.location.href = `/documents/view/${selectedDocumentType}`;
+      }, 1000);
     }, 2000);
   };
 
@@ -625,9 +628,10 @@ const NewGarage = () => {
                             className={`relative ${
                               isCenter 
                                 ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
-                                : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
+                                : `w-12 h-12 ${isAvailable ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-500 hover:bg-gray-600'}`
                             } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
                             onClick={() => handleDocumentAccess(button.key)}
+                            title={isAvailable ? `View ${button.title}` : `Upload ${button.title}`}
                           >
                             {isCenter ? (
                               <>
@@ -637,8 +641,11 @@ const NewGarage = () => {
                             ) : (
                               <span className="text-white text-lg">{button.icon}</span>
                             )}
-                            {!isAvailable && (
+                            {!isAvailable && !isCenter && (
                               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+                            )}
+                            {isAvailable && !isCenter && (
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                             )}
                           </button>
                         );

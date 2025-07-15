@@ -63,9 +63,9 @@ export default function DocumentUpload() {
       setDescription("");
       setExpirationDate("");
       
-      // Redirect back to garage after 2 seconds
+      // Redirect back to document viewer after 2 seconds
       setTimeout(() => {
-        setLocation("/garage");
+        setLocation(`/documents/view/${documentType}`);
       }, 2000);
     }, 2000);
   };
