@@ -11,6 +11,8 @@ import Blog from "@/pages/Blog";
 import MaintenanceScheduler from "@/pages/MaintenanceScheduler";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import DocumentUpload from "@/pages/DocumentUpload";
+import DocumentViewer from "@/pages/DocumentViewer";
 import NotFound from "@/pages/not-found";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -64,6 +66,12 @@ function App() {
           <Route path="/blog" component={Blog} />
           <Route path="/maintenance">
             <AuthenticatedRoute component={MaintenanceScheduler} />
+          </Route>
+          <Route path="/documents/upload">
+            <AuthenticatedRoute component={DocumentUpload} />
+          </Route>
+          <Route path="/documents/view/:type">
+            <AuthenticatedRoute component={DocumentViewer} />
           </Route>
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />

@@ -360,19 +360,15 @@ const NewGarage = () => {
     const docStatus = documentStatus[documentType as keyof typeof documentStatus];
     
     if (!docStatus?.available || documentType === 'all') {
-      // No documents available or accessing all documents - show upload interface
+      // No documents available or accessing all documents - redirect to upload form
       toast({
         title: "Document Management",
-        description: `Opening document upload for ${documentType === 'all' ? 'all document types' : documentType}...`,
+        description: `Redirecting to ${documentType === 'all' ? 'all documents' : documentType} upload form...`,
       });
       
-      // Here you would open a document upload modal/page
-      // For now, show a placeholder message
+      // Redirect to document upload page
       setTimeout(() => {
-        toast({
-          title: "Upload Interface",
-          description: "Document upload interface would open here. Users can upload documents for each vehicle.",
-        });
+        window.location.href = '/documents/upload';
       }, 1000);
     } else {
       // Documents available - show document viewer
@@ -381,6 +377,11 @@ const NewGarage = () => {
         description: docStatus.expired ? "Document found but expired!" : "Viewing current documents...",
         variant: docStatus.expired ? "destructive" : "default",
       });
+      
+      // For available documents, redirect to document viewer
+      setTimeout(() => {
+        window.location.href = `/documents/view/${documentType}`;
+      }, 1000);
     }
   };
 
@@ -535,76 +536,59 @@ const NewGarage = () => {
                     </div>
                   </div>
 
-                  {/* Document Quick Access Buttons */}
-                  <div className="flex items-center justify-center gap-3 px-4">
-                    {(() => {
-                      // Document status for indicators
-                      const documentStatus = {
-                        license: { available: false, expired: true },
-                        insurance: { available: false, expired: true },
-                        registration: { available: true, expired: false },
-                        service: { available: true, expired: false },
-                        all: { available: true, expired: false }
-                      };
+                  {/* Document Quick Access Buttons with Horizontal Scroll */}
+                  <div className="relative w-full">
+                    <div className="overflow-x-auto scrollbar-hide">
+                      <div className="flex items-center justify-center gap-3 px-4 min-w-max">
+                        {(() => {
+                          // Document status for indicators
+                          const documentStatus = {
+                            license: { available: false, expired: true, title: "License" },
+                            insurance: { available: false, expired: true, title: "Insurance" },
+                            registration: { available: true, expired: false, title: "Registration" },
+                            service: { available: true, expired: false, title: "Service" },
+                            all: { available: true, expired: false, title: "All Documents" }
+                          };
 
-                      return (
-                        <>
-                          {/* Insurance Button - Left */}
-                          <button 
-                            className="relative w-12 h-12 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
-                            onClick={() => handleDocumentAccess('insurance')}
-                          >
-                            <span className="text-white text-lg">🛡️</span>
-                            {(!documentStatus.insurance.available || documentStatus.insurance.expired) && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                            )}
-                          </button>
+                          const buttons = [
+                            { key: 'insurance', icon: '🛡️' },
+                            { key: 'service', icon: '🔧' },
+                            { key: 'license', icon: '📋', isCenter: true },
+                            { key: 'registration', icon: '📋' },
+                            { key: 'all', icon: '📁' }
+                          ];
 
-                          {/* Service Button - Left Center */}
-                          <button 
-                            className="relative w-12 h-12 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
-                            onClick={() => handleDocumentAccess('service')}
-                          >
-                            <span className="text-white text-lg">🔧</span>
-                            {(!documentStatus.service.available || documentStatus.service.expired) && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                            )}
-                          </button>
-
-                          {/* License Button - Center (Pill Shape) */}
-                          <button 
-                            className="relative px-6 py-3 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
-                            onClick={() => handleDocumentAccess('license')}
-                          >
-                            <span className="text-white text-sm font-medium mr-2">📋</span>
-                            <span className="text-white text-sm font-medium">License</span>
-                            {(!documentStatus.license.available || documentStatus.license.expired) && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                            )}
-                          </button>
-
-                          {/* Registration Button - Right Center */}
-                          <button 
-                            className="relative w-12 h-12 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
-                            onClick={() => handleDocumentAccess('registration')}
-                          >
-                            <span className="text-white text-lg">📋</span>
-                            {(!documentStatus.registration.available || documentStatus.registration.expired) && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                            )}
-                          </button>
-
-                          {/* All Documents Button - Right */}
-                          <button 
-                            className="relative w-12 h-12 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
-                            onClick={() => handleDocumentAccess('all')}
-                          >
-                            <span className="text-white text-lg">📁</span>
-                            {/* All documents button doesn't show expiration indicator */}
-                          </button>
-                        </>
-                      );
-                    })()}
+                          return buttons.map((button) => {
+                            const status = documentStatus[button.key as keyof typeof documentStatus];
+                            const isCenter = button.isCenter;
+                            
+                            return (
+                              <button 
+                                key={button.key}
+                                className={`relative ${
+                                  isCenter 
+                                    ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
+                                    : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
+                                } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 flex-shrink-0`}
+                                onClick={() => handleDocumentAccess(button.key)}
+                              >
+                                {isCenter ? (
+                                  <>
+                                    <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
+                                    <span className="text-white text-sm font-medium">{status.title}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-white text-lg">{button.icon}</span>
+                                )}
+                                {(!status.available || status.expired) && (
+                                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+                                )}
+                              </button>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

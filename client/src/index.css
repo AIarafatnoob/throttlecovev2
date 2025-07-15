@@ -123,6 +123,16 @@
   .text-responsive-xl {
     @apply text-xl sm:text-2xl;
   }
+
+  /* Hide scrollbars for horizontal scroll containers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
   
   /* Container responsive padding */
   .container-responsive {
