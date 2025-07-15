@@ -673,7 +673,18 @@ const NewGarage = () => {
 
                       return buttons.map((button) => {
                         const isCenter = button.isCenter;
-                        const hasDocument = hasDocumentOfType(button.key);
+                        const document = getDocumentByType(button.key);
+                        
+                        // Determine border color based on document expiry
+                        const getBorderColor = () => {
+                          if (!document) return '';
+                          if (!document.expiryDate) return 'border-green-500';
+                          
+                          const daysUntilExpiry = Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                          if (daysUntilExpiry <= 0) return 'border-red-500'; // Expired
+                          if (daysUntilExpiry <= 30) return 'border-yellow-500'; // Expiring soon
+                          return 'border-green-500'; // All good
+                        };
                         
                         return (
                           <button 
@@ -683,13 +694,20 @@ const NewGarage = () => {
                               isCenter 
                                 ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
                                 : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
-                            } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
+                            } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 ${
+                              document ? `border-2 ${getBorderColor()}` : ''
+                            }`}
+                            style={{
+                              borderWidth: document ? '1px' : '0',
+                              borderStyle: document ? 'solid' : 'none',
+                              borderColor: document ? (
+                                !document.expiryDate ? 'rgb(34 197 94)' : // green-500
+                                Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 0 ? 'rgb(239 68 68)' : // red-500
+                                Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 30 ? 'rgb(234 179 8)' : // yellow-500
+                                'rgb(34 197 94)' // green-500
+                              ) : 'transparent'
+                            }}
                           >
-                            {/* Document availability indicator */}
-                            {hasDocument && (
-                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                            )}
-                            
                             {isCenter ? (
                               <>
                                 <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
@@ -1074,17 +1092,17 @@ const NewGarage = () => {
           whileTap={{ scale: isDragging ? 1 : 0.9 }}
         >
           <div className="relative">
-            {/* Vault Text - slides out behind button */}
+            {/* Vault Text - slides out from the right */}
             <motion.div
-              className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
+              className={`absolute left-full top-1/2 -translate-y-1/2 ml-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
               style={{ 
                 opacity: vaultTextOpacity,
-                transform: `translateY(-50%) translateX(${Math.min(0, buttonPosition / 3)}px)`
+                transform: `translateY(-50%) translateX(${120 - (vaultTextOpacity * 140)}px)`
               }}
             >
               <span className="text-sm font-medium">🔒 Open Vault</span>
               {/* Arrow */}
-              <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
+              <div className={`absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-r-[#FF3B30]' : 'border-r-[#1A1A1A]'} border-r-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
             </motion.div>
 
             <Button 

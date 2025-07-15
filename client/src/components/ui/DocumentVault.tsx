@@ -394,34 +394,35 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
       {/* Upload Form Dialog */}
       <Dialog open={showUploadForm} onOpenChange={setShowUploadForm}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Upload New Document</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="w-[95vw] max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-lg">Upload Document</DialogTitle>
+            <DialogDescription className="text-sm">
               Add a new document to your secure vault.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="document-name">Document Name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="document-name" className="text-sm font-medium">Document Name</Label>
               <Input
                 id="document-name"
                 placeholder="Enter document name..."
                 value={uploadForm.name}
                 onChange={(e) => setUploadForm(prev => ({ ...prev, name: e.target.value }))}
+                className="h-11 text-base"
               />
             </div>
 
-            <div>
-              <Label htmlFor="document-type">Document Type</Label>
+            <div className="space-y-2">
+              <Label htmlFor="document-type" className="text-sm font-medium">Document Type</Label>
               <Select value={uploadForm.type} onValueChange={(value) => setUploadForm(prev => ({ ...prev, type: value }))}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 text-base">
                   <SelectValue placeholder="Select document type..." />
                 </SelectTrigger>
                 <SelectContent>
                   {DOCUMENT_TYPES.map(type => (
-                    <SelectItem key={type.key} value={type.key}>
+                    <SelectItem key={type.key} value={type.key} className="text-base py-3">
                       {type.icon} {type.name}
                     </SelectItem>
                   ))}
@@ -429,35 +430,37 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="expiry-date">Expiry Date (Optional)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="expiry-date" className="text-sm font-medium">Expiry Date (Optional)</Label>
               <Input
                 id="expiry-date"
                 type="date"
                 value={uploadForm.expiryDate}
                 onChange={(e) => setUploadForm(prev => ({ ...prev, expiryDate: e.target.value }))}
+                className="h-11 text-base"
               />
             </div>
 
-            <div>
-              <Label htmlFor="document-notes">Notes (Optional)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="document-notes" className="text-sm font-medium">Notes (Optional)</Label>
               <Textarea
                 id="document-notes"
                 placeholder="Add any notes about this document..."
                 value={uploadForm.notes}
                 onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
                 rows={3}
+                className="text-base resize-none"
               />
             </div>
 
             {/* File Upload */}
-            <div>
-              <Label>Select File</Label>
-              <div className="mt-2">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Select File</Label>
+              <div>
                 <Button
                   onClick={() => fileInputRef.current?.click()}
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-12 text-base"
                   disabled={isUploading || !uploadForm.type}
                 >
                   {isUploading ? (
@@ -467,7 +470,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                     </>
                   ) : (
                     <>
-                      <Upload className="h-4 w-4 mr-2" />
+                      <Upload className="h-5 w-5 mr-2" />
                       Choose File
                     </>
                   )}
@@ -480,14 +483,25 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                   className="hidden"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Supported formats: PDF, JPG, PNG, DOC, DOCX (Max 10MB)
+              <p className="text-xs text-gray-500">
+                Supported: PDF, JPG, PNG, DOC, DOCX (Max 10MB)
               </p>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowUploadForm(false)}>
+            <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowUploadForm(false)}
+                className="h-11 text-base"
+              >
                 Cancel
+              </Button>
+              <Button 
+                onClick={handleFileUpload}
+                disabled={isUploading || !uploadForm.name || !uploadForm.type}
+                className="h-11 text-base flex-1"
+              >
+                {isUploading ? 'Uploading...' : 'Upload Document'}
               </Button>
             </div>
           </div>
