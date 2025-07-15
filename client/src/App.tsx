@@ -14,33 +14,26 @@ import Register from "@/pages/Register";
 import DocumentUpload from "@/pages/DocumentUpload";
 import DocumentViewer from "@/pages/DocumentViewer";
 import NotFound from "@/pages/not-found";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 function App() {
-  const { user, setUser } = useAuth();
-  
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['/api/auth/session'],
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-  
-  useEffect(() => {
-    if (data) {
-      setUser(data);
-    }
-  }, [data, setUser]);
+  const { user, isLoading, isAuthenticated } = useAuth();
   
   // Use the AuthenticatedRoute component to protect routes
   const AuthenticatedRoute = ({ component: Component, ...rest }: any) => {
     if (isLoading) {
-      // Show loading state
-      return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+      // Show loading state while checking authentication
+      return (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF3B30] mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      );
     }
     
-    if (!user) {
+    if (!isAuthenticated) {
       // Redirect to login if not authenticated
       return <Login />;
     }
@@ -57,7 +50,6 @@ function App() {
           <Route path="/garage">
             <AuthenticatedRoute component={Garage} />
           </Route>
-
           <Route path="/community">
             <AuthenticatedRoute component={Community} />
           </Route>

@@ -8,7 +8,7 @@ import { ArrowRight, LogOut } from "lucide-react";
 import logo from "@/assets/tclogov2r2.svg"
 
 const ModernNavBar = () => {
-  const { user, clearUser } = useAuth();
+  const { user, logout } = useAuth();
   const [location] = useLocation();
   const { toast } = useToast();
   const [showNavbar, setShowNavbar] = useState(true);
@@ -30,33 +30,18 @@ const ModernNavBar = () => {
 
   const handleLogout = async () => {
     try {
-      // If this is a dev user, just clear locally
-      if (user?.id === "dev-001") {
-        clearUser();
-        toast({
-          title: "Logged out",
-          description: "You have been logged out successfully",
-        });
-        window.location.href = "/login";
-        return;
-      }
-
-      // For regular users, call the logout API
-      await apiRequest("POST", "/api/auth/logout");
-      clearUser();
+      await logout();
       toast({
         title: "Logged out",
         description: "You have been logged out successfully",
       });
-      window.location.href = "/login";
+      // Use wouter navigation instead of direct window.location change
+      window.location.href = "/";
     } catch (error) {
-      // Even if API fails, clear user locally
-      clearUser();
       toast({
-        title: "Logged out",
-        description: "You have been logged out",
+        title: "Logout error",
+        description: "There was an issue logging out, but you've been signed out locally.",
       });
-      window.location.href = "/login";
     }
   };
 
