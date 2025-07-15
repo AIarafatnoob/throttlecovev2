@@ -175,6 +175,10 @@ const NewGarage = () => {
   const [sosProgress, setSosProgress] = useState(0);
   const sosTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Dynamic button color state
+  const [isOverFooter, setIsOverFooter] = useState(false);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
@@ -191,6 +195,32 @@ const NewGarage = () => {
       }
     };
   }, []);
+
+  // Dynamic button color detection
+  useEffect(() => {
+    const checkButtonPosition = () => {
+      const footerElement = document.querySelector('[data-footer]');
+      if (!footerElement) return;
+      
+      const footerRect = footerElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const buttonBottomPosition = windowHeight - 80; // Button is 80px from bottom
+      
+      // Check if button would be over footer area
+      const isButtonOverFooter = buttonBottomPosition > footerRect.top && footerRect.top < windowHeight;
+      setIsOverFooter(isButtonOverFooter);
+    };
+
+    // Check on mount and scroll
+    checkButtonPosition();
+    window.addEventListener('scroll', checkButtonPosition);
+    window.addEventListener('resize', checkButtonPosition);
+
+    return () => {
+      window.removeEventListener('scroll', checkButtonPosition);
+      window.removeEventListener('resize', checkButtonPosition);
+    };
+  }, [motorcycles]);
 
   // Calculate total kilometers for ranking (convert from miles to km)
   const totalKilometers = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage ? Math.round(bike.mileage * 1.60934) : 0), 0) || 0;
@@ -564,13 +594,13 @@ const NewGarage = () => {
               <div className="relative">
                 <Button 
                   onClick={handleAddMotorcycle} 
-                  className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+                  className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0`}
                 >
                   <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
                 </Button>
                 {/* Slide-out text */}
                 <motion.div
-                  className="absolute right-full top-1/2 -translate-y-1/2 mr-3 bg-[#1A1A1A] text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none"
+                  className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
                   initial={{ x: 10, opacity: 0 }}
                   animate={{ 
                     x: 0, 
@@ -584,7 +614,7 @@ const NewGarage = () => {
                 >
                   <span className="text-sm font-medium">Add New Bike</span>
                   {/* Arrow */}
-                  <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-l-[#1A1A1A] border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+                  <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
                 </motion.div>
               </div>
             </motion.div>
@@ -750,7 +780,7 @@ const NewGarage = () => {
                               <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
                               Documents
                             </h4>
-                            <Button size="sm" variant="outline" className="text-xs h-7 rounded-xl">
+                            <Button size="sm" variant="outline" className={`text-xs h-7 rounded-xl transition-all duration-300 ${isOverFooter ? 'border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white' : 'border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white'}`}>
                               <Settings className="h-3 w-3 mr-1" />
                               Manage
                             </Button>
@@ -811,13 +841,13 @@ const NewGarage = () => {
           <div className="relative">
             <Button 
               onClick={handleAddMotorcycle} 
-              className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+              className={`${isOverFooter ? 'bg-[#FF3B30] hover:bg-[#FF3B30]/90' : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'} text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0`}
             >
               <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
             </Button>
             {/* Slide-out text */}
             <motion.div
-              className="absolute right-full top-1/2 -translate-y-1/2 mr-3 bg-[#1A1A1A] text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none"
+              className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
               initial={{ x: 10, opacity: 0 }}
               animate={{ 
                 x: 0, 
@@ -831,7 +861,7 @@ const NewGarage = () => {
             >
               <span className="text-sm font-medium">Add New Bike</span>
               {/* Arrow */}
-              <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-l-[#1A1A1A] border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+              <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
             </motion.div>
           </div>
         </motion.div>
@@ -866,6 +896,11 @@ const NewGarage = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Footer element for button color detection */}
+        <div data-footer className="h-32 mt-16 bg-gray-100 flex items-center justify-center">
+          <p className="text-gray-500 text-sm">ThrottleCove - Your Digital Garage</p>
+        </div>
       </div>
     </div>
   );
