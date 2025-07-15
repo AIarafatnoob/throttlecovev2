@@ -359,26 +359,36 @@ const NewGarage = () => {
 
     const docStatus = documentStatus[documentType as keyof typeof documentStatus];
     
-    if (!docStatus?.available || documentType === 'all') {
-      // No documents available or accessing all documents - redirect to upload form
+    if (!docStatus?.available) {
+      // No documents available - redirect to upload form
       toast({
-        title: "Document Management",
-        description: `Redirecting to ${documentType === 'all' ? 'all documents' : documentType} upload form...`,
+        title: "No Documents Found",
+        description: `No ${documentType} documents found. Redirecting to upload form...`,
       });
       
       // Redirect to document upload page
       setTimeout(() => {
         window.location.href = '/documents/upload';
       }, 1000);
-    } else {
-      // Documents available - show document viewer
+    } else if (documentType === 'all') {
+      // All documents button - show document manager
       toast({
-        title: `${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Documents`,
-        description: docStatus.expired ? "Document found but expired!" : "Viewing current documents...",
+        title: "Document Manager",
+        description: "Opening document management interface...",
+      });
+      
+      setTimeout(() => {
+        window.location.href = '/documents/view/all';
+      }, 1000);
+    } else {
+      // Documents available - show document directly
+      toast({
+        title: `${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
+        description: docStatus.expired ? "Document found but expired!" : "Viewing current document...",
         variant: docStatus.expired ? "destructive" : "default",
       });
       
-      // For available documents, redirect to document viewer
+      // Show document viewer directly
       setTimeout(() => {
         window.location.href = `/documents/view/${documentType}`;
       }, 1000);
@@ -536,59 +546,55 @@ const NewGarage = () => {
                     </div>
                   </div>
 
-                  {/* Document Quick Access Buttons with Horizontal Scroll */}
-                  <div className="relative w-full">
-                    <div className="overflow-x-auto scrollbar-hide">
-                      <div className="flex items-center justify-center gap-3 px-4 min-w-max">
-                        {(() => {
-                          // Document status for indicators
-                          const documentStatus = {
-                            license: { available: false, expired: true, title: "License" },
-                            insurance: { available: false, expired: true, title: "Insurance" },
-                            registration: { available: true, expired: false, title: "Registration" },
-                            service: { available: true, expired: false, title: "Service" },
-                            all: { available: true, expired: false, title: "All Documents" }
-                          };
+                  {/* Document Quick Access Buttons */}
+                  <div className="flex items-center justify-center gap-3 px-4">
+                    {(() => {
+                      // Document status for indicators
+                      const documentStatus = {
+                        license: { available: false, expired: true, title: "License" },
+                        insurance: { available: false, expired: true, title: "Insurance" },
+                        registration: { available: true, expired: false, title: "Registration" },
+                        service: { available: true, expired: false, title: "Service" },
+                        all: { available: true, expired: false, title: "All Documents" }
+                      };
 
-                          const buttons = [
-                            { key: 'insurance', icon: '🛡️' },
-                            { key: 'service', icon: '🔧' },
-                            { key: 'license', icon: '📋', isCenter: true },
-                            { key: 'registration', icon: '📋' },
-                            { key: 'all', icon: '📁' }
-                          ];
+                      const buttons = [
+                        { key: 'insurance', icon: '🛡️' },
+                        { key: 'service', icon: '🔧' },
+                        { key: 'license', icon: '📋', isCenter: true },
+                        { key: 'registration', icon: '📋' },
+                        { key: 'all', icon: '📁' }
+                      ];
 
-                          return buttons.map((button) => {
-                            const status = documentStatus[button.key as keyof typeof documentStatus];
-                            const isCenter = button.isCenter;
-                            
-                            return (
-                              <button 
-                                key={button.key}
-                                className={`relative ${
-                                  isCenter 
-                                    ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
-                                    : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
-                                } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 flex-shrink-0`}
-                                onClick={() => handleDocumentAccess(button.key)}
-                              >
-                                {isCenter ? (
-                                  <>
-                                    <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
-                                    <span className="text-white text-sm font-medium">{status.title}</span>
-                                  </>
-                                ) : (
-                                  <span className="text-white text-lg">{button.icon}</span>
-                                )}
-                                {(!status.available || status.expired) && (
-                                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
-                                )}
-                              </button>
-                            );
-                          });
-                        })()}
-                      </div>
-                    </div>
+                      return buttons.map((button) => {
+                        const status = documentStatus[button.key as keyof typeof documentStatus];
+                        const isCenter = button.isCenter;
+                        
+                        return (
+                          <button 
+                            key={button.key}
+                            className={`relative ${
+                              isCenter 
+                                ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
+                                : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
+                            } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
+                            onClick={() => handleDocumentAccess(button.key)}
+                          >
+                            {isCenter ? (
+                              <>
+                                <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
+                                <span className="text-white text-sm font-medium">{status.title}</span>
+                              </>
+                            ) : (
+                              <span className="text-white text-lg">{button.icon}</span>
+                            )}
+                            {(!status.available || status.expired) && (
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+                            )}
+                          </button>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
 
