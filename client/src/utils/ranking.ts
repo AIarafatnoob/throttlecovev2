@@ -1,10 +1,10 @@
 
-// Modern biker/traveler ranking system inspired by PUBG progression
+// Modern biker/traveler ranking system with 20 levels based on kilometers
 export interface BikerRank {
   id: number;
   name: string;
-  minMiles: number;
-  maxMiles: number;
+  minKm: number;
+  maxKm: number;
   patch: string;
   tier: string;
   description: string;
@@ -14,8 +14,8 @@ export const bikerRanks: BikerRank[] = [
   {
     id: 1,
     name: "Rookie Rider",
-    minMiles: 0,
-    maxMiles: 499,
+    minKm: 0,
+    maxKm: 999,
     patch: "🔰",
     tier: "Bronze",
     description: "Just starting the journey"
@@ -23,8 +23,8 @@ export const bikerRanks: BikerRank[] = [
   {
     id: 2,
     name: "Street Explorer",
-    minMiles: 500,
-    maxMiles: 1499,
+    minKm: 1000,
+    maxKm: 2999,
     patch: "🛣️",
     tier: "Bronze",
     description: "Learning the local roads"
@@ -32,89 +32,179 @@ export const bikerRanks: BikerRank[] = [
   {
     id: 3,
     name: "City Cruiser",
-    minMiles: 1500,
-    maxMiles: 3499,
+    minKm: 3000,
+    maxKm: 4999,
     patch: "🏙️",
     tier: "Bronze",
     description: "Master of urban riding"
   },
   {
     id: 4,
+    name: "Urban Navigator",
+    minKm: 5000,
+    maxKm: 7999,
+    patch: "🧭",
+    tier: "Bronze",
+    description: "Navigating city streets with ease"
+  },
+  {
+    id: 5,
     name: "Highway Warrior",
-    minMiles: 3500,
-    maxMiles: 7499,
+    minKm: 8000,
+    maxKm: 12999,
     patch: "⚔️",
     tier: "Silver",
     description: "Conquering the highways"
   },
   {
-    id: 5,
+    id: 6,
     name: "Road Captain",
-    minMiles: 7500,
-    maxMiles: 14999,
+    minKm: 13000,
+    maxKm: 19999,
     patch: "🛡️",
     tier: "Silver",
     description: "Leading the pack"
   },
   {
-    id: 6,
+    id: 7,
     name: "Distance Ace",
-    minMiles: 15000,
-    maxMiles: 24999,
+    minKm: 20000,
+    maxKm: 29999,
     patch: "🎯",
-    tier: "Gold",
+    tier: "Silver",
     description: "Elite long-distance rider"
   },
   {
-    id: 7,
+    id: 8,
     name: "Route Master",
-    minMiles: 25000,
-    maxMiles: 39999,
+    minKm: 30000,
+    maxKm: 39999,
     patch: "🗺️",
-    tier: "Gold",
+    tier: "Silver",
     description: "Navigator of endless routes"
   },
   {
-    id: 8,
+    id: 9,
     name: "Iron Horse",
-    minMiles: 40000,
-    maxMiles: 59999,
+    minKm: 40000,
+    maxKm: 54999,
     patch: "🐎",
-    tier: "Platinum",
+    tier: "Gold",
     description: "Unstoppable force on wheels"
   },
   {
-    id: 9,
+    id: 10,
+    name: "Speed Demon",
+    minKm: 55000,
+    maxKm: 69999,
+    patch: "🔥",
+    tier: "Gold",
+    description: "Master of speed and endurance"
+  },
+  {
+    id: 11,
+    name: "Trail Blazer",
+    minKm: 70000,
+    maxKm: 89999,
+    patch: "⭐",
+    tier: "Gold",
+    description: "Carving new paths"
+  },
+  {
+    id: 12,
+    name: "Wind Rider",
+    minKm: 90000,
+    maxKm: 109999,
+    patch: "🌪️",
+    tier: "Gold",
+    description: "One with the wind"
+  },
+  {
+    id: 13,
     name: "Road Legend",
-    minMiles: 60000,
-    maxMiles: 99999,
+    minKm: 110000,
+    maxKm: 134999,
     patch: "👑",
-    tier: "Diamond",
+    tier: "Platinum",
     description: "Legendary status achieved"
   },
   {
-    id: 10,
+    id: 14,
+    name: "Horizon Chaser",
+    minKm: 135000,
+    maxKm: 159999,
+    patch: "🌅",
+    tier: "Platinum",
+    description: "Always chasing the next horizon"
+  },
+  {
+    id: 15,
+    name: "Storm Rider",
+    minKm: 160000,
+    maxKm: 189999,
+    patch: "⚡",
+    tier: "Platinum",
+    description: "Conquering all weather conditions"
+  },
+  {
+    id: 16,
+    name: "Midnight Phantom",
+    minKm: 190000,
+    maxKm: 219999,
+    patch: "🌙",
+    tier: "Diamond",
+    description: "Master of the night roads"
+  },
+  {
+    id: 17,
+    name: "Apex Predator",
+    minKm: 220000,
+    maxKm: 249999,
+    patch: "🦅",
+    tier: "Diamond",
+    description: "Apex of riding prowess"
+  },
+  {
+    id: 18,
+    name: "Road Immortal",
+    minKm: 250000,
+    maxKm: 279999,
+    patch: "🔱",
+    tier: "Diamond",
+    description: "Immortal among riders"
+  },
+  {
+    id: 19,
+    name: "Eternal Nomad",
+    minKm: 280000,
+    maxKm: 299999,
+    patch: "♾️",
+    tier: "Master",
+    description: "Forever wandering the roads"
+  },
+  {
+    id: 20,
     name: "Apex Nomad",
-    minMiles: 100000,
-    maxMiles: Infinity,
+    minKm: 300000,
+    maxKm: Infinity,
     patch: "💎",
     tier: "Master",
     description: "Ultimate road warrior"
   }
 ];
 
-export function getUserRank(totalMiles: number): BikerRank {
+export function getUserRank(totalKm: number): BikerRank {
   for (let i = bikerRanks.length - 1; i >= 0; i--) {
     const rank = bikerRanks[i];
-    if (totalMiles >= rank.minMiles) {
+    if (totalKm >= rank.minKm) {
       return rank;
     }
   }
   return bikerRanks[0]; // Default to Rookie Rider
 }
 
-export function getNextRank(totalMiles: number): BikerRank | null {
-  const currentRank = getUserRank(totalMiles);
+export function getNextRank(totalKm: number): BikerRank | null {
+  const currentRank = getUserRank(totalKm);
   const currentIndex = bikerRanks.findIndex(rank => rank.id === currentRank.id);
   
   if (currentIndex < bikerRanks.length - 1) {
@@ -124,12 +214,32 @@ export function getNextRank(totalMiles: number): BikerRank | null {
   return null; // Already at highest rank
 }
 
-export function getMilesToNextRank(totalMiles: number): number {
-  const nextRank = getNextRank(totalMiles);
+export function getKmToNextRank(totalKm: number): number {
+  const nextRank = getNextRank(totalKm);
   if (nextRank) {
-    return nextRank.minMiles - totalMiles;
+    return nextRank.minKm - totalKm;
   }
   return 0; // Already at highest rank
+}
+
+export function getProgressRanks(totalKm: number): BikerRank[] {
+  const currentRank = getUserRank(totalKm);
+  const currentIndex = bikerRanks.findIndex(rank => rank.id === currentRank.id);
+  
+  const progressRanks = [];
+  
+  // Add current rank
+  progressRanks.push(currentRank);
+  
+  // Add next two ranks if they exist
+  if (currentIndex + 1 < bikerRanks.length) {
+    progressRanks.push(bikerRanks[currentIndex + 1]);
+  }
+  if (currentIndex + 2 < bikerRanks.length) {
+    progressRanks.push(bikerRanks[currentIndex + 2]);
+  }
+  
+  return progressRanks;
 }
 
 // Get tier color for styling

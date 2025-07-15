@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { getUserRank, getNextRank, getMilesToNextRank, getTierColor, bikerRanks } from "@/utils/ranking";
+import { getUserRank, getNextRank, getKmToNextRank, getTierColor, bikerRanks, getProgressRanks } from "@/utils/ranking";
 import PartsCarousel from "@/components/ui/PartsCarousel";
 import { useAuth } from "@/hooks/useAuth";
+import { RankDetailsModal } from "@/components/ui/RankDetailsModal";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -173,11 +174,12 @@ const NewGarage = () => {
     queryKey: ['/api/motorcycles'],
   });
 
-  // Calculate total mileage for ranking
-  const totalMileage = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage || 0), 0) || 0;
-  const currentRank = getUserRank(totalMileage);
-  const nextRank = getNextRank(totalMileage);
-  const milesToNext = getMilesToNextRank(totalMileage);
+  // Calculate total kilometers for ranking (convert from miles to km)
+  const totalKilometers = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage ? Math.round(bike.mileage * 1.60934) : 0), 0) || 0;
+  const currentRank = getUserRank(totalKilometers);
+  const nextRank = getNextRank(totalKilometers);
+  const kmToNext = getKmToNextRank(totalKilometers);
+  const progressRanks = getProgressRanks(totalKilometers);
 
   const handleAddMotorcycle = () => {
     setIsAddDialogOpen(true);
@@ -314,53 +316,56 @@ const NewGarage = () => {
                     </div>
                   </div>
                   
-                  {/* Rank Patch on the right */}
-                  <div className="relative">
-                    <div className={`w-12 h-12 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
-                      <span className="text-white text-lg sm:text-2xl font-bold">
-                        {currentRank.patch}
-                      </span>
+                  {/* Rank Patch on the right - Clickable */}
+                  <RankDetailsModal totalKilometers={totalKilometers}>
+                    <div className="relative cursor-pointer transition-transform hover:scale-105">
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg`}>
+                        <span className="text-white text-lg sm:text-2xl font-bold">
+                          {currentRank.patch}
+                        </span>
+                      </div>
+                      {/* Tier indicator */}
+                      <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                        <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                      </div>
                     </div>
-                    {/* Tier indicator */}
-                    <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
-                      <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
-                    </div>
-                  </div>
+                  </RankDetailsModal>
                 </div>
 
                 <div className="flex flex-col w-full lg:w-auto gap-4">
                   <div className="flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-gray-500 text-sm mb-2">Total Miles</p>
+                      <p className="text-gray-500 text-sm mb-2">Total KM</p>
                       <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A]">
-                        {totalMileage.toLocaleString()}
+                        {totalKilometers.toLocaleString()}
                       </p>
-                      <p className="text-gray-400 text-sm mt-1">miles traveled</p>
+                      <p className="text-gray-400 text-sm mt-1">kilometers traveled</p>
                     </div>
                   </div>
 
-                  {/* Progress Bar with Rank Dots */}
+                  {/* Progress Bar with Current, Next 2 Levels */}
                   <div className="w-full px-4">
-                    <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
-                      {/* Progress fill */}
+                    <div className="relative bg-gray-200 rounded-full h-4 overflow-hidden">
+                      {/* Progress fill based on current level progress */}
                       <div 
                         className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-red-500 rounded-full transition-all duration-500"
                         style={{ 
-                          width: `${Math.min((totalMileage / 100000) * 100, 100)}%` 
+                          width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
                         }}
                       />
 
-                      {/* Rank dots */}
+                      {/* Progress rank dots - only showing current and next 2 levels */}
                       <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-1">
-                        {bikerRanks.map((rank, index) => {
-                          const position = (rank.minMiles / 100000) * 100;
-                          const isAchieved = totalMileage >= rank.minMiles;
+                        {progressRanks.map((rank, index) => {
+                          const position = (rank.minKm / 300000) * 100;
+                          const isAchieved = totalKilometers >= rank.minKm;
                           const isCurrent = currentRank.id === rank.id;
+                          const positionPercent = Math.min(position, 95);
 
                           return (
                             <div
                               key={rank.id}
-                              className={`relative w-3 h-3 rounded-full border-2 transition-all duration-300 ${
+                              className={`relative w-4 h-4 rounded-full border-2 transition-all duration-300 ${
                                 isCurrent
                                   ? 'bg-[#FF3B30] border-white shadow-lg scale-125'
                                   : isAchieved
@@ -369,10 +374,10 @@ const NewGarage = () => {
                               }`}
                               style={{ 
                                 position: 'absolute',
-                                left: `${Math.min(position, 95)}%`,
+                                left: `${33.33 * index}%`,
                                 transform: 'translateX(-50%)'
                               }}
-                              title={`${rank.name} - ${rank.minMiles.toLocaleString()} miles`}
+                              title={`${rank.name} - ${rank.minKm.toLocaleString()} km`}
                             >
                               {isCurrent && (
                                 <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A] text-white px-2 py-1 rounded text-xs whitespace-nowrap">
@@ -387,11 +392,11 @@ const NewGarage = () => {
 
                     {/* Progress info */}
                     <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-                      <span>Rookie Rider</span>
+                      <span>{progressRanks[0]?.name || "Rookie Rider"}</span>
                       <span className="text-[#FF3B30] font-medium">
-                        {nextRank ? `${milesToNext.toLocaleString()} miles to ${nextRank.name}` : "Max Rank Achieved!"}
+                        {nextRank ? `${kmToNext.toLocaleString()} km to ${nextRank.name}` : "Max Rank Achieved!"}
                       </span>
-                      <span>Apex Nomad</span>
+                      <span>{progressRanks[2]?.name || "Apex Nomad"}</span>
                     </div>
                   </div>
                 </div>
