@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,17 +71,32 @@ interface Document {
 interface DocumentVaultProps {
   isOpen: boolean;
   onClose: () => void;
+  documents: Document[];
+  onDocumentsChange: (documents: Document[]) => void;
+  selectedDocumentType?: string | null;
 }
 
-export const DocumentVault: React.FC<DocumentVaultProps> = ({ isOpen, onClose }) => {
-  const [documents, setDocuments] = useState<Document[]>([]);
+export const DocumentVault: React.FC<DocumentVaultProps> = ({ 
+  isOpen, 
+  onClose, 
+  documents, 
+  onDocumentsChange, 
+  selectedDocumentType 
+}) => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("all");
+  const [filterType, setFilterType] = useState(selectedDocumentType || "all");
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDocumentViewOpen, setIsDocumentViewOpen] = useState(false);
+
+  // Update filter when selectedDocumentType changes
+  useEffect(() => {
+    if (selectedDocumentType) {
+      setFilterType(selectedDocumentType);
+    }
+  }, [selectedDocumentType]);
   
   // Upload form state
   const [uploadForm, setUploadForm] = useState({
@@ -148,7 +163,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({ isOpen, onClose })
         notes: uploadForm.notes
       };
 
-      setDocuments(prev => [...prev, newDocument]);
+      onDocumentsChange([...documents, newDocument]);
       
       toast({
         title: "Document uploaded",
@@ -177,7 +192,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({ isOpen, onClose })
   };
 
   const handleDeleteDocument = (docId: string) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== docId));
+    onDocumentsChange(documents.filter(doc => doc.id !== docId));
     setDeleteConfirmId(null);
     toast({
       title: "Document deleted",

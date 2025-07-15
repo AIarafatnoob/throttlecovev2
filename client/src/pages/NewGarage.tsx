@@ -6,6 +6,7 @@ import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
 import DocumentVault from "@/components/ui/DocumentVault";
+import { DocumentPreview } from "@/components/ui/DocumentPreview";
 
 
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp, Upload } from "lucide-react";
@@ -198,6 +199,46 @@ const NewGarage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [vaultTextOpacity, setVaultTextOpacity] = useState(0);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [documents, setDocuments] = useState<any[]>([
+    {
+      id: 'doc1',
+      name: 'Motorcycle Insurance Policy',
+      type: 'insurance',
+      uploadDate: new Date('2024-01-15'),
+      expiryDate: new Date('2025-01-15'),
+      size: 2048000,
+      url: 'https://via.placeholder.com/600x800/4F46E5/FFFFFF?text=Insurance+Policy+Document',
+      isSecure: true,
+      notes: 'Full coverage motorcycle insurance policy',
+      vehicleId: 'bike1'
+    },
+    {
+      id: 'doc2',
+      name: 'Motorcycle License',
+      type: 'license',
+      uploadDate: new Date('2023-05-10'),
+      expiryDate: new Date('2028-05-10'),
+      size: 512000,
+      url: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Motorcycle+License',
+      isSecure: true,
+      notes: 'Valid motorcycle license',
+      vehicleId: 'bike1'
+    },
+    {
+      id: 'doc3',
+      name: 'Vehicle Registration',
+      type: 'registration',
+      uploadDate: new Date('2024-03-20'),
+      expiryDate: new Date('2025-03-20'),
+      size: 1024000,
+      url: 'https://via.placeholder.com/600x800/8B5CF6/FFFFFF?text=Vehicle+Registration',
+      isSecure: true,
+      notes: 'Current vehicle registration certificate',
+      vehicleId: 'bike1'
+    }
+  ]);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
+  const [isDocumentPreviewOpen, setIsDocumentPreviewOpen] = useState(false);
   
 
 
@@ -339,6 +380,35 @@ const NewGarage = () => {
 
   const handleVaultClose = () => {
     setIsVaultOpen(false);
+  };
+
+  // Document button handlers
+  const handleDocumentButtonClick = (docType: string) => {
+    const docOfType = documents.find(doc => doc.type === docType);
+    if (docOfType) {
+      // Open document preview
+      setSelectedDocumentType(docType);
+      setIsDocumentPreviewOpen(true);
+    } else {
+      // Open vault with filter for this document type
+      setSelectedDocumentType(docType);
+      setIsVaultOpen(true);
+    }
+  };
+
+  const handleDocumentPreviewClose = () => {
+    setIsDocumentPreviewOpen(false);
+    setSelectedDocumentType(null);
+  };
+
+  // Get document by type
+  const getDocumentByType = (type: string) => {
+    return documents.find(doc => doc.type === type);
+  };
+
+  // Check if document type has uploaded documents
+  const hasDocumentOfType = (type: string) => {
+    return documents.some(doc => doc.type === type);
   };
 
   const handleEditMotorcycle = (motorcycle: Motorcycle) => {
@@ -603,16 +673,23 @@ const NewGarage = () => {
 
                       return buttons.map((button) => {
                         const isCenter = button.isCenter;
+                        const hasDocument = hasDocumentOfType(button.key);
                         
                         return (
                           <button 
                             key={button.key}
+                            onClick={() => handleDocumentButtonClick(button.key)}
                             className={`relative ${
                               isCenter 
                                 ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
                                 : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
                             } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105`}
                           >
+                            {/* Document availability indicator */}
+                            {hasDocument && (
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            )}
+                            
                             {isCenter ? (
                               <>
                                 <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
@@ -1069,6 +1146,16 @@ const NewGarage = () => {
         <DocumentVault 
           isOpen={isVaultOpen} 
           onClose={handleVaultClose} 
+          documents={documents}
+          onDocumentsChange={setDocuments}
+          selectedDocumentType={selectedDocumentType}
+        />
+
+        {/* Document Preview */}
+        <DocumentPreview 
+          isOpen={isDocumentPreviewOpen} 
+          onClose={handleDocumentPreviewClose} 
+          document={selectedDocumentType ? getDocumentByType(selectedDocumentType) : null}
         />
 
 
