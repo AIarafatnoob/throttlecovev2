@@ -513,6 +513,23 @@ const NewGarage = () => {
                   </div>
 
                   {/* Document Quick Access Buttons */}
+                  <div className="flex justify-center gap-3">
+                    <Button 
+                      size="sm"
+                      className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
+                      onClick={() => window.location.href = `/maintenance`}
+                    >
+                      🛡️🔧Service
+                    </Button>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
+                      onClick={() => window.location.href = `/documents/all`}
+                    >
+                      📋License📋📁
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Primary Stat and Document Access */}
