@@ -198,6 +198,14 @@ const NewGarage = () => {
   const [documentDescription, setDocumentDescription] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [vehicleForDocument, setVehicleForDocument] = useState("");
+  
+  // Mock document storage - in real app this would be in database
+  const [uploadedDocuments, setUploadedDocuments] = useState<{[key: string]: boolean}>({
+    registration: true,
+    service: true,
+    license: false,
+    insurance: false
+  });
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
     queryKey: ['/api/motorcycles'],
@@ -367,47 +375,26 @@ const NewGarage = () => {
 
   // Document access handler
   const handleDocumentAccess = (documentType: string) => {
-    // Mock document availability - in real app this would come from API
-    const documentStatus = {
-      license: { available: false, expired: true },
-      insurance: { available: false, expired: true },
-      registration: { available: true, expired: false },
-      service: { available: true, expired: false },
-      all: { available: true, expired: false }
-    };
-
-    const docStatus = documentStatus[documentType as keyof typeof documentStatus];
-    
-    if (!docStatus?.available) {
-      // No documents available - open upload modal
-      setSelectedDocumentType(documentType);
-      setIsDocumentUploadOpen(true);
-      toast({
-        title: "No Documents Found",
-        description: `No ${documentType} documents found. Opening upload form...`,
-      });
-    } else if (documentType === 'all') {
-      // All documents button - show document manager
-      toast({
-        title: "Document Manager",
-        description: "Opening document management interface...",
-      });
-      
-      setTimeout(() => {
-        window.location.href = '/documents/view/all';
-      }, 1000);
-    } else {
-      // Documents available - show document directly
+    // Check if document already exists/uploaded
+    if (uploadedDocuments[documentType]) {
+      // Document exists - show document viewer
       toast({
         title: `${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
-        description: docStatus.expired ? "Document found but expired!" : "Viewing current document...",
-        variant: docStatus.expired ? "destructive" : "default",
+        description: "Viewing current document...",
       });
       
       // Show document viewer directly
       setTimeout(() => {
         window.location.href = `/documents/view/${documentType}`;
       }, 1000);
+    } else {
+      // Document doesn't exist - open upload form modal
+      setSelectedDocumentType(documentType);
+      setIsDocumentUploadOpen(true);
+      toast({
+        title: "No Documents Found",
+        description: `No ${documentType} documents found. Opening upload form...`,
+      });
     }
   };
 
@@ -445,6 +432,12 @@ const NewGarage = () => {
 
     // Simulate API call
     setTimeout(() => {
+      // Save document to state (in real app this would save to database)
+      setUploadedDocuments(prev => ({
+        ...prev,
+        [selectedDocumentType]: true
+      }));
+      
       toast({
         title: "Document uploaded successfully!",
         description: `${selectedDocumentType} document has been saved for your vehicle`,
@@ -614,26 +607,17 @@ const NewGarage = () => {
                   {/* Document Quick Access Buttons */}
                   <div className="flex items-center justify-center gap-3 px-4">
                     {(() => {
-                      // Document status for indicators
-                      const documentStatus = {
-                        license: { available: false, expired: true, title: "License" },
-                        insurance: { available: false, expired: true, title: "Insurance" },
-                        registration: { available: true, expired: false, title: "Registration" },
-                        service: { available: true, expired: false, title: "Service" },
-                        all: { available: true, expired: false, title: "All Documents" }
-                      };
-
                       const buttons = [
-                        { key: 'insurance', icon: '🛡️' },
-                        { key: 'service', icon: '🔧' },
-                        { key: 'license', icon: '📋', isCenter: true },
-                        { key: 'registration', icon: '📋' },
-                        { key: 'all', icon: '📁' }
+                        { key: 'insurance', icon: '🛡️', title: 'Insurance' },
+                        { key: 'service', icon: '🔧', title: 'Service' },
+                        { key: 'license', icon: '📋', title: 'License', isCenter: true },
+                        { key: 'registration', icon: '📋', title: 'Registration' },
+                        { key: 'all', icon: '📁', title: 'All Documents' }
                       ];
 
                       return buttons.map((button) => {
-                        const status = documentStatus[button.key as keyof typeof documentStatus];
                         const isCenter = button.isCenter;
+                        const isAvailable = button.key === 'all' || uploadedDocuments[button.key];
                         
                         return (
                           <button 
@@ -648,12 +632,12 @@ const NewGarage = () => {
                             {isCenter ? (
                               <>
                                 <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
-                                <span className="text-white text-sm font-medium">{status.title}</span>
+                                <span className="text-white text-sm font-medium">{button.title}</span>
                               </>
                             ) : (
                               <span className="text-white text-lg">{button.icon}</span>
                             )}
-                            {(!status.available || status.expired) && (
+                            {!isAvailable && (
                               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
                             )}
                           </button>
