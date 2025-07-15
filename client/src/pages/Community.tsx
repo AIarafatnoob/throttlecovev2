@@ -1,553 +1,595 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
-import { User, Ride } from "@shared/schema";
-import RiderCard from "@/components/ui/community/RiderCard";
-import RideCard from "@/components/ui/community/RideCard";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Users, 
-  MapPin, 
   Calendar, 
+  MapPin, 
+  MessageCircle, 
   Heart, 
-  MessageSquare, 
-  ExternalLink,
+  Share2,
+  Search, 
+  Plus,
+  Filter,
+  TrendingUp,
+  Clock,
+  Eye,
+  MessageSquare,
+  ThumbsUp,
   UserPlus,
-  Search,
-  Plus
+  Settings,
+  Bell,
+  Globe,
+  Camera,
+  Video,
+  Image as ImageIcon
 } from "lucide-react";
-import { format, addDays } from "date-fns";
 
-// Mock data for community features
-const mockRides = [
+// Mock data for the community
+const mockPosts = [
   {
     id: 1,
-    title: "Mountain Twisties",
-    location: "Blue Ridge Parkway",
-    date: new Date().toISOString(),
-    host: {
-      id: 1,
-      username: "rider1",
-      fullName: "Alex Johnson",
-      email: "alex@example.com",
-      avatarUrl: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      createdAt: new Date()
+    author: {
+      name: "Alex Rodriguez",
+      username: "@alexrides",
+      avatar: "🏍️",
+      rank: "Road Captain",
+      verified: true
     },
-    attendees: [
-      {
-        id: 1,
-        username: "rider1",
-        fullName: "Alex Johnson",
-        email: "alex@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      },
-      {
-        id: 2,
-        username: "rider2",
-        fullName: "Mike Smith",
-        email: "mike@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      },
-      {
-        id: 3,
-        username: "rider3",
-        fullName: "Jessica Taylor",
-        email: "jessica@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      },
-      {
-        id: 4,
-        username: "rider4",
-        fullName: "David Wilson",
-        email: "david@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      }
-    ]
-  },
-  {
-    id: 2,
-    title: "Coastal Cruise",
-    location: "Pacific Coast Highway",
-    date: addDays(new Date(), 7).toISOString(),
-    host: {
-      id: 2,
-      username: "rider2",
-      fullName: "Mike Smith",
-      email: "mike@example.com",
-      avatarUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      createdAt: new Date()
-    },
-    attendees: [
-      {
-        id: 2,
-        username: "rider2",
-        fullName: "Mike Smith",
-        email: "mike@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      },
-      {
-        id: 3,
-        username: "rider3",
-        fullName: "Jessica Taylor",
-        email: "jessica@example.com",
-        avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        createdAt: new Date()
-      }
-    ]
-  }
-];
-
-const mockFeedPosts = [
-  {
-    id: 1,
-    user: {
-      id: 1,
-      username: "rider1",
-      fullName: "Alex Johnson",
-      avatarUrl: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    type: "ride",
-    content: "Just finished an amazing ride through the mountains. 120 miles of pure joy!",
-    imageUrl: "https://images.unsplash.com/photo-1611323795623-21b95144fe3c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-    likes: 24,
-    comments: 5,
-    createdAt: "2 hours ago"
-  },
-  {
-    id: 2,
-    user: {
-      id: 2,
-      username: "rider2",
-      fullName: "Michael Smith",
-      avatarUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    type: "motorcycle",
-    content: "Finally got my dream bike! Can't wait to hit the road this weekend.",
-    imageUrl: "https://images.unsplash.com/photo-1635073908681-b3dbacb15f76?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    content: "Just completed an epic 500-mile ride through the Blue Ridge Mountains! The weather was perfect and the views were absolutely stunning. Met some amazing fellow riders along the way. This is why I love the motorcycle community! 🏔️",
+    images: [
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    timestamp: "2 hours ago",
     likes: 42,
-    comments: 12,
-    createdAt: "1 day ago"
-  }
-];
-
-const mockSquadMembers = [
-  {
-    id: 1,
-    username: "rider1",
-    fullName: "Alex Johnson",
-    email: "alex@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date(),
-    motorcycle: "Ducati"
+    comments: 8,
+    shares: 3,
+    tags: ["adventure", "mountains", "touring"]
   },
   {
     id: 2,
-    username: "rider2",
-    fullName: "Mike Smith",
-    email: "mike@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date(),
-    motorcycle: "Triumph"
+    author: {
+      name: "Sarah Chen",
+      username: "@sarahspeed",
+      avatar: "🌟",
+      rank: "Speed Demon",
+      verified: false
+    },
+    content: "Track day at Laguna Seca was incredible! Managed to shave 2 seconds off my best lap time. The new suspension setup is working perfectly. Who else is hitting the track this weekend?",
+    images: [
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    timestamp: "4 hours ago",
+    likes: 67,
+    comments: 15,
+    shares: 7,
+    tags: ["track", "racing", "performance"]
   },
   {
     id: 3,
-    username: "rider3",
-    fullName: "Jessica Taylor",
-    email: "jessica@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date(),
-    motorcycle: "BMW"
-  },
-  {
-    id: 4,
-    username: "rider4",
-    fullName: "David Wilson",
-    email: "david@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date(),
-    motorcycle: "Harley"
+    author: {
+      name: "Mike Thompson",
+      username: "@mikeadv",
+      avatar: "🗻",
+      rank: "Adventure Seeker",
+      verified: true
+    },
+    content: "Planning a cross-country adventure ride next month. Looking for riding partners who are up for camping under the stars and exploring remote trails. This will be a 2-week journey covering over 3,000 miles!",
+    images: [],
+    timestamp: "6 hours ago",
+    likes: 28,
+    comments: 22,
+    shares: 12,
+    tags: ["adventure", "touring", "camping"]
   }
 ];
 
-const mockNearbyRiders = [
+const mockEvents = [
   {
-    id: 5,
-    username: "rider5",
-    fullName: "Sarah Johnson",
-    email: "sarah@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date()
+    id: 1,
+    title: "Weekly Coffee Meetup",
+    date: "Sunday, 9:00 AM",
+    location: "Downtown Cafe",
+    attendees: 15,
+    type: "social"
   },
   {
-    id: 6,
-    username: "rider6",
-    fullName: "Robert Brown",
-    email: "robert@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date()
+    id: 2,
+    title: "Canyon Run",
+    date: "Saturday, 7:00 AM",
+    location: "Angeles Crest Highway",
+    attendees: 8,
+    type: "ride"
   },
   {
-    id: 7,
-    username: "rider7",
-    fullName: "Emily Davis",
-    email: "emily@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    createdAt: new Date()
+    id: 3,
+    title: "Bike Night",
+    date: "Friday, 6:00 PM",
+    location: "Local Brewery",
+    attendees: 32,
+    type: "social"
   }
 ];
 
-const Community = () => {
-  const [feedFilter, setFeedFilter] = useState("recent");
-  const [joinedRides, setJoinedRides] = useState<number[]>([]);
-  const { toast } = useToast();
-  
-  // Get user's friends
-  const { data: friends = mockSquadMembers, isLoading: friendsLoading } = useQuery<Omit<User, 'password'>[]>({
-    queryKey: ['/api/friends'],
-    enabled: true,
-    retry: false
-  });
-  
-  // Get upcoming rides
-  const { data: rides = mockRides, isLoading: ridesLoading } = useQuery<Ride[]>({
-    queryKey: ['/api/rides'],
-    enabled: true,
-    retry: false
-  });
-  
-  // Join a ride
-  const handleJoinRide = (rideId: number) => {
-    setJoinedRides([...joinedRides, rideId]);
-    toast({
-      title: "Ride Joined",
-      description: "You have successfully joined this ride.",
-    });
+const mockRiders = [
+  {
+    id: 1,
+    name: "Jessica Parker",
+    username: "@jessrides",
+    avatar: "🚴‍♀️",
+    rank: "Navigator",
+    miles: 15420,
+    following: false
+  },
+  {
+    id: 2,
+    name: "David Kim",
+    username: "@davidk",
+    avatar: "🏁",
+    rank: "Track Master",
+    miles: 22100,
+    following: true
+  },
+  {
+    id: 3,
+    name: "Lisa Martinez",
+    username: "@lisamtz",
+    avatar: "🌮",
+    rank: "Cruiser",
+    miles: 8750,
+    following: false
+  }
+];
+
+export default function Community() {
+  const [activeTab, setActiveTab] = useState("feed");
+  const [newPost, setNewPost] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleCreatePost = () => {
+    if (newPost.trim()) {
+      // Here we would normally send to backend
+      console.log("Creating post:", newPost);
+      setNewPost("");
+    }
   };
-  
-  // Handle like post
-  const handleLikePost = (postId: number) => {
-    toast({
-      title: "Post Liked",
-      description: "This feature will be available soon!",
-    });
+
+  const handleLike = (postId: number) => {
+    console.log("Liked post:", postId);
   };
-  
-  // Handle find riders
-  const handleFindRiders = () => {
-    toast({
-      title: "Find Riders",
-      description: "This feature will be available soon!",
-    });
+
+  const handleFollow = (riderId: number) => {
+    console.log("Following rider:", riderId);
   };
-  
-  // Handle create ride
-  const handleCreateRide = () => {
-    toast({
-      title: "Create Ride",
-      description: "This feature will be available soon!",
-    });
-  };
-  
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h2 className="text-3xl font-bold font-header text-[#1A1A1A]">Rider Community</h2>
-          <p className="text-gray-600">Connect with fellow enthusiasts</p>
-        </div>
-        <div className="mt-4 md:mt-0">
-          <Button 
-            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
-            onClick={handleFindRiders}
-          >
-            <Search className="h-4 w-4 mr-2" />
-            FIND RIDERS
-          </Button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-[#1A1A1A] to-gray-800 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <motion.h1 
+              className="text-4xl md:text-6xl font-bold mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              ThrottleCove Community
+            </motion.h1>
+            <motion.p 
+              className="text-xl md:text-2xl text-gray-300 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              Connect, Share, and Ride Together
+            </motion.p>
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <Button size="lg" className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white">
+                <Plus className="h-5 w-5 mr-2" />
+                Create Post
+              </Button>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+                <Users className="h-5 w-5 mr-2" />
+                Find Riders
+              </Button>
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Upcoming Rides */}
-        <div className="lg:col-span-1">
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold font-header">Upcoming Rides</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              {ridesLoading ? (
-                <div className="flex justify-center items-center py-12">
-                  <svg className="animate-spin h-8 w-8 text-[#007AFF]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </div>
-              ) : (rides.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Calendar className="h-12 w-12 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No Upcoming Rides</h3>
-                  <p className="text-gray-500 text-center mb-4">
-                    There are no planned rides coming up
-                  </p>
-                  <Button 
-                    variant="outline"
-                    onClick={handleCreateRide}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create a Ride
-                  </Button>
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {mockRides.map(ride => (
-                    <RideCard
-                      key={ride.id}
-                      id={ride.id}
-                      title={ride.title}
-                      location={ride.location}
-                      date={ride.date}
-                      host={ride.host}
-                      attendees={ride.attendees}
-                      joined={joinedRides.includes(ride.id)}
-                      onJoin={handleJoinRide}
-                    />
-                  ))}
-                </div>
-              ))}
-              
-              <div className="p-4 border-t border-gray-200">
-                <Button 
-                  variant="ghost"
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900"
-                  onClick={handleCreateRide}
+      {/* Navigation Tabs */}
+      <div className="bg-white border-b sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8 overflow-x-auto">
+            {[
+              { id: "feed", label: "Feed", icon: Globe },
+              { id: "events", label: "Events", icon: Calendar },
+              { id: "riders", label: "Riders", icon: Users },
+              { id: "groups", label: "Groups", icon: MessageCircle }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? "border-[#FF3B30] text-[#FF3B30]"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Ride
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-bold font-header">Your Riding Squad</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {friendsLoading ? (
-                <div className="flex justify-center items-center py-8">
-                  <svg className="animate-spin h-8 w-8 text-[#007AFF]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </div>
-              ) : (friends.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8">
-                  <Users className="h-12 w-12 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No Squad Members</h3>
-                  <p className="text-gray-500 text-center mb-4">
-                    Connect with other riders to build your squad
-                  </p>
-                  <Button 
-                    className="bg-[#007AFF] hover:bg-[#007AFF]/90 text-white"
-                    onClick={handleFindRiders}
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Find Riders
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-4">
-                  {mockSquadMembers.map(member => (
-                    <div key={member.id} className="flex flex-col items-center">
-                      <Avatar className="h-14 w-14 mb-2">
-                        <AvatarImage src={member.avatarUrl} alt={member.fullName} />
-                        <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <p className="text-sm font-medium">
-                        {member.fullName.split(' ')[0]} {member.fullName.split(' ')[1]?.charAt(0)}.
-                      </p>
-                      <p className="text-xs text-gray-500">{member.motorcycle}</p>
-                    </div>
-                  ))}
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center mb-2">
-                      <Plus className="h-5 w-5 text-gray-500" />
-                    </div>
-                    <p className="text-sm font-medium">Add</p>
-                    <p className="text-xs text-gray-500">New Rider</p>
-                  </div>
-                </div>
-              ))}
-              
-              <Separator className="my-4" />
-              
-              <Button 
-                variant="outline" 
-                className="w-full text-gray-900"
-                onClick={() => {
-                  toast({
-                    title: "View All",
-                    description: "Full squad management coming soon!",
-                  });
-                }}
-              >
-                View All Squad Members
-              </Button>
-            </CardContent>
-          </Card>
+                  <Icon className="h-4 w-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-        
-        {/* Right Column: Rider Feed */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-xl font-bold font-header">Rider Feed</CardTitle>
-              <Select value={feedFilter} onValueChange={setFeedFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recent">Recent Activity</SelectItem>
-                  <SelectItem value="squad">My Squad</SelectItem>
-                  <SelectItem value="nearby">Nearby Riders</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardHeader>
-            
-            <CardContent className="p-0">
-              <div className="divide-y divide-gray-200">
-                {mockFeedPosts.map(post => (
-                  <div key={post.id} className="p-6">
-                    <div className="flex items-start">
-                      <Avatar className="h-10 w-10 mr-4">
-                        <AvatarImage src={post.user.avatarUrl} alt={post.user.fullName} />
-                        <AvatarFallback>{post.user.fullName.charAt(0)}</AvatarFallback>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Feed */}
+          <div className="lg:col-span-2 space-y-6">
+            {activeTab === "feed" && (
+              <>
+                {/* Create Post Card */}
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex space-x-4">
+                      <Avatar>
+                        <AvatarFallback>🏍️</AvatarFallback>
                       </Avatar>
-                      
-                      <div className="flex-grow">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{post.user.fullName}</h4>
-                            <p className="text-sm text-gray-500">
-                              Added a new {post.type} • {post.createdAt}
-                            </p>
-                          </div>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-more-horizontal"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                          </Button>
-                        </div>
-                        
-                        <div className="mt-3 text-sm">
-                          {post.content}
-                        </div>
-                        
-                        <div className="mt-3 rounded-lg overflow-hidden">
-                          <img 
-                            src={post.imageUrl} 
-                            alt={`${post.user.fullName}'s ${post.type}`} 
-                            className="w-full h-64 object-cover"
-                          />
-                        </div>
-                        
-                        <div className="mt-3 flex justify-between items-center">
+                      <div className="flex-1">
+                        <Textarea
+                          placeholder="Share your latest ride, tips, or motorcycle stories..."
+                          value={newPost}
+                          onChange={(e) => setNewPost(e.target.value)}
+                          rows={3}
+                          className="resize-none border-0 focus:ring-0 text-base"
+                        />
+                        <div className="flex items-center justify-between mt-4 pt-4 border-t">
                           <div className="flex space-x-4">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-gray-500 hover:text-[#007AFF] px-0"
-                              onClick={() => handleLikePost(post.id)}
-                            >
-                              <Heart className="h-4 w-4 mr-1" />
-                              <span>{post.likes}</span>
+                            <Button variant="ghost" size="sm">
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                              Photo
                             </Button>
-                            
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-gray-500 hover:text-[#007AFF] px-0"
-                              onClick={() => {
-                                toast({
-                                  title: "Comment",
-                                  description: "Commenting feature coming soon!",
-                                });
-                              }}
-                            >
-                              <MessageSquare className="h-4 w-4 mr-1" />
-                              <span>{post.comments}</span>
+                            <Button variant="ghost" size="sm">
+                              <Video className="h-4 w-4 mr-2" />
+                              Video
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <MapPin className="h-4 w-4 mr-2" />
+                              Location
                             </Button>
                           </div>
-                          
                           <Button 
-                            variant="link" 
-                            className="text-[#007AFF] p-0"
-                            onClick={() => {
-                              toast({
-                                title: `View ${post.type === 'ride' ? 'Ride' : 'Bike'}`,
-                                description: "This feature will be available soon!",
-                              });
-                            }}
+                            onClick={handleCreatePost}
+                            disabled={!newPost.trim()}
+                            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90"
                           >
-                            View {post.type === 'ride' ? 'Ride' : 'Bike'} <ExternalLink className="ml-1 h-3 w-3" />
+                            Post
                           </Button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </CardContent>
+                </Card>
+
+                {/* Posts Feed */}
+                <div className="space-y-6">
+                  {mockPosts.map((post) => (
+                    <motion.div
+                      key={post.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Card className="hover:shadow-lg transition-shadow">
+                        <CardContent className="p-6">
+                          {/* Post Header */}
+                          <div className="flex items-start space-x-4 mb-4">
+                            <Avatar>
+                              <AvatarFallback>{post.author.avatar}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <h3 className="font-semibold">{post.author.name}</h3>
+                                {post.author.verified && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    {post.author.rank}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-500">{post.author.username} • {post.timestamp}</p>
+                            </div>
+                            <Button variant="ghost" size="sm">
+                              <Settings className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          {/* Post Content */}
+                          <div className="mb-4">
+                            <p className="text-gray-900 leading-relaxed">{post.content}</p>
+                            {post.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-3">
+                                {post.tags.map((tag) => (
+                                  <Badge key={tag} variant="outline" className="text-xs">
+                                    #{tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Post Images */}
+                          {post.images.length > 0 && (
+                            <div className={`grid gap-2 mb-4 ${
+                              post.images.length === 1 ? 'grid-cols-1' : 
+                              post.images.length === 2 ? 'grid-cols-2' : 
+                              'grid-cols-2 lg:grid-cols-3'
+                            }`}>
+                              {post.images.map((image, index) => (
+                                <div key={index} className="relative rounded-lg overflow-hidden">
+                                  <img 
+                                    src={image} 
+                                    alt={`Post image ${index + 1}`}
+                                    className="w-full h-48 object-cover hover:scale-105 transition-transform cursor-pointer"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Post Actions */}
+                          <div className="flex items-center justify-between pt-4 border-t">
+                            <div className="flex space-x-6">
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => handleLike(post.id)}
+                                className="text-gray-500 hover:text-[#FF3B30]"
+                              >
+                                <Heart className="h-4 w-4 mr-2" />
+                                {post.likes}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-gray-500">
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                {post.comments}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-gray-500">
+                                <Share2 className="h-4 w-4 mr-2" />
+                                {post.shares}
+                              </Button>
+                            </div>
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {activeTab === "events" && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">Upcoming Events</h2>
+                  <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Event
+                  </Button>
+                </div>
+                <div className="grid gap-6">
+                  {mockEvents.map((event) => (
+                    <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold mb-2">{event.title}</h3>
+                            <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
+                              <div className="flex items-center">
+                                <Calendar className="h-4 w-4 mr-1" />
+                                {event.date}
+                              </div>
+                              <div className="flex items-center">
+                                <MapPin className="h-4 w-4 mr-1" />
+                                {event.location}
+                              </div>
+                              <div className="flex items-center">
+                                <Users className="h-4 w-4 mr-1" />
+                                {event.attendees} attending
+                              </div>
+                            </div>
+                            <Badge className={
+                              event.type === 'ride' ? 'bg-green-100 text-green-800' :
+                              event.type === 'social' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }>
+                              {event.type}
+                            </Badge>
+                          </div>
+                          <Button variant="outline">
+                            Join Event
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
-              
-              <div className="p-4 flex justify-center border-t border-gray-200">
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    toast({
-                      title: "Load More",
-                      description: "More posts will be available soon!",
-                    });
-                  }}
-                >
-                  Load More
+            )}
+
+            {activeTab === "riders" && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">Connect with Riders</h2>
+                  <div className="flex space-x-2">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        placeholder="Search riders..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <Button variant="outline">
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid gap-4">
+                  {mockRiders.map((rider) => (
+                    <Card key={rider.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback className="text-lg">{rider.avatar}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-semibold">{rider.name}</h3>
+                              <p className="text-sm text-gray-500">{rider.username}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <Badge variant="secondary" className="text-xs">
+                                  {rider.rank}
+                                </Badge>
+                                <span className="text-xs text-gray-500">{rider.miles.toLocaleString()} miles</span>
+                              </div>
+                            </div>
+                          </div>
+                          <Button 
+                            variant={rider.following ? "outline" : "default"}
+                            onClick={() => handleFollow(rider.id)}
+                            className={!rider.following ? "bg-[#FF3B30] hover:bg-[#FF3B30]/90" : ""}
+                          >
+                            {rider.following ? (
+                              "Following"
+                            ) : (
+                              <>
+                                <UserPlus className="h-4 w-4 mr-2" />
+                                Follow
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "groups" && (
+              <div className="text-center py-12">
+                <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Groups Coming Soon</h3>
+                <p className="text-gray-500 mb-6">
+                  Create and join motorcycle groups based on your interests, location, and riding style.
+                </p>
+                <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Notify Me
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-          
-          <div className="mt-6">
-            <h3 className="text-xl font-bold font-header mb-4">Discover Riders Near You</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockNearbyRiders.map(rider => (
-                <RiderCard key={rider.id} rider={rider} />
-              ))}
-            </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Trending Topics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2 text-[#FF3B30]" />
+                  Trending
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  { tag: "#TrackDay", posts: "47 posts" },
+                  { tag: "#AdventureRiding", posts: "32 posts" },
+                  { tag: "#BikeNight", posts: "28 posts" },
+                  { tag: "#MaintenanceTips", posts: "21 posts" },
+                  { tag: "#RideShare", posts: "19 posts" }
+                ].map((trend, index) => (
+                  <div key={index} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div>
+                      <p className="font-medium text-sm">{trend.tag}</p>
+                      <p className="text-xs text-gray-500">{trend.posts}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Events Sidebar */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Calendar className="h-5 w-5 mr-2 text-[#FF3B30]" />
+                  This Week
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {mockEvents.slice(0, 3).map((event) => (
+                  <div key={event.id} className="border-l-4 border-[#FF3B30] pl-3">
+                    <h4 className="font-medium text-sm">{event.title}</h4>
+                    <p className="text-xs text-gray-500 mt-1">{event.date}</p>
+                    <p className="text-xs text-gray-500">{event.attendees} attending</p>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full">
+                  View All Events
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Community Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-[#FF3B30]" />
+                  Community
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">2,847</div>
+                  <div className="text-sm text-gray-500">Active Riders</div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <div className="text-lg font-semibold">156</div>
+                    <div className="text-xs text-gray-500">Posts Today</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">23</div>
+                    <div className="text-xs text-gray-500">Events This Week</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Community;
+}
