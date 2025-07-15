@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Motorcycle } from "@shared/schema";
 import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
 import ExpandableMotorcycleCard from "@/components/ui/motorcycle/ExpandableMotorcycleCard";
-import DocumentUploadDialog from "@/components/ui/DocumentUpload";
+
 
 import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -160,7 +160,7 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
 const NewGarage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
-  const [isDocumentDialogOpen, setIsDocumentDialogOpen] = useState(false);
+
   const [expandedMotorcycleId, setExpandedMotorcycleId] = useState<number | null>(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const { toast } = useToast();
@@ -417,17 +417,17 @@ const NewGarage = () => {
                 msUserSelect: 'none',
               }}
             >
-              {/* SOS Gradient Overlay - Card Shape */}
+              {/* SOS Gradient Overlay - Center to Border */}
               {sosActive && (
                 <div 
                   className="absolute inset-0 pointer-events-none rounded-3xl transition-all duration-200"
                   style={{
-                    background: `linear-gradient(135deg, 
-                      rgba(255, 59, 48, ${sosProgress / 100 * 0.9}) 0%, 
-                      rgba(255, 99, 99, ${sosProgress / 100 * 0.7}) 25%, 
-                      rgba(255, 149, 149, ${sosProgress / 100 * 0.5}) 50%, 
-                      rgba(255, 199, 199, ${sosProgress / 100 * 0.3}) 75%, 
-                      rgba(255, 255, 255, 0) 100%)`,
+                    background: `radial-gradient(ellipse at center, 
+                      rgba(255, 255, 255, 0) ${50 - (sosProgress / 100 * 45)}%, 
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.3}) ${55 - (sosProgress / 100 * 45)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.6}) ${70 - (sosProgress / 100 * 35)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.8}) ${85 - (sosProgress / 100 * 25)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.9}) 100%)`,
                     border: `2px solid rgba(255, 59, 48, ${sosProgress / 100 * 0.8})`,
                   }}
                 />
@@ -495,10 +495,10 @@ const NewGarage = () => {
                   </div>
                 </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Primary Stat and Document Access */}
+                <div className="space-y-4">
                   {/* Total KM - Primary Stat */}
-                  <div className="col-span-1 sm:col-span-3 text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6">
+                  <div className="text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6">
                     <p className="text-gray-500 text-sm mb-2 font-medium">Total Distance</p>
                     <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] mb-1">
                       {totalKilometers.toLocaleString()}
@@ -506,21 +506,41 @@ const NewGarage = () => {
                     <p className="text-gray-400 text-sm">kilometers traveled</p>
                   </div>
                   
-                  {/* Secondary Stats */}
-                  <div className="text-center bg-gray-50 rounded-xl p-4">
-                    <p className="text-gray-500 text-xs mb-1">Vehicles</p>
-                    <p className="text-2xl font-bold text-[#1A1A1A]">{motorcycles?.length || 0}</p>
-                  </div>
-                  
-                  <div className="text-center bg-gray-50 rounded-xl p-4">
-                    <p className="text-gray-500 text-xs mb-1">Rank Level</p>
-                    <p className="text-2xl font-bold text-[#FF3B30]">{currentRank.id}/20</p>
-                  </div>
-                  
-                  <div className="text-center bg-gray-50 rounded-xl p-4">
-                    <p className="text-gray-500 text-xs mb-1">Progress</p>
-                    <p className="text-2xl font-bold text-green-600">{((totalKilometers / 300000) * 100).toFixed(0)}%</p>
-                  </div>
+                  {/* Document Quick Access */}
+                  {motorcycles && motorcycles.length > 0 && (
+                    <div className="bg-gray-50 rounded-2xl p-4">
+                      <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center">
+                        <FileText className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                        Quick Document Access
+                      </h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
+                          <div className="text-center">
+                            <div className="text-2xl mb-1">📋</div>
+                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">License</p>
+                          </div>
+                        </button>
+                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
+                          <div className="text-center">
+                            <div className="text-2xl mb-1">🛡️</div>
+                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Insurance</p>
+                          </div>
+                        </button>
+                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
+                          <div className="text-center">
+                            <div className="text-2xl mb-1">🔧</div>
+                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">Service</p>
+                          </div>
+                        </button>
+                        <button className="flex items-center justify-center bg-white rounded-xl p-3 border border-gray-200 hover:border-[#FF3B30] transition-all duration-200 group">
+                          <div className="text-center">
+                            <div className="text-2xl mb-1">📁</div>
+                            <p className="text-xs font-medium text-gray-700 group-hover:text-[#FF3B30]">All Docs</p>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Progress Bar with Enhanced Design */}
@@ -894,7 +914,7 @@ const NewGarage = () => {
           }}
         />
 
-        <DocumentUploadDialog />
+
 
 
 
