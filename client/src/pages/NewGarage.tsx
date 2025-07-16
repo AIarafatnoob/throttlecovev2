@@ -759,7 +759,9 @@ const NewGarage = () => {
                     <div 
                       className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full transition-all duration-700 ease-out"
                       style={{ 
-                        width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
+                        width: nextRank 
+                          ? `${Math.min(((totalKilometers - currentRank.minKm) / (nextRank.minKm - currentRank.minKm)) * 100, 100)}%`
+                          : '100%'
                       }}
                     />
 
@@ -768,6 +770,24 @@ const NewGarage = () => {
                       {progressRanks.map((rank, index) => {
                         const isAchieved = totalKilometers >= rank.minKm;
                         const isCurrent = currentRank.id === rank.id;
+                        
+                        // Calculate position based on the current progress range
+                        let leftPosition = 0;
+                        if (nextRank) {
+                          if (index === 0) {
+                            // Current rank position (start)
+                            leftPosition = 0;
+                          } else if (index === 1) {
+                            // Next rank position (end)
+                            leftPosition = 100;
+                          } else if (index === 2) {
+                            // Third rank position (off the visible progress bar)
+                            leftPosition = 100;
+                          }
+                        } else {
+                          // If at max rank, show all as achieved
+                          leftPosition = 33.33 * index;
+                        }
 
                         return (
                           <div
@@ -781,7 +801,7 @@ const NewGarage = () => {
                             }`}
                             style={{ 
                               position: 'absolute',
-                              left: `${33.33 * index}%`,
+                              left: `${leftPosition}%`,
                               transform: 'translateX(-50%)'
                             }}
                             title={`${rank.name} - ${rank.minKm.toLocaleString()} km`}
@@ -799,8 +819,8 @@ const NewGarage = () => {
 
                   {/* Progress labels */}
                   <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
-                    <span className="font-medium">{progressRanks[2]?.name || "Apex Nomad"}</span>
+                    <span className="font-medium">{currentRank.name}</span>
+                    <span className="font-medium">{nextRank?.name || "Max Rank"}</span>
                   </div>
                 </div>
               </div>
