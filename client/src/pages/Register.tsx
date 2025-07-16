@@ -215,13 +215,15 @@ const Register = () => {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-3/4 mx-auto bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white rounded-full px-12 disabled:opacity-50"
-                >
-                  {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
+                <div className="flex justify-center">
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-3/4 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white rounded-full px-12 disabled:opacity-50"
+                  >
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
+                </div>
 
                 <CardFooter className="text-center px-0 pb-0">
                   <p className="text-sm text-gray-600">
