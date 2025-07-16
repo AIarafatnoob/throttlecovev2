@@ -116,6 +116,7 @@ const Login = () => {
                   id="username"
                   type="text"
                   placeholder="Enter your username"
+                  className="rounded-full"
                   {...form.register("username")}
                 />
                 {form.formState.errors.username && (
@@ -136,6 +137,7 @@ const Login = () => {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
+                  className="rounded-full"
                   {...form.register("password")}
                 />
                 {form.formState.errors.password && (
@@ -148,11 +150,11 @@ const Login = () => {
             
             <CardFooter className="flex flex-col gap-4">
               <Button 
-                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]/90"
+                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 rounded-full"
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Opening Garage..." : "Open Garage"}
               </Button>
               
               <p className="text-sm text-center text-gray-600">
