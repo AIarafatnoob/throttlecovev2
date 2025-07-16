@@ -2,34 +2,48 @@ import { pgTable, text, serial, integer, date, boolean, timestamp, uniqueIndex, 
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Session storage table - required for Replit Auth
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
-
-// User storage table - required for Replit Auth
+// Users table with enhanced security fields
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 50 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  fullName: varchar("full_name", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  avatarUrl: text("avatar_url"),
+  emailVerified: boolean("email_verified").default(false),
+  mfaEnabled: boolean("mfa_enabled").default(false),
+  mfaSecret: varchar("mfa_secret", { length: 32 }),
+  loginAttempts: integer("login_attempts").default(0),
+  lockedUntil: timestamp("locked_until"),
+  lastLogin: timestamp("last_login"),
+  role: varchar("role", { length: 20 }).default("user"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  usernameIdx: index("idx_users_username").on(table.username),
+  emailIdx: index("idx_users_email").on(table.email),
+}));
 
-
+// User sessions for JWT management
+export const userSessions = pgTable("user_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionToken: varchar("session_token", { length: 255 }).notNull().unique(),
+  refreshToken: varchar("refresh_token", { length: 255 }).unique(),
+  ipAddress: inet("ip_address"),
+  userAgent: text("user_agent"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  sessionTokenIdx: index("idx_sessions_token").on(table.sessionToken),
+  expiresAtIdx: index("idx_sessions_expires").on(table.expiresAt),
+}));
 
 // Enhanced motorcycles table
 export const motorcycles = pgTable("motorcycles", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
   make: varchar("make", { length: 100 }).notNull(),
   model: varchar("model", { length: 100 }).notNull(),
@@ -103,7 +117,7 @@ export const maintenanceSchedules = pgTable("maintenance_schedules", {
 // Enhanced rides table with GPS tracking
 export const rides = pgTable("rides", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   motorcycleId: integer("motorcycle_id").references(() => motorcycles.id, { onDelete: "set null" }),
   title: varchar("title", { length: 255 }),
   description: text("description"),
@@ -127,6 +141,7 @@ export const rides = pgTable("rides", {
 }, (table) => ({
   userIdIdx: index("idx_rides_user_id").on(table.userId),
   startTimeIdx: index("idx_rides_start_time").on(table.startTime),
+  startLocationIdx: index("idx_rides_start_location").on(table.startLocation),
 }));
 
 // Documents table for vehicle paperwork
@@ -155,8 +170,8 @@ export const documents = pgTable("documents", {
 // Enhanced rider relationships (social features)
 export const riderRelationships = pgTable("rider_relationships", {
   id: serial("id").primaryKey(),
-  followerId: varchar("follower_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  followingId: varchar("following_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  followerId: integer("follower_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  followingId: integer("following_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   status: varchar("status", { length: 20 }).default("pending"), // pending, accepted, blocked
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
@@ -170,7 +185,7 @@ export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  creatorId: varchar("creator_id").references(() => users.id, { onDelete: "set null" }),
+  creatorId: integer("creator_id").references(() => users.id, { onDelete: "set null" }),
   type: varchar("type", { length: 20 }).default("public"), // public, private, invite_only
   location: point("location"),
   locationName: varchar("location_name", { length: 255 }),
@@ -182,6 +197,7 @@ export const groups = pgTable("groups", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
+  locationIdx: index("idx_groups_location").on(table.location),
   searchIdx: index("idx_groups_search").on(table.name, table.description),
 }));
 
@@ -189,7 +205,7 @@ export const groups = pgTable("groups", {
 export const groupMembers = pgTable("group_members", {
   id: serial("id").primaryKey(),
   groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   role: varchar("role", { length: 20 }).default("member"), // admin, moderator, member
   joinedAt: timestamp("joined_at").defaultNow().notNull(),
 }, (table) => ({
@@ -200,7 +216,7 @@ export const groupMembers = pgTable("group_members", {
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   groupId: integer("group_id").references(() => groups.id, { onDelete: "cascade" }),
-  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  creatorId: integer("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   eventType: varchar("event_type", { length: 20 }).default("ride"), // ride, meetup, service, social
@@ -219,13 +235,14 @@ export const events = pgTable("events", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
+  locationIdx: index("idx_events_location").on(table.location),
   startTimeIdx: index("idx_events_start_time").on(table.startTime),
 }));
 
 // Notifications system
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   type: varchar("type", { length: 50 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   message: text("message"),
@@ -241,7 +258,7 @@ export const notifications = pgTable("notifications", {
 // API keys for integrations
 export const apiKeys = pgTable("api_keys", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
   keyHash: varchar("key_hash", { length: 255 }).notNull().unique(),
   permissions: text("permissions").array(), // Array of allowed operations
@@ -254,6 +271,7 @@ export const apiKeys = pgTable("api_keys", {
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertUserSessionSchema = createInsertSchema(userSessions).omit({ id: true, createdAt: true });
 export const insertMotorcycleSchema = createInsertSchema(motorcycles).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMaintenanceRecordSchema = createInsertSchema(maintenanceRecords).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMaintenanceScheduleSchema = createInsertSchema(maintenanceSchedules).omit({ id: true, createdAt: true, updatedAt: true });
@@ -282,7 +300,9 @@ export const registerSchema = z.object({
 // Type definitions
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type UpsertUser = typeof users.$inferInsert;
+
+export type UserSession = typeof userSessions.$inferSelect;
+export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
 
 export type Motorcycle = typeof motorcycles.$inferSelect;
 export type InsertMotorcycle = z.infer<typeof insertMotorcycleSchema>;
