@@ -188,6 +188,8 @@ const NewGarage = () => {
   const [sosProgress, setSosProgress] = useState(0);
   const sosTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const sosStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const sosMovementThreshold = 10; // pixels - if user moves more than this, cancel SOS
   
   // Dynamic button color state
   const [isOverFooter, setIsOverFooter] = useState(false);
@@ -445,38 +447,57 @@ const NewGarage = () => {
   };
 
   // SOS functionality handlers
-  const startSOS = () => {
+  const startSOS = (clientX: number, clientY: number) => {
     if (sosActive) return;
+    
+    // Record starting position
+    sosStartPosition.current = { x: clientX, y: clientY };
     
     // Add 800ms delay to prevent accidental triggers during normal interactions
     sosTimeoutRef.current = setTimeout(() => {
-      setSosActive(true);
-      setSosProgress(0);
-      
-      // Haptic feedback - vibrate if available
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
+      // Only start if we haven't moved too much
+      if (sosStartPosition.current) {
+        setSosActive(true);
+        setSosProgress(0);
+        
+        // Haptic feedback - vibrate if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+        
+        // Start progress animation
+        sosIntervalRef.current = setInterval(() => {
+          setSosProgress(prev => {
+            const next = prev + 2; // 2% every 100ms = 5 seconds total
+            if (next >= 100) {
+              // Only trigger SOS when progress reaches 100%
+              clearInterval(sosIntervalRef.current!);
+              triggerSOS();
+              return 100;
+            }
+            return next;
+          });
+        }, 100);
       }
-      
-      // Start progress animation
-      sosIntervalRef.current = setInterval(() => {
-        setSosProgress(prev => {
-          const next = prev + 2; // 2% every 100ms = 5 seconds total
-          if (next >= 100) {
-            // Only trigger SOS when progress reaches 100%
-            clearInterval(sosIntervalRef.current!);
-            triggerSOS();
-            return 100;
-          }
-          return next;
-        });
-      }, 100);
     }, 800);
+  };
+  
+  const checkSOSMovement = (clientX: number, clientY: number) => {
+    if (!sosStartPosition.current) return;
+    
+    const deltaX = Math.abs(clientX - sosStartPosition.current.x);
+    const deltaY = Math.abs(clientY - sosStartPosition.current.y);
+    
+    // If user moved too much, cancel SOS
+    if (deltaX > sosMovementThreshold || deltaY > sosMovementThreshold) {
+      cancelSOS();
+    }
   };
   
   const cancelSOS = () => {
     setSosActive(false);
     setSosProgress(0);
+    sosStartPosition.current = null;
     
     if (sosTimeoutRef.current) {
       clearTimeout(sosTimeoutRef.current);
@@ -572,10 +593,28 @@ const NewGarage = () => {
           <Card className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden w-full max-w-7xl mb-4">
             <CardContent 
               className="p-4 sm:p-6 lg:p-8 relative"
-              onMouseDown={startSOS}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                startSOS(e.clientX, e.clientY);
+              }}
+              onMouseMove={(e) => {
+                if (sosStartPosition.current) {
+                  checkSOSMovement(e.clientX, e.clientY);
+                }
+              }}
               onMouseUp={cancelSOS}
               onMouseLeave={cancelSOS}
-              onTouchStart={startSOS}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startSOS(touch.clientX, touch.clientY);
+              }}
+              onTouchMove={(e) => {
+                if (sosStartPosition.current && e.touches[0]) {
+                  const touch = e.touches[0];
+                  checkSOSMovement(touch.clientX, touch.clientY);
+                }
+              }}
               onTouchEnd={cancelSOS}
               style={{
                 userSelect: 'none',
