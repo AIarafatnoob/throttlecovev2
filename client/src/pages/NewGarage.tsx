@@ -124,11 +124,8 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
               onClick={() => {
-                // Show coming soon message
-                toast({
-                  title: "Service Feature",
-                  description: "Service scheduling feature will be available soon!",
-                });
+                // Navigate to maintenance scheduler
+                window.location.href = `/maintenance`;
               }}
             >
               Service
@@ -762,9 +759,7 @@ const NewGarage = () => {
                     <div 
                       className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full transition-all duration-700 ease-out"
                       style={{ 
-                        width: nextRank 
-                          ? `${Math.min(((totalKilometers - currentRank.minKm) / (nextRank.minKm - currentRank.minKm)) * 100, 100)}%`
-                          : '100%'
+                        width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
                       }}
                     />
 
@@ -773,24 +768,6 @@ const NewGarage = () => {
                       {progressRanks.map((rank, index) => {
                         const isAchieved = totalKilometers >= rank.minKm;
                         const isCurrent = currentRank.id === rank.id;
-                        
-                        // Calculate position based on the current progress range
-                        let leftPosition = 0;
-                        if (nextRank) {
-                          if (index === 0) {
-                            // Current rank position (start)
-                            leftPosition = 0;
-                          } else if (index === 1) {
-                            // Next rank position (end)
-                            leftPosition = 100;
-                          } else if (index === 2) {
-                            // Third rank position (off the visible progress bar)
-                            leftPosition = 100;
-                          }
-                        } else {
-                          // If at max rank, show all as achieved
-                          leftPosition = 33.33 * index;
-                        }
 
                         return (
                           <div
@@ -804,7 +781,7 @@ const NewGarage = () => {
                             }`}
                             style={{ 
                               position: 'absolute',
-                              left: `${leftPosition}%`,
+                              left: `${33.33 * index}%`,
                               transform: 'translateX(-50%)'
                             }}
                             title={`${rank.name} - ${rank.minKm.toLocaleString()} km`}
@@ -822,8 +799,8 @@ const NewGarage = () => {
 
                   {/* Progress labels */}
                   <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span className="font-medium">{currentRank.name}</span>
-                    <span className="font-medium">{nextRank?.name || "Max Rank"}</span>
+                    <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
+                    <span className="font-medium">{progressRanks[2]?.name || "Apex Nomad"}</span>
                   </div>
                 </div>
               </div>
@@ -955,12 +932,7 @@ const NewGarage = () => {
                       <Button 
                         size="sm"
                         className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
-                        onClick={() => {
-                          toast({
-                            title: "Service Feature",
-                            description: "Service scheduling feature will be available soon!",
-                          });
-                        }}
+                        onClick={() => window.location.href = `/maintenance`}
                       >
                         <Wrench className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         Service
