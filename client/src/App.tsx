@@ -24,7 +24,7 @@ function App() {
     if (isLoading) {
       // Show loading state while checking authentication
       return (
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF3B30] mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
@@ -50,9 +50,7 @@ function App() {
           <Route path="/garage">
             <AuthenticatedRoute component={Garage} />
           </Route>
-          <Route path="/community">
-            <AuthenticatedRoute component={Community} />
-          </Route>
+          <Route path="/community" component={Community} />
           <Route path="/catalog" component={Catalog} />
           <Route path="/shop" component={Shop} />
           <Route path="/blog" component={Blog} />

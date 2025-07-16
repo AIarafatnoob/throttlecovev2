@@ -88,5 +88,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   }
 }));
 
-// Initialize session check when the module loads
-useAuth.getState().checkSession();
+// Initialize session check when the module loads - but don't block rendering
+setTimeout(() => {
+  useAuth.getState().checkSession();
+}, 100);
