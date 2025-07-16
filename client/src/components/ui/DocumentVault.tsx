@@ -258,33 +258,24 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
                               {/* Status and actions section */}
                               <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 flex-wrap">
-                                {/* Status indicators */}
-                                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                                  {doc.isSecure && (
-                                    <div className="flex items-center gap-1">
-                                      <Lock className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
-                                      <span className="text-xs text-green-600 font-medium">Secure</span>
-                                    </div>
-                                  )}
-                                  <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
-                                    <statusInfo.icon className="h-3 w-3" />
-                                    <span className="text-xs font-medium">
-                                      {statusInfo.status === 'expired' ? 'Expired' :
-                                       statusInfo.status === 'expiring' ? 'Soon' :
-                                       statusInfo.status === 'valid' ? 'Valid' : 'No Expiry'}
+                                {/* Expiry status */}
+                                {doc.expiryDate && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-500 font-medium">
+                                      {statusInfo.status === 'expired' ? 'Expired' : 'Expires'}
+                                    </span>
+                                    <statusInfo.icon className={`h-3 w-3 ${statusInfo.color}`} />
+                                    <span className={`text-xs font-medium ${statusInfo.color}`}>
+                                      {formatDate(doc.expiryDate)}
                                     </span>
                                   </div>
-                                </div>
+                                )}
 
-                                {/* Expiry date */}
-                                {doc.expiryDate && (
-                                  <div className="text-right">
-                                    <p className="text-xs text-gray-500">
-                                      {statusInfo.status === 'expired' ? 'Expired' : 'Expires'}
-                                    </p>
-                                    <p className={`text-xs font-medium ${statusInfo.color}`}>
-                                      {formatDate(doc.expiryDate)}
-                                    </p>
+                                {/* No expiry status */}
+                                {!doc.expiryDate && (
+                                  <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100">
+                                    <CheckCircle className="h-3 w-3 text-gray-500" />
+                                    <span className="text-xs font-medium text-gray-500">No Expiry</span>
                                   </div>
                                 )}
 
