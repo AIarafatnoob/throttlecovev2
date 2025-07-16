@@ -171,7 +171,7 @@ const Home = () => {
                 <img
                   src={logoh}
                   alt="ThrottleCove Logo"
-                  className="h-14 sm:h-20 w-auto object-contain relative z-10"
+                  className="h-20 sm:h-28 w-auto object-contain relative z-10"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm" />
               </div>
