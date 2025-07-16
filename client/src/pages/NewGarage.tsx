@@ -767,10 +767,12 @@ const NewGarage = () => {
                   {/* Total KM - Primary Stat */}
                   <div className="text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6">
                     <p className="text-gray-500 text-sm mb-2 font-medium">Total Distance</p>
-                    <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] mb-1">
-                      {totalKilometers.toLocaleString()}
-                    </p>
-                    <p className="text-gray-400 text-xs">KM</p>
+                    <div className="flex items-baseline justify-center gap-2 mb-1">
+                      <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A]">
+                        {totalKilometers.toLocaleString()}
+                      </p>
+                      <span className="text-lg sm:text-xl font-medium text-gray-400">KM</span>
+                    </div>
                   </div>
                   
 
