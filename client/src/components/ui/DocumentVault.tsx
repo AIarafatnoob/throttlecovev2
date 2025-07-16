@@ -253,44 +253,46 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <Card className={`transition-all duration-200 hover:shadow-md ${statusInfo.bgColor}`}>
+                        <Card className={`transition-all duration-200 hover:shadow-md ${statusInfo.bgColor} rounded-full`}>
                           <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              {/* Left side - Document info */}
-                              <div className="flex items-center gap-4 flex-1 min-w-0">
-                                {/* Document icon and type */}
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-10 h-10 rounded-lg ${docType?.color || 'bg-gray-500'} flex items-center justify-center text-white text-lg`}>
-                                    {docType?.icon || '📄'}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <h4 className="font-semibold text-gray-900 truncate text-sm">
-                                      {doc.name}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 truncate">
-                                      {docType?.name || 'Document'} • {formatFileSize(doc.size)}
-                                    </p>
-                                  </div>
+                            <div className="flex items-center justify-between gap-4">
+                              {/* Left side - Document icon and name */}
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className={`w-12 h-12 rounded-full ${docType?.color || 'bg-gray-500'} flex items-center justify-center text-white text-lg shrink-0`}>
+                                  {docType?.icon || '📄'}
                                 </div>
-
-                                {/* Status indicator */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                  {doc.isSecure && (
-                                    <Lock className="h-3 w-3 text-green-500" />
-                                  )}
-                                  <div className={`flex items-center gap-1 ${statusInfo.color}`}>
-                                    <statusInfo.icon className="h-4 w-4" />
-                                    <span className="text-xs font-medium">
-                                      {statusInfo.status === 'expired' ? 'Expired' :
-                                       statusInfo.status === 'expiring' ? 'Expiring Soon' :
-                                       statusInfo.status === 'valid' ? 'Valid' : 'No Expiry'}
-                                    </span>
-                                  </div>
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="font-semibold text-gray-900 truncate text-sm">
+                                    {doc.name}
+                                  </h4>
+                                  <p className="text-xs text-gray-500 truncate">
+                                    {docType?.name || 'Document'} • {formatFileSize(doc.size)}
+                                  </p>
                                 </div>
+                              </div>
 
-                                {/* Expiry date */}
+                              {/* Center - Status and security */}
+                              <div className="flex items-center gap-3 shrink-0">
+                                {doc.isSecure && (
+                                  <div className="flex items-center gap-1">
+                                    <Lock className="h-4 w-4 text-green-500" />
+                                    <span className="text-xs text-green-600 font-medium">Secure</span>
+                                  </div>
+                                )}
+                                <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${statusInfo.bgColor} ${statusInfo.color}`}>
+                                  <statusInfo.icon className="h-3 w-3" />
+                                  <span className="text-xs font-medium">
+                                    {statusInfo.status === 'expired' ? 'Expired' :
+                                     statusInfo.status === 'expiring' ? 'Expiring Soon' :
+                                     statusInfo.status === 'valid' ? 'Valid' : 'No Expiry'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Right side - Expiry date and actions */}
+                              <div className="flex items-center gap-4 shrink-0">
                                 {doc.expiryDate && (
-                                  <div className="text-right shrink-0">
+                                  <div className="text-right">
                                     <p className="text-xs text-gray-500">
                                       {statusInfo.status === 'expired' ? 'Expired' : 'Expires'}
                                     </p>
@@ -299,38 +301,29 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                                     </p>
                                   </div>
                                 )}
-                              </div>
-
-                              {/* Actions */}
-                              <div className="flex gap-2 ml-4">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleViewDocument(doc)}
-                                  className="h-8 px-3"
-                                >
-                                  <Eye className="h-3 w-3 mr-1" />
-                                  View
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setDeleteConfirmId(doc.id)}
-                                  className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </Button>
+                                
+                                {/* Actions */}
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleViewDocument(doc)}
+                                    className="h-8 px-3 rounded-full"
+                                  >
+                                    <Eye className="h-3 w-3 mr-1" />
+                                    View
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setDeleteConfirmId(doc.id)}
+                                    className="h-8 px-2 rounded-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               </div>
                             </div>
-
-                            {/* Notes (if any) */}
-                            {doc.notes && (
-                              <div className="mt-2 pt-2 border-t border-gray-200">
-                                <p className="text-xs text-gray-600 line-clamp-1">
-                                  <span className="font-medium">Notes:</span> {doc.notes}
-                                </p>
-                              </div>
-                            )}
                           </CardContent>
                         </Card>
                       </motion.div>
