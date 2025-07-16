@@ -141,14 +141,14 @@ const Register = () => {
 
           {/* Main Registration Section - Primary Focus */}
           <div className="text-center mb-8 sm:mb-12 px-4">
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-1">
               <img
                 src={logo}
                 alt="ThrottleCove Logo"
                 className="h-20 sm:h-24 w-auto"
               />
             </div>
-            <h1 className="text-lg sm:text-xl font-bold text-[#1A1A1A]/70 mb-4">
+            <h1 className="text-lg sm:text-xl font-light text-[#1A1A1A]/70 mb-4">
               Everything You Need To Manage Your Motorcycle Life
             </h1>
           </div>
