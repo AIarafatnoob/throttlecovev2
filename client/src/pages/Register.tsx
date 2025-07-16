@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import logo from "@/assets/tclogov2h2.svg";
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -140,11 +141,16 @@ const Register = () => {
 
           {/* Main Registration Section - Primary Focus */}
           <div className="text-center mb-8 sm:mb-12 px-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-header text-[#1A1A1A] mb-4">
-              THROTTLE<span className="text-[#FF3B30] font-bold">COVE</span>
+            <div className="flex justify-center mb-6">
+              <img
+                src={logo}
+                alt="ThrottleCove Logo"
+                className="h-16 sm:h-20 w-auto"
+              />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-4">
+              Everything You Need To Manage Your Motorcycle Life
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 mb-2">Join the motorcycle community</p>
-            <p className="text-sm text-gray-500">Everything you need to manage your motorcycle life</p>
           </div>
 
           {/* Registration Form */}
