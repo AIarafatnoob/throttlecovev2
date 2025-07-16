@@ -213,7 +213,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
           <div className="flex-1 overflow-hidden flex flex-col">
             {/* Document Grid */}
-            <div className="flex-1 overflow-y-auto px-2 sm:px-0">
+            <div className="flex-1 overflow-y-auto px-2 sm:px-0 pb-20">
               {documents.length === 0 ? (
                 <div className="text-center py-8 sm:py-12">
                   <Shield className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
@@ -318,18 +318,19 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Floating Add Document Button */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:bottom-6">
-            <Button 
-              onClick={() => setShowUploadForm(true)} 
-              className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base"
-            >
-              <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Add Document</span>
-              <span className="sm:hidden">Add</span>
-            </Button>
+            {/* Add Document Button Section */}
+            <div className="border-t bg-white px-4 py-4 sm:px-6">
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => setShowUploadForm(true)} 
+                  className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
+                >
+                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+                  + New Document
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
