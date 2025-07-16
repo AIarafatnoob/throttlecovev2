@@ -326,7 +326,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
               >
                 <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                + New Document
+                New Document
               </Button>
             </div>
           </div>
