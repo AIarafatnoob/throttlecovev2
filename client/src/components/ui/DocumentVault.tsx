@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -84,7 +83,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDocumentViewOpen, setIsDocumentViewOpen] = useState(false);
-  
+
   // Upload form state
   const [uploadForm, setUploadForm] = useState({
     name: "",
@@ -93,16 +92,16 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
     expiryDate: "",
     isSecure: true
   });
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   // Get document status
   const getDocumentStatus = (doc: Document) => {
     if (!doc.expiryDate) return { status: 'no-expiry', color: 'text-gray-500', bgColor: 'bg-gray-100', icon: CheckCircle };
-    
+
     const daysUntilExpiry = Math.ceil((doc.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (daysUntilExpiry <= 0) {
       return { status: 'expired', color: 'text-red-600', bgColor: 'bg-red-50', icon: AlertTriangle };
     } else if (daysUntilExpiry <= 30) {
@@ -117,7 +116,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    
+
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       toast({
@@ -145,7 +144,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
       };
 
       onDocumentsChange([...documents, newDocument]);
-      
+
       toast({
         title: "Document uploaded",
         description: `${newDocument.name} has been securely stored in your vault.`,
@@ -160,7 +159,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
         isSecure: true
       });
       setShowUploadForm(false);
-      
+
     } catch (error) {
       toast({
         title: "Upload failed",
@@ -245,7 +244,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                   {documents.map((doc) => {
                     const docType = DOCUMENT_TYPES.find(type => type.key === doc.type);
                     const statusInfo = getDocumentStatus(doc);
-                    
+
                     return (
                       <motion.div
                         key={doc.id}
@@ -301,7 +300,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                                     </p>
                                   </div>
                                 )}
-                                
+
                                 {/* Actions */}
                                 <div className="flex gap-2">
                                   <Button
@@ -332,6 +331,17 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Floating Add Document Button */}
+          <div className="absolute bottom-6 right-6">
+            <Button 
+              onClick={() => setShowUploadForm(true)} 
+              className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Document
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
