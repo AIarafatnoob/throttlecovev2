@@ -16,6 +16,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/tclogov2h2.svg";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -84,8 +85,12 @@ const Login = () => {
         <Card className="shadow-xl border-0">
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="text-center space-y-4 pb-8">
-              <div className="mx-auto w-16 h-16 bg-[#FF3B30] rounded-2xl flex items-center justify-center">
-                <span className="text-2xl">🏍️</span>
+              <div className="mx-auto flex items-center justify-center">
+                <img
+                  src={logo}
+                  alt="ThrottleCove Logo"
+                  className="h-12 w-auto"
+                />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-[#1A1A1A]">
