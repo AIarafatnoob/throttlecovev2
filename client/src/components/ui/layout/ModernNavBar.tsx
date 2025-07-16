@@ -68,7 +68,7 @@ const ModernNavBar = () => {
                     className="object-contain w-full h-full"
                   />
               </div>
-              <span className="text-base sm:text-lg font-semibold text-white hidden sm:block">
+              <span className="text-base sm:text-lg font-bold text-white hidden sm:block" style={{ fontFamily: 'Kanit, sans-serif' }}>
                 THROTTLE<span className="text-[#FF3B30] font-bold">Cove</span>
               </span>
             </Link>
