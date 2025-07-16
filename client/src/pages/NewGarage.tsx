@@ -770,7 +770,7 @@ const NewGarage = () => {
                     <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] mb-1">
                       {totalKilometers.toLocaleString()}
                     </p>
-                    <p className="text-gray-400 text-sm">kilometers traveled</p>
+                    <p className="text-gray-400 text-xs">KM</p>
                   </div>
                   
 
