@@ -30,7 +30,7 @@ const Login = () => {
   const { toast } = useToast();
   const { setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,10 +38,10 @@ const Login = () => {
       password: "",
     },
   });
-  
+
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -51,16 +51,16 @@ const Login = () => {
         credentials: 'include',
         body: JSON.stringify(data),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         setUser(result.user);
-        
+
         toast({
           title: "Login successful",
           description: "Welcome back to ThrottleCove!",
         });
-        
+
         // Navigate to garage after successful login
         navigate("/garage");
       } else {
@@ -87,7 +87,7 @@ const Login = () => {
         <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
         <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
       </div>
-      
+
       <div className="w-full max-w-md relative z-10">
         <Card className="shadow-2xl border-0 rounded-3xl backdrop-blur-sm bg-white/90">
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -108,7 +108,7 @@ const Login = () => {
                 </CardDescription>
               </div>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
@@ -125,7 +125,7 @@ const Login = () => {
                   </p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password">Password</Label>
@@ -147,16 +147,16 @@ const Login = () => {
                 )}
               </div>
             </CardContent>
-            
+
             <CardFooter className="flex flex-col gap-4">
               <Button 
-                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 rounded-full"
+                className="w-3/4 mx-auto bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 rounded-full px-12"
                 type="submit"
                 disabled={isLoading}
               >
                 {isLoading ? "Opening Garage..." : "Open Garage"}
               </Button>
-              
+
               <p className="text-sm text-center text-gray-600">
                 Don't have an account?{" "}
                 <Link href="/register" className="text-[#FF3B30] hover:underline">
@@ -166,7 +166,7 @@ const Login = () => {
             </CardFooter>
           </form>
         </Card>
-        
+
         <div className="mt-4 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-[#1A1A1A]">
             ← Back to home
