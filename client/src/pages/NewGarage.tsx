@@ -124,8 +124,11 @@ const ModernMotorcycleCard = ({ motorcycle, onEdit, onDelete }: {
             <Button 
               className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
               onClick={() => {
-                // Navigate to maintenance scheduler
-                window.location.href = `/maintenance`;
+                // Show coming soon message
+                toast({
+                  title: "Service Feature",
+                  description: "Service scheduling feature will be available soon!",
+                });
               }}
             >
               Service
@@ -952,7 +955,12 @@ const NewGarage = () => {
                       <Button 
                         size="sm"
                         className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-xl py-2 text-xs sm:text-sm font-medium"
-                        onClick={() => window.location.href = `/maintenance`}
+                        onClick={() => {
+                          toast({
+                            title: "Service Feature",
+                            description: "Service scheduling feature will be available soon!",
+                          });
+                        }}
                       >
                         <Wrench className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         Service
