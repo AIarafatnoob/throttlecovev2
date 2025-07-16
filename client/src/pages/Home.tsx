@@ -166,7 +166,7 @@ const Home = () => {
             transition={{ duration: 0.5 }}
           >
             {/* Site Logo Centered */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mt-4 mb-8">
               <div className="relative">
                 <img
                   src={logoh}
