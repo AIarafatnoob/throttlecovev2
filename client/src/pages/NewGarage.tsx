@@ -182,7 +182,7 @@ const NewGarage = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // SOS functionality state
   const [sosActive, setSosActive] = useState(false);
   const [sosProgress, setSosProgress] = useState(0);
@@ -190,58 +190,21 @@ const NewGarage = () => {
   const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const sosStartPosition = useRef<{ x: number; y: number } | null>(null);
   const sosMovementThreshold = 10; // pixels - if user moves more than this, cancel SOS
-  
+
   // Dynamic button color state
   const [isOverFooter, setIsOverFooter] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
-  
+
   // Vault functionality states
   const [isVaultOpen, setIsVaultOpen] = useState(false);
   const [buttonPosition, setButtonPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [vaultTextOpacity, setVaultTextOpacity] = useState(0);
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [documents, setDocuments] = useState<any[]>([
-    {
-      id: 'doc1',
-      name: 'Motorcycle Insurance Policy',
-      type: 'insurance',
-      uploadDate: new Date('2024-01-15'),
-      expiryDate: new Date('2025-01-15'),
-      size: 2048000,
-      url: 'https://via.placeholder.com/600x800/4F46E5/FFFFFF?text=Insurance+Policy+Document',
-      isSecure: true,
-      notes: 'Full coverage motorcycle insurance policy',
-      vehicleId: 'bike1'
-    },
-    {
-      id: 'doc2',
-      name: 'Motorcycle License',
-      type: 'license',
-      uploadDate: new Date('2023-05-10'),
-      expiryDate: new Date('2028-05-10'),
-      size: 512000,
-      url: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Motorcycle+License',
-      isSecure: true,
-      notes: 'Valid motorcycle license',
-      vehicleId: 'bike1'
-    },
-    {
-      id: 'doc3',
-      name: 'Vehicle Registration',
-      type: 'registration',
-      uploadDate: new Date('2024-03-20'),
-      expiryDate: new Date('2025-03-20'),
-      size: 1024000,
-      url: 'https://via.placeholder.com/600x800/8B5CF6/FFFFFF?text=Vehicle+Registration',
-      isSecure: true,
-      notes: 'Current vehicle registration certificate',
-      vehicleId: 'bike1'
-    }
-  ]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
   const [isDocumentPreviewOpen, setIsDocumentPreviewOpen] = useState(false);
-  
+
 
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
@@ -264,11 +227,11 @@ const NewGarage = () => {
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      
+
       const containerWidth = 200; // Maximum slide distance
       const deltaX = Math.min(0, Math.max(-containerWidth, e.clientX - window.innerWidth + 100));
       setButtonPosition(deltaX);
-      
+
       // Calculate vault text opacity based on position
       const opacity = Math.abs(deltaX) / containerWidth;
       setVaultTextOpacity(Math.min(opacity, 1));
@@ -276,12 +239,12 @@ const NewGarage = () => {
 
     const handleGlobalTouchMove = (e: TouchEvent) => {
       if (!isDragging) return;
-      
+
       const touch = e.touches[0];
       const containerWidth = 200; // Maximum slide distance
       const deltaX = Math.min(0, Math.max(-containerWidth, touch.clientX - window.innerWidth + 100));
       setButtonPosition(deltaX);
-      
+
       // Calculate vault text opacity based on position
       const opacity = Math.abs(deltaX) / containerWidth;
       setVaultTextOpacity(Math.min(opacity, 1));
@@ -289,14 +252,14 @@ const NewGarage = () => {
 
     const handleGlobalEnd = () => {
       if (!isDragging) return;
-      
+
       setIsDragging(false);
-      
+
       // If slid more than 80px, open vault
       if (Math.abs(buttonPosition) > 80) {
         setIsVaultOpen(true);
       }
-      
+
       // Reset position
       setButtonPosition(0);
       setVaultTextOpacity(0);
@@ -325,23 +288,23 @@ const NewGarage = () => {
                           document.querySelector('[class*="footer"]') ||
                           document.querySelector('[style*="background-color: rgb(0, 0, 0)"]') ||
                           document.querySelector('[class*="bg-black"]');
-      
+
       if (!footerElement) {
         // If no footer found, check if we're near bottom of page
         const documentHeight = document.documentElement.scrollHeight;
         const windowHeight = window.innerHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
-        
+
         // Consider we're over "footer area" if within 200px of bottom
         setIsOverFooter(distanceFromBottom < 200);
         return;
       }
-      
+
       const footerRect = footerElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const buttonBottomPosition = windowHeight - 80; // Button is 80px from bottom
-      
+
       // Check if button would be over footer area
       const isButtonOverFooter = buttonBottomPosition > footerRect.top && footerRect.top < windowHeight;
       setIsOverFooter(isButtonOverFooter);
@@ -449,22 +412,22 @@ const NewGarage = () => {
   // SOS functionality handlers
   const startSOS = (clientX: number, clientY: number) => {
     if (sosActive) return;
-    
+
     // Record starting position
     sosStartPosition.current = { x: clientX, y: clientY };
-    
+
     // Add 800ms delay to prevent accidental triggers during normal interactions
     sosTimeoutRef.current = setTimeout(() => {
       // Only start if we haven't moved too much
       if (sosStartPosition.current) {
         setSosActive(true);
         setSosProgress(0);
-        
+
         // Haptic feedback - vibrate if available
         if (navigator.vibrate) {
           navigator.vibrate(50);
         }
-        
+
         // Start progress animation
         sosIntervalRef.current = setInterval(() => {
           setSosProgress(prev => {
@@ -481,51 +444,51 @@ const NewGarage = () => {
       }
     }, 800);
   };
-  
+
   const checkSOSMovement = (clientX: number, clientY: number) => {
     if (!sosStartPosition.current) return;
-    
+
     const deltaX = Math.abs(clientX - sosStartPosition.current.x);
     const deltaY = Math.abs(clientY - sosStartPosition.current.y);
-    
+
     // If user moved too much, cancel SOS
     if (deltaX > sosMovementThreshold || deltaY > sosMovementThreshold) {
       cancelSOS();
     }
   };
-  
+
   const cancelSOS = () => {
     setSosActive(false);
     setSosProgress(0);
     sosStartPosition.current = null;
-    
+
     if (sosTimeoutRef.current) {
       clearTimeout(sosTimeoutRef.current);
       sosTimeoutRef.current = null;
     }
-    
+
     if (sosIntervalRef.current) {
       clearInterval(sosIntervalRef.current);
       sosIntervalRef.current = null;
     }
   };
-  
+
   const triggerSOS = () => {
     // Stronger haptic feedback for SOS activation
     if (navigator.vibrate) {
       navigator.vibrate([200, 100, 200, 100, 200]);
     }
-    
+
     // Show SOS activated notification
     toast({
       title: "🚨 SOS Activated",
       description: "Emergency alert has been triggered. Help is on the way!",
       variant: "destructive",
     });
-    
+
     // Reset state
     cancelSOS();
-    
+
     // Here you would typically send the SOS signal to emergency services
     console.log("SOS ACTIVATED - Emergency services notified");
   };
@@ -643,7 +606,7 @@ const NewGarage = () => {
                 <div className="flex items-center justify-between">
                   {/* Left side - empty for balance */}
                   <div className="w-16"></div>
-                  
+
                   {/* Center - Large Profile Picture */}
                   <div className="relative">
                     <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
@@ -671,7 +634,7 @@ const NewGarage = () => {
                         className="hidden"
                     />
                   </div>
-                  
+
                   {/* Right side - Rank Badge */}
                   <RankDetailsModal totalKilometers={totalKilometers}>
                     <div className="relative cursor-pointer transition-transform hover:scale-105">
@@ -713,18 +676,18 @@ const NewGarage = () => {
                       return buttons.map((button) => {
                         const isCenter = button.isCenter;
                         const document = getDocumentByType(button.key);
-                        
+
                         // Determine border color based on document expiry
                         const getBorderColor = () => {
                           if (!document) return '';
                           if (!document.expiryDate) return 'border-green-500';
-                          
+
                           const daysUntilExpiry = Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
                           if (daysUntilExpiry <= 0) return 'border-red-500'; // Expired
                           if (daysUntilExpiry <= 30) return 'border-yellow-500'; // Expiring soon
                           return 'border-green-500'; // All good
                         };
-                        
+
                         return (
                           <button 
                             key={button.key}
@@ -772,7 +735,7 @@ const NewGarage = () => {
                     </p>
                     <p className="text-gray-400 text-sm">kilometers traveled</p>
                   </div>
-                  
+
 
                 </div>
 
@@ -788,7 +751,604 @@ const NewGarage = () => {
                       <p className="text-xs text-green-600 font-medium">🏆 Maximum Rank Achieved!</p>
                     )}
                   </div>
-                  
+
+                  <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
+                    {/* Progress fill */}
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full transition-all duration-700 ease-out"
+                      style={{ 
+                        width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
+                      }}
+                    />
+
+                    {/* Progress rank indicators */}
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-2">
+                      {progressRanks.map((rank, index) => {
+                        const isAchieved = totalKilometers >= rank.minKm;
+                        const isCurrent = current```
+// Removed mock document initialization and set the initial state to an empty array.
+const Garage = () => {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [motorcycleToDelete, setMotorcycleToDelete] = useState<number | null>(null);
+
+  const [expandedMotorcycleId, setExpandedMotorcycleId] = useState<number | null>(null);
+  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
+
+  // SOS functionality state
+  const [sosActive, setSosActive] = useState(false);
+  const [sosProgress, setSosProgress] = useState(0);
+  const sosTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const sosStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const sosMovementThreshold = 10; // pixels - if user moves more than this, cancel SOS
+
+  // Dynamic button color state
+  const [isOverFooter, setIsOverFooter] = useState(false);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  // Vault functionality states
+  const [isVaultOpen, setIsVaultOpen] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [vaultTextOpacity, setVaultTextOpacity] = useState(0);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
+  const [isDocumentPreviewOpen, setIsDocumentPreviewOpen] = useState(false);
+
+
+
+  const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
+    queryKey: ['/api/motorcycles'],
+  });
+
+  // Cleanup SOS timers on unmount
+  useEffect(() => {
+    return () => {
+      if (sosTimeoutRef.current) {
+        clearTimeout(sosTimeoutRef.current);
+      }
+      if (sosIntervalRef.current) {
+        clearInterval(sosIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Add global event listeners for vault functionality
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+
+      const containerWidth = 200; // Maximum slide distance
+      const deltaX = Math.min(0, Math.max(-containerWidth, e.clientX - window.innerWidth + 100));
+      setButtonPosition(deltaX);
+
+      // Calculate vault text opacity based on position
+      const opacity = Math.abs(deltaX) / containerWidth;
+      setVaultTextOpacity(Math.min(opacity, 1));
+    };
+
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+
+      const touch = e.touches[0];
+      const containerWidth = 200; // Maximum slide distance
+      const deltaX = Math.min(0, Math.max(-containerWidth, touch.clientX - window.innerWidth + 100));
+      setButtonPosition(deltaX);
+
+      // Calculate vault text opacity based on position
+      const opacity = Math.abs(deltaX) / containerWidth;
+      setVaultTextOpacity(Math.min(opacity, 1));
+    };
+
+    const handleGlobalEnd = () => {
+      if (!isDragging) return;
+
+      setIsDragging(false);
+
+      // If slid more than 80px, open vault
+      if (Math.abs(buttonPosition) > 80) {
+        setIsVaultOpen(true);
+      }
+
+      // Reset position
+      setButtonPosition(0);
+      setVaultTextOpacity(0);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('touchmove', handleGlobalTouchMove);
+      document.addEventListener('mouseup', handleGlobalEnd);
+      document.addEventListener('touchend', handleGlobalEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('mouseup', handleGlobalEnd);
+      document.removeEventListener('touchend', handleGlobalEnd);
+    };
+  }, [isDragging, buttonPosition]);
+
+  // Dynamic button color detection
+  useEffect(() => {
+    const checkButtonPosition = () => {
+      // Look for existing footer (likely with black background)
+      const footerElement = document.querySelector('footer') || 
+                          document.querySelector('[class*="footer"]') ||
+                          document.querySelector('[style*="background-color: rgb(0, 0, 0)"]') ||
+                          document.querySelector('[class*="bg-black"]');
+
+      if (!footerElement) {
+        // If no footer found, check if we're near bottom of page
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
+
+        // Consider we're over "footer area" if within 200px of bottom
+        setIsOverFooter(distanceFromBottom < 200);
+        return;
+      }
+
+      const footerRect = footerElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const buttonBottomPosition = windowHeight - 80; // Button is 80px from bottom
+
+      // Check if button would be over footer area
+      const isButtonOverFooter = buttonBottomPosition > footerRect.top && footerRect.top < windowHeight;
+      setIsOverFooter(isButtonOverFooter);
+    };
+
+    // Check on mount and scroll
+    checkButtonPosition();
+    window.addEventListener('scroll', checkButtonPosition);
+    window.addEventListener('resize', checkButtonPosition);
+
+    return () => {
+      window.removeEventListener('scroll', checkButtonPosition);
+      window.removeEventListener('resize', checkButtonPosition);
+    };
+  }, [motorcycles]);
+
+  // Calculate total kilometers for ranking (convert from miles to km)
+  const totalKilometers = motorcycles?.reduce((sum: number, bike: Motorcycle) => sum + (bike.mileage ? Math.round(bike.mileage * 1.60934) : 0), 0) || 0;
+  const currentRank = getUserRank(totalKilometers);
+  const nextRank = getNextRank(totalKilometers);
+  const kmToNext = getKmToNextRank(totalKilometers);
+  const progressRanks = getProgressRanks(totalKilometers);
+
+  const handleAddMotorcycle = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  // Vault functionality handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleVaultClose = () => {
+    setIsVaultOpen(false);
+  };
+
+  // Document button handlers
+  const handleDocumentButtonClick = (docType: string) => {
+    const docOfType = documents.find(doc => doc.type === docType);
+    if (docOfType) {
+      // Open document preview
+      setSelectedDocumentType(docType);
+      setIsDocumentPreviewOpen(true);
+    } else {
+      // Open vault with filter for this document type
+      setSelectedDocumentType(docType);
+      setIsVaultOpen(true);
+    }
+  };
+
+  const handleDocumentPreviewClose = () => {
+    setIsDocumentPreviewOpen(false);
+    setSelectedDocumentType(null);
+  };
+
+  // Get document by type
+  const getDocumentByType = (type: string) => {
+    return documents.find(doc => doc.type === type);
+  };
+
+  // Check if document type has uploaded documents
+  const hasDocumentOfType = (type: string) => {
+    return documents.some(doc => doc.type === type);
+  };
+
+  const handleEditMotorcycle = (motorcycle: Motorcycle) => {
+    toast({
+      title: "Coming Soon",
+      description: "Motorcycle editing feature will be available soon!",
+    });
+  };
+
+  const handleToggleExpand = (motorcycleId: number) => {
+    setExpandedMotorcycleId(expandedMotorcycleId === motorcycleId ? null : motorcycleId);
+  };
+
+  const handleDeleteMotorcycle = async () => {
+    if (!motorcycleToDelete) return;
+
+    try {
+      await apiRequest("DELETE", `/api/motorcycles/${motorcycleToDelete}`, undefined);
+      queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+
+      toast({
+        title: "Motorcycle deleted",
+        description: "Your motorcycle has been removed from the garage.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete motorcycle. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setMotorcycleToDelete(null);
+    }
+  };
+
+  // SOS functionality handlers
+  const startSOS = (clientX: number, clientY: number) => {
+    if (sosActive) return;
+
+    // Record starting position
+    sosStartPosition.current = { x: clientX, y: clientY };
+
+    // Add 800ms delay to prevent accidental triggers during normal interactions
+    sosTimeoutRef.current = setTimeout(() => {
+      // Only start if we haven't moved too much
+      if (sosStartPosition.current) {
+        setSosActive(true);
+        setSosProgress(0);
+
+        // Haptic feedback - vibrate if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+
+        // Start progress animation
+        sosIntervalRef.current = setInterval(() => {
+          setSosProgress(prev => {
+            const next = prev + 2; // 2% every 100ms = 5 seconds total
+            if (next >= 100) {
+              // Only trigger SOS when progress reaches 100%
+              clearInterval(sosIntervalRef.current!);
+              triggerSOS();
+              return 100;
+            }
+            return next;
+          });
+        }, 100);
+      }
+    }, 800);
+  };
+
+  const checkSOSMovement = (clientX: number, clientY: number) => {
+    if (!sosStartPosition.current) return;
+
+    const deltaX = Math.abs(clientX - sosStartPosition.current.x);
+    const deltaY = Math.abs(clientY - sosStartPosition.current.y);
+
+    // If user moved too much, cancel SOS
+    if (deltaX > sosMovementThreshold || deltaY > sosMovementThreshold) {
+      cancelSOS();
+    }
+  };
+
+  const cancelSOS = () => {
+    setSosActive(false);
+    setSosProgress(0);
+    sosStartPosition.current = null;
+
+    if (sosTimeoutRef.current) {
+      clearTimeout(sosTimeoutRef.current);
+      sosTimeoutRef.current = null;
+    }
+
+    if (sosIntervalRef.current) {
+      clearInterval(sosIntervalRef.current);
+      sosIntervalRef.current = null;
+    }
+  };
+
+  const triggerSOS = () => {
+    // Stronger haptic feedback for SOS activation
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200]);
+    }
+
+    // Show SOS activated notification
+    toast({
+      title: "🚨 SOS Activated",
+      description: "Emergency alert has been triggered. Help is on the way!",
+      variant: "destructive",
+    });
+
+    // Reset state
+    cancelSOS();
+
+    // Here you would typically send the SOS signal to emergency services
+    console.log("SOS ACTIVATED - Emergency services notified");
+  };
+
+
+
+  const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Error", 
+          description: "File size must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePicture(e.target?.result as string);
+        toast({
+          title: "Profile Picture Updated",
+          description: "Your profile picture has been updated.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF3B30]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+          <p className="text-gray-600">Failed to load your motorcycles. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Profile Section */}
+        <div className="flex flex-col items-center mb-8">
+          <Card className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden w-full max-w-7xl mb-4">
+            <CardContent 
+              className="p-4 sm:p-6 lg:p-8 relative"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                startSOS(e.clientX, e.clientY);
+              }}
+              onMouseMove={(e) => {
+                if (sosStartPosition.current) {
+                  checkSOSMovement(e.clientX, e.clientY);
+                }
+              }}
+              onMouseUp={cancelSOS}
+              onMouseLeave={cancelSOS}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startSOS(touch.clientX, touch.clientY);
+              }}
+              onTouchMove={(e) => {
+                if (sosStartPosition.current && e.touches[0]) {
+                  const touch = e.touches[0];
+                  checkSOSMovement(touch.clientX, touch.clientY);
+                }
+              }}
+              onTouchEnd={cancelSOS}
+              style={{
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                msUserSelect: 'none',
+              }}
+            >
+              {/* SOS Gradient Overlay - Center to Border */}
+              {sosActive && (
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-3xl transition-all duration-200"
+                  style={{
+                    background: `radial-gradient(ellipse at center, 
+                      rgba(255, 255, 255, 0) ${50 - (sosProgress / 100 * 45)}%, 
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.3}) ${55 - (sosProgress / 100 * 45)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.6}) ${70 - (sosProgress / 100 * 35)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.8}) ${85 - (sosProgress / 100 * 25)}%,
+                      rgba(255, 59, 48, ${sosProgress / 100 * 0.9}) 100%)`,
+                    border: `2px solid rgba(255, 59, 48, ${sosProgress / 100 * 0.8})`,
+                  }}
+                />
+              )}
+              {/* SNS-Style Profile Layout */}
+              <div className="flex flex-col space-y-6">
+                {/* Header Row - Profile Picture + Action Buttons */}
+                <div className="flex items-center justify-between">
+                  {/* Left side - empty for balance */}
+                  <div className="w-16"></div>
+
+                  {/* Center - Large Profile Picture */}
+                  <div className="relative">
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
+                        onClick={() => profileInputRef.current?.click()}>
+                        {profilePicture ? (
+                            <img 
+                                src={profilePicture} 
+                                alt="Profile" 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="text-white font-bold text-2xl sm:text-3xl">
+                                {user?.fullName?.[0] || user?.username?.[0] || 'U'}
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                            <Camera className="w-6 h-6 text-white" />
+                        </div>
+                    </div>
+                    <input
+                        ref={profileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePictureUpload}
+                        className="hidden"
+                    />
+                  </div>
+
+                  {/* Right side - Rank Badge */}
+                  <RankDetailsModal totalKilometers={totalKilometers}>
+                    <div className="relative cursor-pointer transition-transform hover:scale-105">
+                      <div className={`w-14 h-14 sm:w-16 sm:h-16 ${getTierColor(currentRank.tier)} rounded-full flex items-center justify-center shadow-lg ring-2 ring-white`}>
+                        <span className="text-white text-xl sm:text-2xl font-bold">
+                          {currentRank.patch}
+                        </span>
+                      </div>
+                      {/* Tier indicator */}
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center">
+                        <div className={`w-2 h-2 ${getTierColor(currentRank.tier)} rounded-full`}></div>
+                      </div>
+                    </div>
+                  </RankDetailsModal>
+                </div>
+
+                {/* User Info - Centered */}
+                <div className="text-center space-y-4">
+                  <div className="space-y-2">
+                    <h1 className="font-bold text-2xl sm:text-3xl text-[#1A1A1A]">
+                      {user?.fullName || user?.username || "User"}
+                    </h1>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-gray-600 text-sm font-medium">{currentRank.name}</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-500 text-sm">{currentRank.tier}</span>
+                    </div>
+                  </div>
+
+                  {/* Document Quick Access Buttons */}
+                  <div className="flex items-center justify-center gap-3 px-4">
+                    {(() => {
+                      const buttons = [
+                        { key: 'insurance', icon: '🛡️', title: 'Insurance' },
+                        { key: 'license', icon: '📋', title: 'License', isCenter: true },
+                        { key: 'registration', icon: '📋', title: 'Registration' }
+                      ];
+
+                      return buttons.map((button) => {
+                        const isCenter = button.isCenter;
+                        const document = getDocumentByType(button.key);
+
+                        // Determine border color based on document expiry
+                        const getBorderColor = () => {
+                          if (!document) return '';
+                          if (!document.expiryDate) return 'border-green-500';
+
+                          const daysUntilExpiry = Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                          if (daysUntilExpiry <= 0) return 'border-red-500'; // Expired
+                          if (daysUntilExpiry <= 30) return 'border-yellow-500'; // Expiring soon
+                          return 'border-green-500'; // All good
+                        };
+
+                        return (
+                          <button 
+                            key={button.key}
+                            onClick={() => handleDocumentButtonClick(button.key)}
+                            className={`relative ${
+                              isCenter 
+                                ? 'px-6 py-3 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90' 
+                                : 'w-12 h-12 bg-[#1A1A1A] hover:bg-[#1A1A1A]/90'
+                            } rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 ${
+                              document ? `border-2 ${getBorderColor()}` : ''
+                            }`}
+                            style={{
+                              borderWidth: document ? '1px' : '0',
+                              borderStyle: document ? 'solid' : 'none',
+                              borderColor: document ? (
+                                !document.expiryDate ? 'rgb(34 197 94)' : // green-500
+                                Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 0 ? 'rgb(239 68 68)' : // red-500
+                                Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 30 ? 'rgb(234 179 8)' : // yellow-500
+                                'rgb(34 197 94)' // green-500
+                              ) : 'transparent'
+                            }}
+                          >
+                            {isCenter ? (
+                              <>
+                                <span className="text-white text-sm font-medium mr-2">{button.icon}</span>
+                                <span className="text-white text-sm font-medium">{button.title}</span>
+                              </>
+                            ) : (
+                              <span className="text-white text-lg">{button.icon}</span>
+                            )}
+                          </button>
+                        );
+                      });
+                    })()}
+                  </div>
+                </div>
+
+                {/* Primary Stat and Document Access */}
+                <div className="space-y-4">
+                  {/* Total KM - Primary Stat */}
+                  <div className="text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6">
+                    <p className="text-gray-500 text-sm mb-2 font-medium">Total Distance</p>
+                    <p className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] mb-1">
+                      {totalKilometers.toLocaleString()}
+                    </p>
+                    <p className="text-gray-400 text-sm">kilometers traveled</p>
+                  </div>
+
+
+                </div>
+
+                {/* Progress Bar with Enhanced Design */}
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Ranking Progress</p>
+                    {nextRank ? (
+                      <p className="text-xs text-gray-500">
+                        <span className="font-medium text-[#FF3B30]">{kmToNext.toLocaleString()} km</span> to reach <span className="font-medium">{nextRank.name}</span>
+                      </p>
+                    ) : (
+                      <p className="text-xs text-green-600 font-medium">🏆 Maximum Rank Achieved!</p>
+                    )}
+                  </div>
+
                   <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
                     {/* Progress fill */}
                     <div 
@@ -831,7 +1391,7 @@ const NewGarage = () => {
                       })}
                     </div>
                   </div>
-                  
+
                   {/* Progress labels */}
                   <div className="flex justify-between items-center text-xs text-gray-500">
                     <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
@@ -1047,7 +1607,7 @@ const NewGarage = () => {
                               Manage
                             </Button>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 gap-2">
                             {[
                               { id: 1, name: "Registration", icon: "📋", status: "valid" },
@@ -1172,4 +1732,4 @@ const NewGarage = () => {
   );
 };
 
-export default NewGarage;
+export default Garage;
