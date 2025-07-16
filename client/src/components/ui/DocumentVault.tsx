@@ -325,10 +325,10 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
           </div>
 
           {/* Floating Add Document Button */}
-          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:bottom-6">
             <Button 
               onClick={() => setShowUploadForm(true)} 
-              className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
+              className="rounded-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 shadow-lg hover:shadow-xl transition-all duration-300 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base"
             >
               <Plus className="h-4 w-4 mr-1 sm:mr-2" />
               <span className="hidden sm:inline">Add Document</span>
