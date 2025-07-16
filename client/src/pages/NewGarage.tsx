@@ -1105,7 +1105,22 @@ const NewGarage = () => {
           whileHover={{ scale: isDragging ? 1 : 1.1 }}
           whileTap={{ scale: isDragging ? 1 : 0.9 }}
         >
-          <div className="relative">
+          <div className="relative flex items-center">
+            {/* Swipe Indicator and Open Vault Text */}
+            <div className="flex items-center mr-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
+              {/* Swipe Indicator */}
+              <div className="flex flex-col gap-1 mr-2">
+                <div className="w-4 h-0.5 bg-gray-400 rounded-full animate-pulse"></div>
+                <div className="w-3 h-0.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                <div className="w-4 h-0.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+              </div>
+              
+              {/* Open Vault Text */}
+              <span className="text-gray-600 text-sm font-medium whitespace-nowrap">
+                Open Vault
+              </span>
+            </div>
+
             <Button 
               onClick={isDragging ? undefined : handleAddMotorcycle}
               onMouseDown={handleMouseDown}
