@@ -136,12 +136,9 @@ app.get("/health", async (req, res) => {
       });
     });
 
-    // Setup Vite in development or serve static files in production
-    if (app.get("env") === "development") {
-      await setupVite(app, server);
-    } else {
-      serveStatic(app);
-    }
+    // Always use Vite middleware for now to fix deployment blank page issue
+    // TODO: Optimize for production with proper static serving later
+    await setupVite(app, server);
 
     // Graceful shutdown handlers
     process.on('SIGTERM', () => {
