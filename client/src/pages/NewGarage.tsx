@@ -182,7 +182,7 @@ const NewGarage = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(user?.avatarUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // SOS functionality state
   const [sosActive, setSosActive] = useState(false);
   const [sosProgress, setSosProgress] = useState(0);
@@ -190,58 +190,21 @@ const NewGarage = () => {
   const sosIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const sosStartPosition = useRef<{ x: number; y: number } | null>(null);
   const sosMovementThreshold = 10; // pixels - if user moves more than this, cancel SOS
-  
+
   // Dynamic button color state
   const [isOverFooter, setIsOverFooter] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
-  
+
   // Vault functionality states
   const [isVaultOpen, setIsVaultOpen] = useState(false);
   const [buttonPosition, setButtonPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [vaultTextOpacity, setVaultTextOpacity] = useState(0);
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [documents, setDocuments] = useState<any[]>([
-    {
-      id: 'doc1',
-      name: 'Motorcycle Insurance Policy',
-      type: 'insurance',
-      uploadDate: new Date('2024-01-15'),
-      expiryDate: new Date('2025-01-15'),
-      size: 2048000,
-      url: 'https://via.placeholder.com/600x800/4F46E5/FFFFFF?text=Insurance+Policy+Document',
-      isSecure: true,
-      notes: 'Full coverage motorcycle insurance policy',
-      vehicleId: 'bike1'
-    },
-    {
-      id: 'doc2',
-      name: 'Motorcycle License',
-      type: 'license',
-      uploadDate: new Date('2023-05-10'),
-      expiryDate: new Date('2028-05-10'),
-      size: 512000,
-      url: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Motorcycle+License',
-      isSecure: true,
-      notes: 'Valid motorcycle license',
-      vehicleId: 'bike1'
-    },
-    {
-      id: 'doc3',
-      name: 'Vehicle Registration',
-      type: 'registration',
-      uploadDate: new Date('2024-03-20'),
-      expiryDate: new Date('2025-03-20'),
-      size: 1024000,
-      url: 'https://via.placeholder.com/600x800/8B5CF6/FFFFFF?text=Vehicle+Registration',
-      isSecure: true,
-      notes: 'Current vehicle registration certificate',
-      vehicleId: 'bike1'
-    }
-  ]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
   const [isDocumentPreviewOpen, setIsDocumentPreviewOpen] = useState(false);
-  
+
 
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
@@ -264,11 +227,11 @@ const NewGarage = () => {
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      
+
       const containerWidth = 200; // Maximum slide distance
       const deltaX = Math.min(0, Math.max(-containerWidth, e.clientX - window.innerWidth + 100));
       setButtonPosition(deltaX);
-      
+
       // Calculate vault text opacity based on position
       const opacity = Math.abs(deltaX) / containerWidth;
       setVaultTextOpacity(Math.min(opacity, 1));
@@ -276,12 +239,12 @@ const NewGarage = () => {
 
     const handleGlobalTouchMove = (e: TouchEvent) => {
       if (!isDragging) return;
-      
+
       const touch = e.touches[0];
       const containerWidth = 200; // Maximum slide distance
       const deltaX = Math.min(0, Math.max(-containerWidth, touch.clientX - window.innerWidth + 100));
       setButtonPosition(deltaX);
-      
+
       // Calculate vault text opacity based on position
       const opacity = Math.abs(deltaX) / containerWidth;
       setVaultTextOpacity(Math.min(opacity, 1));
@@ -289,14 +252,14 @@ const NewGarage = () => {
 
     const handleGlobalEnd = () => {
       if (!isDragging) return;
-      
+
       setIsDragging(false);
-      
+
       // If slid more than 80px, open vault
       if (Math.abs(buttonPosition) > 80) {
         setIsVaultOpen(true);
       }
-      
+
       // Reset position
       setButtonPosition(0);
       setVaultTextOpacity(0);
@@ -325,23 +288,23 @@ const NewGarage = () => {
                           document.querySelector('[class*="footer"]') ||
                           document.querySelector('[style*="background-color: rgb(0, 0, 0)"]') ||
                           document.querySelector('[class*="bg-black"]');
-      
+
       if (!footerElement) {
         // If no footer found, check if we're near bottom of page
         const documentHeight = document.documentElement.scrollHeight;
         const windowHeight = window.innerHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
-        
+
         // Consider we're over "footer area" if within 200px of bottom
         setIsOverFooter(distanceFromBottom < 200);
         return;
       }
-      
+
       const footerRect = footerElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const buttonBottomPosition = windowHeight - 80; // Button is 80px from bottom
-      
+
       // Check if button would be over footer area
       const isButtonOverFooter = buttonBottomPosition > footerRect.top && footerRect.top < windowHeight;
       setIsOverFooter(isButtonOverFooter);
@@ -449,22 +412,22 @@ const NewGarage = () => {
   // SOS functionality handlers
   const startSOS = (clientX: number, clientY: number) => {
     if (sosActive) return;
-    
+
     // Record starting position
     sosStartPosition.current = { x: clientX, y: clientY };
-    
+
     // Add 800ms delay to prevent accidental triggers during normal interactions
     sosTimeoutRef.current = setTimeout(() => {
       // Only start if we haven't moved too much
       if (sosStartPosition.current) {
         setSosActive(true);
         setSosProgress(0);
-        
+
         // Haptic feedback - vibrate if available
         if (navigator.vibrate) {
           navigator.vibrate(50);
         }
-        
+
         // Start progress animation
         sosIntervalRef.current = setInterval(() => {
           setSosProgress(prev => {
@@ -481,51 +444,51 @@ const NewGarage = () => {
       }
     }, 800);
   };
-  
+
   const checkSOSMovement = (clientX: number, clientY: number) => {
     if (!sosStartPosition.current) return;
-    
+
     const deltaX = Math.abs(clientX - sosStartPosition.current.x);
     const deltaY = Math.abs(clientY - sosStartPosition.current.y);
-    
+
     // If user moved too much, cancel SOS
     if (deltaX > sosMovementThreshold || deltaY > sosMovementThreshold) {
       cancelSOS();
     }
   };
-  
+
   const cancelSOS = () => {
     setSosActive(false);
     setSosProgress(0);
     sosStartPosition.current = null;
-    
+
     if (sosTimeoutRef.current) {
       clearTimeout(sosTimeoutRef.current);
       sosTimeoutRef.current = null;
     }
-    
+
     if (sosIntervalRef.current) {
       clearInterval(sosIntervalRef.current);
       sosIntervalRef.current = null;
     }
   };
-  
+
   const triggerSOS = () => {
     // Stronger haptic feedback for SOS activation
     if (navigator.vibrate) {
       navigator.vibrate([200, 100, 200, 100, 200]);
     }
-    
+
     // Show SOS activated notification
     toast({
       title: "🚨 SOS Activated",
       description: "Emergency alert has been triggered. Help is on the way!",
       variant: "destructive",
     });
-    
+
     // Reset state
     cancelSOS();
-    
+
     // Here you would typically send the SOS signal to emergency services
     console.log("SOS ACTIVATED - Emergency services notified");
   };
@@ -643,7 +606,7 @@ const NewGarage = () => {
                 <div className="flex items-center justify-between">
                   {/* Left side - empty for balance */}
                   <div className="w-16"></div>
-                  
+
                   {/* Center - Large Profile Picture */}
                   <div className="relative">
                     <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden cursor-pointer group bg-gradient-to-br from-[#FF3B30] to-[#FF6B6B] flex items-center justify-center shadow-lg ring-4 ring-white"
@@ -671,7 +634,7 @@ const NewGarage = () => {
                         className="hidden"
                     />
                   </div>
-                  
+
                   {/* Right side - Rank Badge */}
                   <RankDetailsModal totalKilometers={totalKilometers}>
                     <div className="relative cursor-pointer transition-transform hover:scale-105">
@@ -713,18 +676,18 @@ const NewGarage = () => {
                       return buttons.map((button) => {
                         const isCenter = button.isCenter;
                         const document = getDocumentByType(button.key);
-                        
+
                         // Determine border color based on document expiry
                         const getBorderColor = () => {
                           if (!document) return '';
                           if (!document.expiryDate) return 'border-green-500';
-                          
+
                           const daysUntilExpiry = Math.ceil((document.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
                           if (daysUntilExpiry <= 0) return 'border-red-500'; // Expired
                           if (daysUntilExpiry <= 30) return 'border-yellow-500'; // Expiring soon
                           return 'border-green-500'; // All good
                         };
-                        
+
                         return (
                           <button 
                             key={button.key}
@@ -774,7 +737,7 @@ const NewGarage = () => {
                       <span className="text-lg sm:text-xl font-medium text-gray-400">KM</span>
                     </div>
                   </div>
-                  
+
 
                 </div>
 
@@ -790,7 +753,7 @@ const NewGarage = () => {
                       <p className="text-xs text-green-600 font-medium">🏆 Maximum Rank Achieved!</p>
                     )}
                   </div>
-                  
+
                   <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
                     {/* Progress fill */}
                     <div 
@@ -833,7 +796,7 @@ const NewGarage = () => {
                       })}
                     </div>
                   </div>
-                  
+
                   {/* Progress labels */}
                   <div className="flex justify-between items-center text-xs text-gray-500">
                     <span className="font-medium">{progressRanks[0]?.name || "Rookie"}</span>
@@ -1049,7 +1012,7 @@ const NewGarage = () => {
                               Manage
                             </Button>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 gap-2">
                             {[
                               { id: 1, name: "Registration", icon: "📋", status: "valid" },
@@ -1121,7 +1084,7 @@ const NewGarage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
                 </svg>
               </div>
-              
+
               {/* Open Vault Text */}
               <span className="text-gray-600 text-sm font-medium whitespace-nowrap">
                 Open Vault
