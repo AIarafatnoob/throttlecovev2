@@ -136,9 +136,18 @@ app.get("/health", async (req, res) => {
       });
     });
 
-    // Always use Vite middleware for now to fix deployment blank page issue
-    // TODO: Optimize for production with proper static serving later
-    await setupVite(app, server);
+    // Use Vite in development, static files in production
+    if (config.NODE_ENV === 'development') {
+      await setupVite(app, server);
+    } else {
+      try {
+        serveStatic(app);
+        logger.info('Serving static files from dist/public');
+      } catch (error) {
+        logger.warn('Static files not found, falling back to Vite middleware:', error);
+        await setupVite(app, server);
+      }
+    }
 
     // Graceful shutdown handlers
     process.on('SIGTERM', () => {

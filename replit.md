@@ -6,6 +6,14 @@ ThrottleCove is a modern vehicle management web application designed to be a com
 
 ## Recent Changes
 
+### Production Deployment Fixes (July 2025)
+- Fixed Vite development server running in production causing deployment failures
+- Implemented proper environment detection to serve static files in production mode
+- Created fallback mechanism when static build files are not available
+- Updated server configuration to handle both development and production modes correctly
+- Resolved issue where application was loading React development files in production
+- Added proper error handling and logging for production static file serving
+
 ### Dynamic Button Colors & SNS-Inspired Profile Layout (July 2025)
 - Implemented dynamic color system for floating buttons (black over content, red over footer)
 - Redesigned profile card with SNS-inspired layout featuring centered profile picture
