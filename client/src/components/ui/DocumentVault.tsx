@@ -86,9 +86,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
   // Upload form state
   const [uploadForm, setUploadForm] = useState({
-    name: "",
     type: "",
-    notes: "",
     expiryDate: "",
     isSecure: true
   });
@@ -133,14 +131,13 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
       // Simulate file upload - in real app this would upload to server
       const newDocument: Document = {
         id: Math.random().toString(36).substr(2, 9),
-        name: uploadForm.name || file.name,
+        name: file.name,
         type: uploadForm.type,
         uploadDate: new Date(),
         expiryDate: uploadForm.expiryDate ? new Date(uploadForm.expiryDate) : undefined,
         size: file.size,
         url: URL.createObjectURL(file),
-        isSecure: uploadForm.isSecure,
-        notes: uploadForm.notes
+        isSecure: uploadForm.isSecure
       };
 
       onDocumentsChange([...documents, newDocument]);
@@ -152,9 +149,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
       // Reset form
       setUploadForm({
-        name: "",
         type: "",
-        notes: "",
         expiryDate: "",
         isSecure: true
       });
@@ -355,20 +350,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="document-name" className="text-sm font-medium">Document Name</Label>
-              <Input
-                id="document-name"
-                placeholder="Enter document name..."
-                value={uploadForm.name}
-                onChange={(e) => setUploadForm(prev => ({ ...prev, name: e.target.value }))}
-                className="h-11 text-base"
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="document-type" className="text-sm font-medium">Document Type</Label>
               <Select value={uploadForm.type} onValueChange={(value) => setUploadForm(prev => ({ ...prev, type: value }))}>
-                <SelectTrigger className="h-11 text-base">
+                <SelectTrigger className="h-11 text-base rounded-full">
                   <SelectValue placeholder="Select document type..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -388,19 +372,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 type="date"
                 value={uploadForm.expiryDate}
                 onChange={(e) => setUploadForm(prev => ({ ...prev, expiryDate: e.target.value }))}
-                className="h-11 text-base"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="document-notes" className="text-sm font-medium">Notes (Optional)</Label>
-              <Textarea
-                id="document-notes"
-                placeholder="Add any notes about this document..."
-                value={uploadForm.notes}
-                onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
-                rows={3}
-                className="text-base resize-none"
+                className="h-11 text-base rounded-full"
               />
             </div>
 
@@ -411,7 +383,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 <Button
                   onClick={() => fileInputRef.current?.click()}
                   variant="outline"
-                  className="w-full h-12 text-base"
+                  className="w-full h-12 text-base rounded-full"
                   disabled={isUploading || !uploadForm.type}
                 >
                   {isUploading ? (
@@ -443,14 +415,14 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
               <Button 
                 variant="outline" 
                 onClick={() => setShowUploadForm(false)}
-                className="h-11 text-base"
+                className="h-11 text-base rounded-full"
               >
                 Cancel
               </Button>
               <Button 
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading || !uploadForm.name || !uploadForm.type}
-                className="h-11 text-base flex-1"
+                disabled={isUploading || !uploadForm.type}
+                className="h-11 text-base flex-1 rounded-full"
               >
                 {isUploading ? 'Uploading...' : 'Upload Document'}
               </Button>
