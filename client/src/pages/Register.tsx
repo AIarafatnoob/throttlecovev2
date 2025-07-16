@@ -143,8 +143,8 @@ const Register = () => {
         <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
       </div>
       
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="max-w-6xl mx-auto"></div>
+      <div className="container mx-auto px-4 py-8 relative z-10"></div>
+        <div className="max-w-6xl mx-auto">
 
           {/* Main Registration Section - Primary Focus */}
           <div className="text-center mb-8 sm:mb-12 px-4">
@@ -161,7 +161,7 @@ const Register = () => {
           </div>
 
           {/* Registration Form */}
-          <Card className="w-full max-w-md mx-auto mb-12 sm:mb-16 shadow-2xl border-0 rounded-3xl backdrop-blur-sm bg-white/90">
+          <Card className="w-full max-w-md mx-auto mb-12 sm:mb-16 shadow-2xl border-0 rounded-3xl backdrop-blur-sm bg-white/90"></div>
             <CardContent className="p-6 sm:p-8">
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                 <div className="space-y-3 sm:space-y-4">
