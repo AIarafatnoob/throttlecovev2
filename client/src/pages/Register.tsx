@@ -135,17 +135,8 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 animate-gradient-x relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-        <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-        <div className="absolute top-1/2 right-1/3 w-24 h-24 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-6000"></div>
-        <div className="absolute bottom-1/3 right-1/2 w-28 h-28 bg-green-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-8000"></div>
-      </div>
-      
-      <div className="container mx-auto px-4 py-8 relative z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
 
           {/* Main Registration Section - Primary Focus */}
