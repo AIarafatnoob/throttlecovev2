@@ -220,13 +220,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                     Your vault is empty
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-500 mb-6 px-4">
+                  <p className="text-sm sm:text-base text-gray-500 px-4">
                     Upload your first document to get started with secure storage.
                   </p>
-                  <Button onClick={() => setShowUploadForm(true)} className="text-sm sm:text-base">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload First Document
-                  </Button>
                 </div>
               ) : (
                 <div className="space-y-3">
