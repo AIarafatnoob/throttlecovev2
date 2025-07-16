@@ -145,10 +145,10 @@ const Register = () => {
               <img
                 src={logo}
                 alt="ThrottleCove Logo"
-                className="h-16 sm:h-20 w-auto"
+                className="h-20 sm:h-24 w-auto"
               />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-4">
+            <h1 className="text-lg sm:text-xl font-bold text-[#1A1A1A]/70 mb-4">
               Everything You Need To Manage Your Motorcycle Life
             </h1>
           </div>
