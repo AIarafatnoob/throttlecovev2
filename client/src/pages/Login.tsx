@@ -150,7 +150,7 @@ const Login = () => {
             
             <CardFooter className="flex flex-col gap-4">
               <Button 
-                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 rounded-full px-12"
+                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 rounded-full"
                 type="submit"
                 disabled={isLoading}
               >
