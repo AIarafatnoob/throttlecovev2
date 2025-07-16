@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,16 +31,11 @@ import {
   Calendar, 
   AlertTriangle, 
   CheckCircle, 
-  X, 
   Eye,
   Download,
   Trash2,
   Lock,
-  Unlock,
-  Search,
-  Filter,
-  Plus,
-  Camera
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -85,18 +81,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState(selectedDocumentType || "all");
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDocumentViewOpen, setIsDocumentViewOpen] = useState(false);
-
-  // Update filter when selectedDocumentType changes
-  useEffect(() => {
-    if (selectedDocumentType) {
-      setFilterType(selectedDocumentType);
-    }
-  }, [selectedDocumentType]);
   
   // Upload form state
   const [uploadForm, setUploadForm] = useState({
@@ -110,25 +97,19 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Filter documents based on search and type
-  const filteredDocuments = documents.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doc.notes?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || doc.type === filterType;
-    return matchesSearch && matchesType;
-  });
-
-  // Check if document is expiring soon (within 30 days)
-  const isExpiringSoon = (doc: Document) => {
-    if (!doc.expiryDate) return false;
+  // Get document status
+  const getDocumentStatus = (doc: Document) => {
+    if (!doc.expiryDate) return { status: 'no-expiry', color: 'text-gray-500', bgColor: 'bg-gray-100', icon: CheckCircle };
+    
     const daysUntilExpiry = Math.ceil((doc.expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
-  };
-
-  // Check if document is expired
-  const isExpired = (doc: Document) => {
-    if (!doc.expiryDate) return false;
-    return doc.expiryDate < new Date();
+    
+    if (daysUntilExpiry <= 0) {
+      return { status: 'expired', color: 'text-red-600', bgColor: 'bg-red-50', icon: AlertTriangle };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: 'expiring', color: 'text-yellow-600', bgColor: 'bg-yellow-50', icon: AlertTriangle };
+    } else {
+      return { status: 'valid', color: 'text-green-600', bgColor: 'bg-green-50', icon: CheckCircle };
+    }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,159 +208,129 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-500" />
-              Document Vault
+            <DialogTitle className="flex items-center gap-2 justify-between">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-blue-500" />
+                Document Vault
+              </div>
+              <Button onClick={() => setShowUploadForm(true)} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Document
+              </Button>
             </DialogTitle>
             <DialogDescription>
               Securely store and manage your vehicle documents, licenses, and important paperwork.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-hidden flex flex-col gap-4">
-            {/* Search and Filter Bar */}
-            <div className="flex gap-4 items-center">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search documents..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Documents</SelectItem>
-                  {DOCUMENT_TYPES.map(type => (
-                    <SelectItem key={type.key} value={type.key}>
-                      {type.icon} {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button onClick={() => setShowUploadForm(true)} className="shrink-0">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Document
-              </Button>
-            </div>
-
+          <div className="flex-1 overflow-hidden flex flex-col">
             {/* Document Grid */}
             <div className="flex-1 overflow-y-auto">
-              {filteredDocuments.length === 0 ? (
+              {documents.length === 0 ? (
                 <div className="text-center py-12">
                   <Shield className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {documents.length === 0 ? "Your vault is empty" : "No documents found"}
+                    Your vault is empty
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    {documents.length === 0 
-                      ? "Upload your first document to get started with secure storage."
-                      : "Try adjusting your search or filter criteria."
-                    }
+                    Upload your first document to get started with secure storage.
                   </p>
-                  {documents.length === 0 && (
-                    <Button onClick={() => setShowUploadForm(true)}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload First Document
-                    </Button>
-                  )}
+                  <Button onClick={() => setShowUploadForm(true)}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload First Document
+                  </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredDocuments.map((doc) => {
+                <div className="space-y-3">
+                  {documents.map((doc) => {
                     const docType = DOCUMENT_TYPES.find(type => type.key === doc.type);
-                    const expiring = isExpiringSoon(doc);
-                    const expired = isExpired(doc);
+                    const statusInfo = getDocumentStatus(doc);
                     
                     return (
                       <motion.div
                         key={doc.id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -2 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <Card className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                          expired ? 'border-red-200 bg-red-50' : 
-                          expiring ? 'border-yellow-200 bg-yellow-50' : 
-                          'border-gray-200'
-                        }`}>
+                        <Card className={`transition-all duration-200 hover:shadow-md ${statusInfo.bgColor}`}>
                           <CardContent className="p-4">
-                            {/* Document Header */}
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <div className={`w-8 h-8 rounded-lg ${docType?.color || 'bg-gray-500'} flex items-center justify-center text-white text-sm`}>
-                                  {docType?.icon || '📄'}
+                            <div className="flex items-center justify-between">
+                              {/* Left side - Document info */}
+                              <div className="flex items-center gap-4 flex-1 min-w-0">
+                                {/* Document icon and type */}
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-10 h-10 rounded-lg ${docType?.color || 'bg-gray-500'} flex items-center justify-center text-white text-lg`}>
+                                    {docType?.icon || '📄'}
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <h4 className="font-semibold text-gray-900 truncate text-sm">
+                                      {doc.name}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 truncate">
+                                      {docType?.name || 'Document'} • {formatFileSize(doc.size)}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-xs text-gray-500">
-                                    {docType?.name || 'Document'}
-                                  </span>
+
+                                {/* Status indicator */}
+                                <div className="flex items-center gap-2 shrink-0">
                                   {doc.isSecure && (
                                     <Lock className="h-3 w-3 text-green-500" />
                                   )}
+                                  <div className={`flex items-center gap-1 ${statusInfo.color}`}>
+                                    <statusInfo.icon className="h-4 w-4" />
+                                    <span className="text-xs font-medium">
+                                      {statusInfo.status === 'expired' ? 'Expired' :
+                                       statusInfo.status === 'expiring' ? 'Expiring Soon' :
+                                       statusInfo.status === 'valid' ? 'Valid' : 'No Expiry'}
+                                    </span>
+                                  </div>
                                 </div>
+
+                                {/* Expiry date */}
+                                {doc.expiryDate && (
+                                  <div className="text-right shrink-0">
+                                    <p className="text-xs text-gray-500">
+                                      {statusInfo.status === 'expired' ? 'Expired' : 'Expires'}
+                                    </p>
+                                    <p className={`text-xs font-medium ${statusInfo.color}`}>
+                                      {formatDate(doc.expiryDate)}
+                                    </p>
+                                  </div>
+                                )}
                               </div>
-                              
-                              {/* Status Indicators */}
-                              <div className="flex items-center gap-1">
-                                {expired && (
-                                  <AlertTriangle className="h-4 w-4 text-red-500" />
-                                )}
-                                {expiring && !expired && (
-                                  <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                                )}
+
+                              {/* Actions */}
+                              <div className="flex gap-2 ml-4">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleViewDocument(doc)}
+                                  className="h-8 px-3"
+                                >
+                                  <Eye className="h-3 w-3 mr-1" />
+                                  View
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setDeleteConfirmId(doc.id)}
+                                  className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
                               </div>
                             </div>
 
-                            {/* Document Title */}
-                            <h4 className="font-medium text-gray-900 mb-2 line-clamp-2">
-                              {doc.name}
-                            </h4>
-
-                            {/* Document Info */}
-                            <div className="space-y-1 text-xs text-gray-500 mb-3">
-                              <div>Uploaded: {formatDate(doc.uploadDate)}</div>
-                              {doc.expiryDate && (
-                                <div className={expired ? 'text-red-600' : expiring ? 'text-yellow-600' : ''}>
-                                  Expires: {formatDate(doc.expiryDate)}
-                                </div>
-                              )}
-                              <div>Size: {formatFileSize(doc.size)}</div>
-                            </div>
-
-                            {/* Notes */}
+                            {/* Notes (if any) */}
                             {doc.notes && (
-                              <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-                                {doc.notes}
-                              </p>
+                              <div className="mt-2 pt-2 border-t border-gray-200">
+                                <p className="text-xs text-gray-600 line-clamp-1">
+                                  <span className="font-medium">Notes:</span> {doc.notes}
+                                </p>
+                              </div>
                             )}
-
-                            {/* Actions */}
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleViewDocument(doc)}
-                                className="flex-1"
-                              >
-                                <Eye className="h-3 w-3 mr-1" />
-                                View
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setDeleteConfirmId(doc.id)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
                           </CardContent>
                         </Card>
                       </motion.div>
@@ -497,7 +448,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 Cancel
               </Button>
               <Button 
-                onClick={handleFileUpload}
+                onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading || !uploadForm.name || !uploadForm.type}
                 className="h-11 text-base flex-1"
               >
