@@ -869,19 +869,6 @@ const NewGarage = () => {
               whileTap={{ scale: isDragging ? 1 : 0.9 }}
             >
               <div className="relative">
-                {/* Vault Text - slides out behind button */}
-                <motion.div
-                  className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
-                  style={{ 
-                    opacity: vaultTextOpacity,
-                    transform: `translateY(-50%) translateX(${Math.min(0, buttonPosition / 3)}px)`
-                  }}
-                >
-                  <span className="text-sm font-medium">🔒 Open Vault</span>
-                  {/* Arrow */}
-                  <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
-                </motion.div>
-
                 <Button 
                   onClick={isDragging ? undefined : handleAddMotorcycle}
                   onMouseDown={handleMouseDown}
@@ -891,18 +878,6 @@ const NewGarage = () => {
                 >
                   <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
                 </Button>
-
-                {/* Add New Bike hover text */}
-                <motion.div
-                  className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
-                  style={{
-                    opacity: vaultTextOpacity > 0 ? 0 : undefined // Hide when vault text is showing
-                  }}
-                >
-                  <span className="text-sm font-medium">Add New Bike</span>
-                  {/* Arrow */}
-                  <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
-                </motion.div>
               </div>
             </motion.div>
           </>
@@ -1131,19 +1106,6 @@ const NewGarage = () => {
           whileTap={{ scale: isDragging ? 1 : 0.9 }}
         >
           <div className="relative">
-            {/* Vault Text - slides out from the right */}
-            <motion.div
-              className={`absolute left-full top-1/2 -translate-y-1/2 ml-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-4 py-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-300`}
-              style={{ 
-                opacity: vaultTextOpacity,
-                transform: `translateY(-50%) translateX(${120 - (vaultTextOpacity * 140)}px)`
-              }}
-            >
-              <span className="text-sm font-medium">🔒 Open Vault</span>
-              {/* Arrow */}
-              <div className={`absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-r-[#FF3B30]' : 'border-r-[#1A1A1A]'} border-r-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
-            </motion.div>
-
             <Button 
               onClick={isDragging ? undefined : handleAddMotorcycle}
               onMouseDown={handleMouseDown}
@@ -1153,18 +1115,6 @@ const NewGarage = () => {
             >
               <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
             </Button>
-
-            {/* Add New Bike hover text */}
-            <motion.div
-              className={`absolute right-full top-1/2 -translate-y-1/2 mr-3 ${isOverFooter ? 'bg-[#FF3B30]' : 'bg-[#1A1A1A]'} text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300`}
-              style={{
-                opacity: vaultTextOpacity > 0 ? 0 : undefined // Hide when vault text is showing
-              }}
-            >
-              <span className="text-sm font-medium">Add New Bike</span>
-              {/* Arrow */}
-              <div className={`absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 ${isOverFooter ? 'border-l-[#FF3B30]' : 'border-l-[#1A1A1A]'} border-l-4 border-t-4 border-t-transparent border-b-4 border-b-transparent transition-all duration-300`}></div>
-            </motion.div>
           </div>
         </motion.div>
 
