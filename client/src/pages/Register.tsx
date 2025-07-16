@@ -148,7 +148,7 @@ const Register = () => {
                 className="h-16 sm:h-20 w-auto"
               />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-4">
               Everything You Need To Manage Your Motorcycle Life
             </h1>
           </div>
