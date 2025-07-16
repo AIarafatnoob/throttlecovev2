@@ -419,26 +419,72 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
       {/* Document View Dialog */}
       <Dialog open={isDocumentViewOpen} onOpenChange={setIsDocumentViewOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh]">
+        <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
           {selectedDocument && (
             <>
-              <DialogHeader>
+              <DialogHeader className="pb-4">
                 <DialogTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
                   {selectedDocument.name}
                 </DialogTitle>
-                <DialogDescription>
-                  {DOCUMENT_TYPES.find(type => type.key === selectedDocument.type)?.name}
+                <DialogDescription className="flex items-center justify-between">
+                  <span>{DOCUMENT_TYPES.find(type => type.key === selectedDocument.type)?.name}</span>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = selectedDocument.url;
+                        link.download = selectedDocument.name;
+                        link.click();
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                  </div>
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="text-center py-8">
-                <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">Document preview coming soon</p>
-                <Button variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
+              <div className="flex-1 bg-gray-50 rounded-lg overflow-hidden">
+                {selectedDocument.url.toLowerCase().endsWith('.pdf') ? (
+                  <iframe
+                    src={selectedDocument.url}
+                    className="w-full h-[60vh] border-0"
+                    title={selectedDocument.name}
+                  />
+                ) : selectedDocument.url.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i) ? (
+                  <div className="flex items-center justify-center h-[60vh] p-4">
+                    <img 
+                      src={selectedDocument.url} 
+                      alt={selectedDocument.name}
+                      className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-[60vh] p-8">
+                    <FileText className="h-16 w-16 text-gray-300 mb-4" />
+                    <p className="text-gray-600 mb-2 text-center">
+                      Preview not available for this file type
+                    </p>
+                    <p className="text-sm text-gray-500 mb-4">
+                      File type: {selectedDocument.name.split('.').pop()?.toUpperCase() || 'Unknown'}
+                    </p>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = selectedDocument.url;
+                        link.download = selectedDocument.name;
+                        link.click();
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download to View
+                    </Button>
+                  </div>
+                )}
               </div>
             </>
           )}
