@@ -857,11 +857,11 @@ const NewGarage = () => {
                 transition={{ duration: 0.2 }}
               >
                 <Card 
-                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden"
+                  className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden relative"
                 >
                   <CardContent className="p-4 sm:p-6 flex flex-col">
                     {/* Header Section */}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-black rounded-2xl flex items-center justify-center flex-shrink-0">
                           <svg viewBox="0 0 100 100" className="w-6 h-6 sm:w-8 sm:h-8 text-white fill-current">
@@ -874,43 +874,45 @@ const NewGarage = () => {
                         </div>
                       </div>
 
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0 rounded-xl flex-shrink-0"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditMotorcycle(motorcycle);
-                            }}
-                          >
-                            <Wrench className="mr-2 h-4 w-4" />
-                            Edit Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMotorcycleToDelete(motorcycle.id);
-                            }}
-                            className="text-red-600"
-                          >
-                            <span className="mr-2">🗑️</span>
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="absolute top-4 right-4">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0 rounded-xl flex-shrink-0 bg-white/80 hover:bg-white shadow-sm"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditMotorcycle(motorcycle);
+                              }}
+                            >
+                              <Wrench className="mr-2 h-4 w-4" />
+                              Edit Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMotorcycleToDelete(motorcycle.id);
+                              }}
+                              className="text-red-600"
+                            >
+                              <span className="mr-2">🗑️</span>
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
 
                     {/* Stats Section */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 flex-1">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 flex-1">
                       <div className="text-center bg-gray-50 rounded-2xl p-3 sm:p-4">
                         <p className="text-gray-500 text-xs mb-1">Total KM</p>
                         <p className="text-lg sm:text-xl font-bold text-[#1A1A1A]">
