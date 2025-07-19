@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "lucide-react";
+import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import MotorcycleDetailsDialog from "@/components/ui/motorcycle/MotorcycleDetailsDialog";
@@ -177,6 +177,29 @@ const Home = () => {
                   className="h-20 sm:h-28 w-auto object-contain relative z-10"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF3B30]/5 to-transparent rounded-lg blur-sm" />
+              </div>
+            </div>
+
+            {/* Quick Stats Dashboard */}
+            <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8 max-w-4xl mx-auto">
+              <h3 className="text-lg font-semibold text-center mb-4 text-gray-800">ThrottleCove Community</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-gradient-to-br from-[#FF3B30]/10 to-[#FF3B30]/5 rounded-2xl">
+                  <div className="text-2xl font-bold text-[#FF3B30]">2,847</div>
+                  <div className="text-sm text-gray-600">Active Riders</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-2xl">
+                  <div className="text-2xl font-bold text-blue-600">15,392</div>
+                  <div className="text-sm text-gray-600">Miles Logged</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-2xl">
+                  <div className="text-2xl font-bold text-green-600">1,249</div>
+                  <div className="text-sm text-gray-600">Bikes Tracked</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 rounded-2xl">
+                  <div className="text-2xl font-bold text-purple-600">98</div>
+                  <div className="text-sm text-gray-600">Group Rides</div>
+                </div>
               </div>
             </div>
 
@@ -352,6 +375,308 @@ const Home = () => {
               </Button>
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Popular Gear Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-bold mb-4">Essential Rider Gear</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Top-rated safety equipment and accessories trusted by thousands of riders worldwide
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[
+              {
+                name: "Apex Pro Carbon Helmet",
+                price: "$599.99",
+                rating: 4.9,
+                image: "https://via.placeholder.com/300x200/F59E0B",
+                category: "Helmet",
+                badge: "Best Seller"
+              },
+              {
+                name: "Turbulence Pro Jacket",
+                price: "$349.99",
+                rating: 4.8,
+                image: "https://via.placeholder.com/300x200/3B82F6",
+                category: "Jacket",
+                badge: "Top Rated"
+              },
+              {
+                name: "Track Pro Gloves",
+                price: "$149.99",
+                rating: 4.8,
+                image: "https://via.placeholder.com/300x200/10B981",
+                category: "Gloves",
+                badge: "Premium"
+              },
+              {
+                name: "Race Pro Boots",
+                price: "$329.99",
+                rating: 4.9,
+                image: "https://via.placeholder.com/300x200/8B5CF6",
+                category: "Boots",
+                badge: "Pro Level"
+              }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                  <div className="relative h-40">
+                    <div 
+                      className="w-full h-full bg-cover bg-center rounded-t-2xl"
+                      style={{ backgroundImage: `url(${item.image})` }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-t-2xl" />
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-[#FF3B30] text-white rounded-full px-3 py-1">
+                          {item.badge}
+                        </Badge>
+                      </div>
+                      <div className="absolute bottom-3 left-3">
+                        <span className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium">
+                          {item.category}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">{item.name}</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <span className="text-sm font-medium">{item.rating}</span>
+                      </div>
+                      <span className="font-bold text-lg">{item.price}</span>
+                    </div>
+                    <Button className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full">
+                      Add to Cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Link href="/shop">
+              <Button 
+                variant="outline" 
+                className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium rounded-full"
+                asChild
+              >
+                <span>
+                  Shop All Gear
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </span>
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Latest Blog Posts Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-bold mb-4">Latest from the Community</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Stay updated with the latest tips, reviews, and stories from fellow riders
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {[
+              {
+                title: "The Ultimate Guide to Motorcycle Maintenance",
+                excerpt: "Learn essential maintenance tips to keep your bike running smoothly and extend its lifespan.",
+                category: "Maintenance",
+                readTime: "8 min read",
+                date: "2 days ago",
+                image: "https://images.unsplash.com/photo-1558981359-219d6364c9c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                author: "Michael Johnson"
+              },
+              {
+                title: "Top Motorcycle Routes in California",
+                excerpt: "Discover the most scenic and thrilling motorcycle routes California has to offer.",
+                category: "Travel",
+                readTime: "6 min read",
+                date: "4 days ago",
+                image: "https://images.unsplash.com/photo-1558979158-65a1eaa08691?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                author: "Amanda Rivera"
+              },
+              {
+                title: "Safety Gear That Could Save Your Life",
+                excerpt: "Explore the essential safety gear every rider should have and how it can protect you.",
+                category: "Safety",
+                readTime: "7 min read",
+                date: "1 week ago",
+                image: "https://images.unsplash.com/photo-1605664061868-b262d0e08dcb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                author: "Sarah Martinez"
+              }
+            ].map((post, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                  <div className="relative h-48">
+                    <img 
+                      src={post.image} 
+                      alt={post.title}
+                      className="w-full h-full object-cover rounded-t-2xl"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-[#FF3B30] text-white rounded-full px-3 py-1">
+                        {post.category}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <CardContent className="flex-grow p-6">
+                    <div className="flex items-center text-xs text-gray-500 mb-3 gap-4">
+                      <span>{post.date}</span>
+                      <span>•</span>
+                      <span>{post.readTime}</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold mb-3 line-clamp-2">{post.title}</h3>
+                    <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      <span className="text-sm font-medium text-gray-700">By {post.author}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-[#FF3B30] hover:text-[#FF3B30]/90 p-0 rounded-full"
+                      >
+                        Read More <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Link href="/blog">
+              <Button 
+                variant="outline" 
+                className="px-8 py-3 border-2 border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white transition-all font-medium rounded-full"
+                asChild
+              >
+                <span>
+                  Read All Articles
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </span>
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Quick Actions Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-bold mb-4">Get Started Today</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Everything you need to manage your motorcycle lifestyle in one place
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Build Your Garage",
+                description: "Add your motorcycles and track maintenance, mileage, and modifications",
+                icon: <Bike className="h-8 w-8" />,
+                buttonText: "Start Building",
+                href: "/garage",
+                color: "from-blue-500 to-blue-600"
+              },
+              {
+                title: "Join the Squad",
+                description: "Connect with riders, share experiences, and organize group rides",
+                icon: <User className="h-8 w-8" />,
+                buttonText: "Join Now",
+                href: "/squad",
+                color: "from-green-500 to-green-600"
+              },
+              {
+                title: "Schedule Maintenance",
+                description: "Never miss important service dates with our smart reminder system",
+                icon: <TrafficCone className="h-8 w-8" />,
+                buttonText: "Get Started",
+                href: "/maintenance",
+                color: "from-purple-500 to-purple-600"
+              }
+            ].map((action, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card className="text-center p-8 hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50 h-full">
+                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white`}>
+                    {action.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">{action.title}</h3>
+                  <p className="text-gray-600 mb-6 line-height-relaxed">{action.description}</p>
+                  <Link href={action.href}>
+                    <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6" asChild>
+                      <span>{action.buttonText}</span>
+                    </Button>
+                  </Link>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
