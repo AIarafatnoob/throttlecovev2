@@ -380,7 +380,7 @@ const Shop = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Rider Essentials</h1>
+          <h1 className="text-3xl font-bold mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>RIDER ESSENTIALS</h1>
           <p className="text-gray-600 mb-6">Quality gear for the modern motorcyclist</p>
         </div>
         
