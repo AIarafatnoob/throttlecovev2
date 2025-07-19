@@ -8,8 +8,9 @@ ThrottleCove is a modern vehicle management web application designed to be a com
 
 ### Community Page Replacement (July 2025)
 - Deleted Community page completely
-- Created blank "Suad" page as replacement
-- Updated routing in App.tsx to point /community route to new Suad page
+- Created blank "Squad" page as replacement
+- Updated routing in App.tsx to point /community route to new Squad page
+- Updated navigation button text from "Community" to "Squad"
 - Removed Community.tsx file from codebase
 
 ### Production Deployment Fixes (July 2025)

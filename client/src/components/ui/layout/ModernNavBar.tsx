@@ -47,7 +47,7 @@ const ModernNavBar = () => {
 
   const navLinks = [
     { name: "Garage", path: "/garage" },
-    { name: "Community", path: "/community" },
+    { name: "Squad", path: "/community" },
     { name: "Catalog", path: "/catalog" },
     { name: "Shop", path: "/shop" },
     { name: "Blog", path: "/blog" },

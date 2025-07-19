@@ -4,7 +4,7 @@ import Footer from "@/components/ui/layout/Footer";
 import Home from "@/pages/Home";
 import Garage from "@/pages/NewGarage";
 import Maintenance from "@/pages/Maintenance";
-import Suad from "@/pages/Suad";
+import Squad from "@/pages/Squad";
 import Catalog from "@/pages/Catalog";
 import Shop from "@/pages/Shop";
 import Blog from "@/pages/Blog";
@@ -50,7 +50,7 @@ function App() {
           <Route path="/garage">
             <AuthenticatedRoute component={Garage} />
           </Route>
-          <Route path="/community" component={Suad} />
+          <Route path="/community" component={Squad} />
           <Route path="/catalog" component={Catalog} />
           <Route path="/shop" component={Shop} />
           <Route path="/blog" component={Blog} />
