@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from './storage.js';
 import session from "express-session";
@@ -7,6 +8,9 @@ import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 import {
   insertUserSchema,
@@ -20,6 +24,48 @@ import {
 } from "../shared/schema.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Create uploads directory if it doesn't exist
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  // Multer configuration for file uploads
+  const upload = multer({
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, uploadsDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+      }
+    }),
+    limits: {
+      fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      if (file.fieldname === 'photo') {
+        // Accept images only
+        if (!file.mimetype.startsWith('image/')) {
+          cb(new Error('Only image files are allowed'));
+          return;
+        }
+      } else if (file.fieldname.startsWith('document_')) {
+        // Accept common document formats
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.mimetype)) {
+          cb(new Error('Only PDF, JPG, and PNG files are allowed for documents'));
+          return;
+        }
+      }
+      cb(null, true);
+    }
+  });
+
+  // Serve uploaded files statically
+  app.use('/uploads', express.static(uploadsDir));
+
   // Session setup
   const MemoryStoreSession = MemoryStore(session);
   
@@ -198,10 +244,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create new motorcycle
-  app.post("/api/motorcycles", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/motorcycles", isAuthenticated, upload.any(), async (req: any, res: Response) => {
     try {
-      const motorcycleData = { ...req.body, userId: req.user.id };
+      const files = req.files as Express.Multer.File[];
+      
+      // Process uploaded photo
+      let photoUrl = '';
+      const photoFile = files?.find(f => f.fieldname === 'photo');
+      if (photoFile) {
+        photoUrl = `/uploads/${photoFile.filename}`;
+      }
+      
+      // Process uploaded documents
+      const documentFiles = files?.filter(f => f.fieldname.startsWith('document_')) || [];
+      
+      // Create motorcycle with photo as first item in photos array
+      const motorcycleData = {
+        ...req.body,
+        userId: req.user.id,
+        photos: photoUrl ? [photoUrl] : [],
+        mileage: req.body.mileage ? parseInt(req.body.mileage) : 0,
+        year: req.body.year ? parseInt(req.body.year) : new Date().getFullYear()
+      };
+      
       const motorcycle = await storage.createMotorcycle(motorcycleData);
+      
+      // Save documents to documents table if any were uploaded
+      if (documentFiles.length > 0) {
+        for (const docFile of documentFiles) {
+          const documentData = {
+            motorcycleId: motorcycle.id,
+            documentType: 'general',
+            title: docFile.originalname,
+            fileUrl: `/uploads/${docFile.filename}`,
+            fileSize: docFile.size,
+            mimeType: docFile.mimetype
+          };
+          
+          await storage.createDocument(documentData);
+        }
+      }
+      
       res.status(201).json(motorcycle);
     } catch (error) {
       console.error('Create motorcycle error:', error);
@@ -256,6 +339,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Delete motorcycle error:', error);
       res.status(500).json({ error: "Failed to delete motorcycle" });
+    }
+  });
+
+  // Get documents for a motorcycle
+  app.get("/api/motorcycles/:id/documents", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const motorcycleId = parseInt(req.params.id);
+      const motorcycle = await storage.getMotorcycle(motorcycleId);
+      
+      if (!motorcycle || motorcycle.userId !== req.user.id) {
+        return res.status(404).json({ error: "Motorcycle not found" });
+      }
+      
+      const documents = await storage.getDocumentsByMotorcycleId(motorcycleId);
+      res.json(documents);
+    } catch (error) {
+      console.error('Get documents error:', error);
+      res.status(500).json({ error: "Failed to get documents" });
+    }
+  });
+
+  // Get all documents for user's vehicles
+  app.get("/api/documents", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const userMotorcycles = await storage.getMotorcyclesByUserId(req.user.id);
+      const allDocuments = [];
+      
+      for (const motorcycle of userMotorcycles) {
+        const documents = await storage.getDocumentsByMotorcycleId(motorcycle.id);
+        allDocuments.push(...documents.map(doc => ({ 
+          ...doc, 
+          motorcycleName: motorcycle.name || `${motorcycle.make} ${motorcycle.model}` 
+        })));
+      }
+      
+      res.json(allDocuments);
+    } catch (error) {
+      console.error('Get all documents error:', error);
+      res.status(500).json({ error: "Failed to get documents" });
     }
   });
 

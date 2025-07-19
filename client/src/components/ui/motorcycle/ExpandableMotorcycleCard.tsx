@@ -45,7 +45,7 @@ const ExpandableMotorcycleCard = ({ motorcycle, onEdit, onDelete }: ExpandableMo
       <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
         <div className="h-48 overflow-hidden relative">
           <img 
-            src={motorcycle.imageUrl || `https://source.unsplash.com/random/400x300/?motorcycle,${motorcycle.make}`} 
+            src={motorcycle.photos?.[0] || motorcycle.imageUrl || `https://source.unsplash.com/random/400x300/?motorcycle,${motorcycle.make}`} 
             alt={`${motorcycle.make} ${motorcycle.model}`} 
             className="w-full h-full object-cover"
           />

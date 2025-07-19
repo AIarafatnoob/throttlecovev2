@@ -107,20 +107,46 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      const formattedData = {
-        ...data,
-        imageUrl: uploadedPhoto || "",
-        tags: data.tags || ["Motorcycle"]
-      };
+      // Create FormData to handle file uploads
+      const formData = new FormData();
       
-      await apiRequest("POST", "/api/motorcycles", formattedData);
+      // Add basic motorcycle data
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+      
+      // Add photo if uploaded
+      if (uploadedPhoto && photoInputRef.current?.files?.[0]) {
+        formData.append('photo', photoInputRef.current.files[0]);
+      }
+      
+      // Add documents if uploaded
+      uploadedDocuments.forEach((doc, index) => {
+        formData.append(`document_${index}`, doc);
+      });
+      
+      // Add document count for processing
+      formData.append('documentCount', uploadedDocuments.length.toString());
+      
+      const response = await fetch('/api/motorcycles', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create motorcycle');
+      }
       
       toast({
         title: "Success",
-        description: "Motorcycle added to your garage!",
+        description: "Motorcycle added to your garage with all files!",
       });
       
       queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
       
       form.reset();
       setUploadedPhoto(null);

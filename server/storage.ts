@@ -4,6 +4,7 @@ import {
   maintenanceRecords, MaintenanceRecord, InsertMaintenanceRecord,
   maintenanceSchedules, MaintenanceSchedule, InsertMaintenanceSchedule,
   rides, Ride, InsertRide,
+  documents, Document, InsertDocument,
   riderRelationships, RiderRelationship, InsertRiderRelationship
 } from "@shared/schema";
 
@@ -42,6 +43,13 @@ export interface IStorage {
   updateRide(id: number, ride: Partial<Ride>): Promise<Ride | undefined>;
   deleteRide(id: number): Promise<boolean>;
   
+  // Document operations
+  getDocument(id: number): Promise<Document | undefined>;
+  getDocumentsByMotorcycleId(motorcycleId: number): Promise<Document[]>;
+  createDocument(document: InsertDocument): Promise<Document>;
+  updateDocument(id: number, document: Partial<Document>): Promise<Document | undefined>;
+  deleteDocument(id: number): Promise<boolean>;
+  
   // Rider relationship operations
   getRiderRelationship(id: number): Promise<RiderRelationship | undefined>;
   getRiderRelationshipsByUserId(userId: number): Promise<RiderRelationship[]>;
@@ -56,6 +64,7 @@ export class MemStorage implements IStorage {
   private maintenanceRecords: Map<number, MaintenanceRecord>;
   private maintenanceSchedules: Map<number, MaintenanceSchedule>;
   private rides: Map<number, Ride>;
+  private documents: Map<number, Document>;
   private riderRelationships: Map<number, RiderRelationship>;
   
   private currentUserId: number = 1;
@@ -63,6 +72,7 @@ export class MemStorage implements IStorage {
   private currentMaintenanceRecordId: number = 1;
   private currentMaintenanceScheduleId: number = 1;
   private currentRideId: number = 1;
+  private currentDocumentId: number = 1;
   private currentRiderRelationshipId: number = 1;
   
   constructor() {
@@ -71,6 +81,7 @@ export class MemStorage implements IStorage {
     this.maintenanceRecords = new Map();
     this.maintenanceSchedules = new Map();
     this.rides = new Map();
+    this.documents = new Map();
     this.riderRelationships = new Map();
     
     // Add demo user with hashed password
@@ -223,6 +234,43 @@ export class MemStorage implements IStorage {
   
   async deleteRide(id: number): Promise<boolean> {
     return this.rides.delete(id);
+  }
+  
+  // Document operations
+  async getDocument(id: number): Promise<Document | undefined> {
+    return this.documents.get(id);
+  }
+
+  async getDocumentsByMotorcycleId(motorcycleId: number): Promise<Document[]> {
+    return Array.from(this.documents.values()).filter(doc => doc.motorcycleId === motorcycleId);
+  }
+
+  async createDocument(document: InsertDocument): Promise<Document> {
+    const newDocument: Document = {
+      id: this.currentDocumentId++,
+      ...document,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.documents.set(newDocument.id, newDocument);
+    return newDocument;
+  }
+
+  async updateDocument(id: number, document: Partial<Document>): Promise<Document | undefined> {
+    const existing = this.documents.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { 
+      ...existing, 
+      ...document, 
+      updatedAt: new Date()
+    };
+    this.documents.set(id, updated);
+    return updated;
+  }
+
+  async deleteDocument(id: number): Promise<boolean> {
+    return this.documents.delete(id);
   }
   
   // Rider relationship operations
