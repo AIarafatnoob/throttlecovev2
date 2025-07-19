@@ -269,6 +269,79 @@ export const apiKeys = pgTable("api_keys", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Event RSVPs
+export const eventRsvps = pgTable("event_rsvps", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 20 }).default("pending"), // going, not_going, maybe, pending
+  responseAt: timestamp("response_at").defaultNow().notNull(),
+}, (table) => ({
+  eventUserIdx: index("idx_event_rsvps_event_user").on(table.eventId, table.userId),
+}));
+
+// Group posts/feed
+export const groupPosts = pgTable("group_posts", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  authorId: integer("author_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  postType: varchar("post_type", { length: 20 }).default("text"), // text, photo, route, tip, poll
+  attachments: text("attachments").array(), // URLs for photos/files
+  routeData: jsonb("route_data"), // GPX route data
+  pollData: jsonb("poll_data"), // Poll options and responses
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  groupCreatedIdx: index("idx_group_posts_group_created").on(table.groupId, table.createdAt),
+}));
+
+// Group chat messages
+export const groupMessages = pgTable("group_messages", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  senderId: integer("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  messageType: varchar("message_type", { length: 20 }).default("text"), // text, location, emergency, system
+  metadata: jsonb("metadata"), // Location data, emergency info, etc.
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  groupCreatedIdx: index("idx_group_messages_group_created").on(table.groupId, table.createdAt),
+}));
+
+// Ride stats and leaderboards
+export const rideStats = pgTable("ride_stats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  groupId: integer("group_id").references(() => groups.id, { onDelete: "cascade" }),
+  statType: varchar("stat_type", { length: 30 }).notNull(), // total_distance, max_speed, rides_count, etc.
+  value: decimal("value", { precision: 12, scale: 4 }).notNull(),
+  period: varchar("period", { length: 20 }).default("all_time"), // weekly, monthly, yearly, all_time
+  achievedAt: timestamp("achieved_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userStatIdx: index("idx_ride_stats_user_stat").on(table.userId, table.statType, table.period),
+  groupStatIdx: index("idx_ride_stats_group_stat").on(table.groupId, table.statType, table.period),
+}));
+
+// User profiles with riding preferences
+export const userProfiles = pgTable("user_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  ridingStyle: varchar("riding_style", { length: 30 }), // sprinter, climber, endurance, casual
+  preferredTerrain: text("preferred_terrain").array(), // road, gravel, mtb, touring
+  skillLevel: varchar("skill_level", { length: 20 }), // beginner, intermediate, advanced, expert
+  availability: jsonb("availability"), // Weekly schedule preferences
+  maxDistance: integer("max_distance"), // Maximum ride distance in km
+  bio: text("bio"),
+  achievements: text("achievements").array(), // List of cycling achievements
+  emergencyContact: varchar("emergency_contact", { length: 20 }),
+  medicalInfo: text("medical_info"), // Allergies, medical conditions
+  notificationPreferences: jsonb("notification_preferences"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertUserSessionSchema = createInsertSchema(userSessions).omit({ id: true, createdAt: true });
@@ -283,6 +356,11 @@ export const insertGroupMemberSchema = createInsertSchema(groupMembers).omit({ i
 export const insertEventSchema = createInsertSchema(events).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true });
 export const insertApiKeySchema = createInsertSchema(apiKeys).omit({ id: true, createdAt: true });
+export const insertEventRsvpSchema = createInsertSchema(eventRsvps).omit({ id: true, responseAt: true });
+export const insertGroupPostSchema = createInsertSchema(groupPosts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertGroupMessageSchema = createInsertSchema(groupMessages).omit({ id: true, createdAt: true });
+export const insertRideStatSchema = createInsertSchema(rideStats).omit({ id: true, achievedAt: true, updatedAt: true });
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Authentication schemas
 export const loginSchema = z.object({
@@ -336,6 +414,21 @@ export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type InsertApiKey = z.infer<typeof insertApiKeySchema>;
+
+export type EventRsvp = typeof eventRsvps.$inferSelect;
+export type InsertEventRsvp = z.infer<typeof insertEventRsvpSchema>;
+
+export type GroupPost = typeof groupPosts.$inferSelect;
+export type InsertGroupPost = z.infer<typeof insertGroupPostSchema>;
+
+export type GroupMessage = typeof groupMessages.$inferSelect;
+export type InsertGroupMessage = z.infer<typeof insertGroupMessageSchema>;
+
+export type RideStat = typeof rideStats.$inferSelect;
+export type InsertRideStat = z.infer<typeof insertRideStatSchema>;
+
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
 
 // Auth types
 export type LoginData = z.infer<typeof loginSchema>;
