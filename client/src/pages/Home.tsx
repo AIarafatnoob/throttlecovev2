@@ -159,7 +159,7 @@ const Home = () => {
       </section>
 
       {/* Motorcycle Catalog Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-12"
@@ -358,7 +358,7 @@ const Home = () => {
       </section>
 
       {/* Popular Gear Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-12"
