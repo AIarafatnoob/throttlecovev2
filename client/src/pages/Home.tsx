@@ -180,28 +180,7 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Quick Stats Dashboard */}
-            <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8 max-w-4xl mx-auto">
-              <h3 className="text-lg font-semibold text-center mb-4 text-gray-800">ThrottleCove Community</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gradient-to-br from-[#FF3B30]/10 to-[#FF3B30]/5 rounded-2xl">
-                  <div className="text-2xl font-bold text-[#FF3B30]">2,847</div>
-                  <div className="text-sm text-gray-600">Active Riders</div>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-2xl">
-                  <div className="text-2xl font-bold text-blue-600">15,392</div>
-                  <div className="text-sm text-gray-600">Miles Logged</div>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-2xl">
-                  <div className="text-2xl font-bold text-green-600">1,249</div>
-                  <div className="text-sm text-gray-600">Bikes Tracked</div>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 rounded-2xl">
-                  <div className="text-2xl font-bold text-purple-600">98</div>
-                  <div className="text-sm text-gray-600">Group Rides</div>
-                </div>
-              </div>
-            </div>
+            
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto relative mb-8">
@@ -612,73 +591,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Quick Actions Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl font-bold mb-4">Get Started Today</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Everything you need to manage your motorcycle lifestyle in one place
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Build Your Garage",
-                description: "Add your motorcycles and track maintenance, mileage, and modifications",
-                icon: <Bike className="h-8 w-8" />,
-                buttonText: "Start Building",
-                href: "/garage",
-                color: "from-blue-500 to-blue-600"
-              },
-              {
-                title: "Join the Squad",
-                description: "Connect with riders, share experiences, and organize group rides",
-                icon: <User className="h-8 w-8" />,
-                buttonText: "Join Now",
-                href: "/squad",
-                color: "from-green-500 to-green-600"
-              },
-              {
-                title: "Schedule Maintenance",
-                description: "Never miss important service dates with our smart reminder system",
-                icon: <TrafficCone className="h-8 w-8" />,
-                buttonText: "Get Started",
-                href: "/maintenance",
-                color: "from-purple-500 to-purple-600"
-              }
-            ].map((action, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card className="text-center p-8 hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50 h-full">
-                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white`}>
-                    {action.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-4">{action.title}</h3>
-                  <p className="text-gray-600 mb-6 line-height-relaxed">{action.description}</p>
-                  <Link href={action.href}>
-                    <Button className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6" asChild>
-                      <span>{action.buttonText}</span>
-                    </Button>
-                  </Link>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Motorcycle Details Dialog */}
       <MotorcycleDetailsDialog 
