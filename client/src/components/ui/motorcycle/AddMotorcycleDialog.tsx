@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { X, Upload, Camera, FileText } from "lucide-react";
+import { X, Upload, Camera, FileText, ImageIcon } from "lucide-react";
 import { insertMotorcycleSchema } from "@shared/schema";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -139,11 +140,13 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-[#1A1A1A]">Add New Motorcycle</DialogTitle>
+      <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto rounded-3xl">
+        <DialogHeader className="relative pb-4">
+          <DialogTitle className="text-2xl font-bold text-center text-[#1A1A1A] mb-6">
+            Add Your Motorcycle
+          </DialogTitle>
           <Button 
-            className="absolute right-4 top-4" 
+            className="absolute right-0 top-0" 
             variant="ghost" 
             size="icon"
             onClick={() => onOpenChange(false)}
@@ -153,26 +156,27 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Photo Upload Section */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Vehicle Photo</Label>
-              <div className="flex items-center space-x-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Upload Section - Compact and at the top */}
+            <div className="bg-gray-50 rounded-3xl p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-center mb-4">Upload Files</h3>
+              
+              <div className="flex gap-4 justify-center">
+                {/* Photo Upload */}
                 <div className="flex-1">
                   <div 
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-[#FF3B30] transition-colors"
+                    className="bg-white rounded-full border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer hover:border-[#FF3B30] transition-colors min-h-[80px] flex flex-col items-center justify-center"
                     onClick={() => photoInputRef.current?.click()}
                   >
                     {uploadedPhoto ? (
-                      <div className="space-y-2">
-                        <img src={uploadedPhoto} alt="Uploaded" className="w-20 h-20 object-cover rounded-lg mx-auto" />
-                        <p className="text-sm text-gray-600">Photo uploaded</p>
+                      <div className="flex items-center space-x-2">
+                        <img src={uploadedPhoto} alt="Uploaded" className="w-8 h-8 object-cover rounded-full" />
+                        <span className="text-sm text-green-600 font-medium">Photo Added</span>
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        <Camera className="h-8 w-8 mx-auto text-gray-400" />
-                        <p className="text-sm text-gray-600">Click to upload photo</p>
-                        <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
+                      <div className="flex items-center space-x-2">
+                        <ImageIcon className="h-5 w-5 text-gray-400" />
+                        <span className="text-sm text-gray-600 font-medium">Add Photo</span>
                       </div>
                     )}
                   </div>
@@ -184,209 +188,232 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
                     className="hidden"
                   />
                 </div>
-              </div>
-            </div>
 
-            {/* Basic Information */}
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Nickname *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="e.g., My Beast" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Status *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="in service">In Service</SelectItem>
-                        <SelectItem value="stored">Stored</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            {/* Vehicle Details */}
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="make"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Make *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="e.g., Honda, Yamaha" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="model"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Model *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="e.g., CBR600RR" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="year"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Year *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="2023" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field}
-                        onChange={e => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="engineSize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Engine *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="600cc" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="mileage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Mileage</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="0" 
-                        className="border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30]"
-                        {...field}
-                        onChange={e => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Vehicle Documents */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Vehicle Documents (Optional)</Label>
-              <div className="border border-gray-300 rounded-lg p-4">
-                <div 
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center cursor-pointer hover:border-[#FF3B30] transition-colors"
-                  onClick={() => documentsInputRef.current?.click()}
-                >
-                  <FileText className="h-6 w-6 mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600">Upload vehicle-specific documents</p>
-                  <p className="text-xs text-gray-500">Registration, insurance, service records, etc.</p>
+                {/* Documents Upload */}
+                <div className="flex-1">
+                  <div 
+                    className="bg-white rounded-full border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer hover:border-[#FF3B30] transition-colors min-h-[80px] flex flex-col items-center justify-center"
+                    onClick={() => documentsInputRef.current?.click()}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <FileText className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600 font-medium">
+                        {uploadedDocuments.length > 0 ? `${uploadedDocuments.length} Files` : "Add Documents"}
+                      </span>
+                    </div>
+                  </div>
+                  <input
+                    ref={documentsInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleDocumentsUpload}
+                    className="hidden"
+                  />
                 </div>
-                <input
-                  ref={documentsInputRef}
-                  type="file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleDocumentsUpload}
-                  className="hidden"
+              </div>
+
+              {/* Document List */}
+              {uploadedDocuments.length > 0 && (
+                <div className="space-y-2">
+                  {uploadedDocuments.map((doc, index) => (
+                    <div key={index} className="flex items-center justify-between bg-white rounded-full px-4 py-2">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-4 w-4 text-[#FF3B30]" />
+                        <span className="text-sm text-gray-700 truncate max-w-[200px]">{doc.name}</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeDocument(index)}
+                        className="text-red-500 hover:text-red-700 h-6 w-6 p-0 rounded-full"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Step 1: Basic Info */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] flex items-center">
+                <div className="w-8 h-8 bg-[#FF3B30] text-white rounded-full flex items-center justify-center text-sm mr-3">1</div>
+                Basic Information
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Nickname *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="My Beast" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
                 
-                {uploadedDocuments.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {uploadedDocuments.map((doc, index) => (
-                      <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-2">
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4 text-[#FF3B30]" />
-                          <span className="text-sm text-gray-700 truncate">{doc.name}</span>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeDocument(index)}
-                          className="text-red-500 hover:text-red-700 h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Status *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="rounded-2xl">
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="in service">In Service</SelectItem>
+                          <SelectItem value="stored">Stored</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
             
-            <DialogFooter className="flex gap-3">
+            {/* Step 2: Vehicle Details */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] flex items-center">
+                <div className="w-8 h-8 bg-[#FF3B30] text-white rounded-full flex items-center justify-center text-sm mr-3">2</div>
+                Vehicle Details
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="make"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Make *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Honda, Yamaha, Ducati" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Model *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="CBR600RR, R1, Panigale" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Step 3: Specifications */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] flex items-center">
+                <div className="w-8 h-8 bg-[#FF3B30] text-white rounded-full flex items-center justify-center text-sm mr-3">3</div>
+                Specifications
+              </h3>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="year"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Year *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="2023" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field}
+                          onChange={e => field.onChange(parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="engineSize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Engine *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="600cc" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="mileage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Miles/Km</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="15,000" 
+                          className="rounded-full border-gray-300 focus:border-[#FF3B30] focus:ring-[#FF3B30] px-4 py-3"
+                          {...field}
+                          onChange={e => field.onChange(parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            <DialogFooter className="flex gap-3 pt-6">
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={() => onOpenChange(false)}
-                className="border-gray-300"
+                className="rounded-full border-gray-300 px-8 py-3"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
+                className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-8 py-3"
                 disabled={isLoading}
               >
                 {isLoading ? "Adding..." : "Add to Garage"}
