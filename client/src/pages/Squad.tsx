@@ -107,12 +107,7 @@ const Squad = () => {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6">
           <div className="text-center lg:text-left">
             <div className="flex justify-center lg:justify-start items-center gap-3 mb-4">
-              <img
-                src="/src/assets/tclogov2h2.svg"
-                alt="ThrottleCove Logo"
-                className="h-20 w-20"
-              />
-              <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Kanit, sans-serif' }}>Squad</h1>
+              <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Kanit, sans-serif' }}>YOUR SQUAD</h1>
             </div>
             <p className="text-gray-600">Connect, ride, and conquer together</p>
           </div>
