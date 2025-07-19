@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import MotorcycleDetailsDialog from "@/components/ui/motorcycle/MotorcycleDetailsDialog";
 
 // Sample motorcycle data
 const motorcycles = [
@@ -154,6 +155,8 @@ const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [selectedMotorcycle, setSelectedMotorcycle] = useState<typeof motorcycles[0] | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const { toast } = useToast();
   
   // Filter motorcycles based on search query and category
@@ -370,10 +373,8 @@ const Catalog = () => {
                     <Button 
                       className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full h-12"
                       onClick={() => {
-                        toast({
-                          title: "Motorcycle Details",
-                          description: `View detailed specifications for ${motorcycle.make} ${motorcycle.model}`,
-                        });
+                        setSelectedMotorcycle(motorcycle);
+                        setIsDetailsDialogOpen(true);
                       }}
                     >
                       <span className="flex items-center">
@@ -405,6 +406,13 @@ const Catalog = () => {
             </Button>
           </div>
         )}
+
+        {/* Motorcycle Details Dialog */}
+        <MotorcycleDetailsDialog 
+          motorcycle={selectedMotorcycle}
+          open={isDetailsDialogOpen}
+          onOpenChange={setIsDetailsDialogOpen}
+        />
       </div>
     </div>
   );
