@@ -110,9 +110,9 @@ const Squad = () => {
               <img
                 src="/src/assets/tclogov2h2.svg"
                 alt="ThrottleCove Logo"
-                className="h-12 w-12"
+                className="h-16 w-16"
               />
-              <h1 className="text-3xl font-bold text-gray-900">Squad</h1>
+              <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Kanit, sans-serif' }}>Squad</h1>
             </div>
             <p className="text-gray-600">Connect, ride, and conquer together</p>
           </div>
