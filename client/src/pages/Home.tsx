@@ -215,79 +215,92 @@ const Home = () => {
           </motion.div>
 
           {/* Motorcycle Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMotorcycles.map((bike, index) => (
               <motion.div
                 key={bike.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border-0">
-                  <div className="relative">
-                    <img
-                      src={bike.image}
+                <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                  <div className="relative h-48 overflow-hidden rounded-t-2xl">
+                    <img 
+                      src={bike.image} 
                       alt={bike.name}
-                      className="w-full h-56 object-cover"
+                      className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
                     />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-[#FF3B30] text-white px-3 py-1">
-                        {bike.type}
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-600 hover:text-[#FF3B30] rounded-full p-2"
-                      onClick={() => {
-                        // Add to favorites
-                        const favorites = JSON.parse(localStorage.getItem('bikeFavorites') || '[]');
-                        if (!favorites.find((b: any) => b.id === bike.id)) {
-                          favorites.push(bike);
-                          localStorage.setItem('bikeFavorites', JSON.stringify(favorites));
-                          alert(`${bike.name} added to favorites!`);
-                        } else {
-                          alert(`${bike.name} is already in favorites!`);
-                        }
-                      }}
-                    >
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-xl font-bold text-[#1A1A1A]">
-                        {bike.name}
-                      </CardTitle>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <span className="font-medium">{bike.brand}</span>
-                      <span>•</span>
-                      <span>{bike.year}</span>
-                      <span>•</span>
-                      <span>{bike.engine}</span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-2">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-sm font-medium">{bike.rating}</span>
-                      <span className="text-sm text-gray-500">(142 reviews)</span>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="pt-0">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {bike.features.map((feature, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs bg-gray-100 text-gray-700">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
+                    <div className="absolute top-3 right-3 flex space-x-2">
                       <Button 
-                        className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-[#FF3B30] hover:bg-white border-0"
+                        onClick={() => {
+                          // Add to favorites
+                          const favorites = JSON.parse(localStorage.getItem('bikeFavorites') || '[]');
+                          if (!favorites.find((b: any) => b.id === bike.id)) {
+                            favorites.push(bike);
+                            localStorage.setItem('bikeFavorites', JSON.stringify(favorites));
+                            alert(`${bike.name} added to favorites!`);
+                          } else {
+                            alert(`${bike.name} is already in favorites!`);
+                          }
+                        }}
+                      >
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 mb-2 inline-block">
+                            <span className="text-white text-xs font-medium">
+                              {bike.year} {bike.brand}
+                            </span>
+                          </div>
+                          <h3 className="text-white font-bold text-lg">{bike.name}</h3>
+                        </div>
+                        <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
+                          <span className="text-gray-900 font-bold">{bike.price}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <CardContent className="flex-grow py-6">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
+                        <span className="text-gray-600 text-sm">Category</span>
+                        <span className="font-semibold text-gray-900">{bike.type}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-gray-50 rounded-2xl text-center">
+                          <p className="text-xs text-gray-500 mb-1">Engine</p>
+                          <p className="font-semibold text-sm">{bike.engine}</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-2xl text-center">
+                          <p className="text-xs text-gray-500 mb-1">Rating</p>
+                          <div className="flex items-center justify-center gap-1">
+                            <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                            <p className="font-semibold text-sm">{bike.rating}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {bike.features.slice(0, 3).map((feature, i) => (
+                          <Badge key={i} variant="secondary" className="text-xs bg-gray-100 text-gray-700 rounded-full">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter className="pt-0 pb-6 px-6">
+                    <div className="w-full flex gap-2">
+                      <Button 
+                        className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full h-12"
                         onClick={() => {
                           // Convert bike data to match MotorcycleDetailsDialog interface
                           const motorcycleData = {
@@ -307,29 +320,12 @@ const Home = () => {
                           setIsDetailsDialogOpen(true);
                         }}
                       >
-                        View Details
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="px-4 border-gray-300 hover:border-[#FF3B30] hover:text-[#FF3B30] rounded-full"
-                        onClick={() => {
-                          // Add to comparison list
-                          const existingComparisons = JSON.parse(localStorage.getItem('bikeComparisons') || '[]');
-                          if (!existingComparisons.find((b: any) => b.id === bike.id)) {
-                            existingComparisons.push(bike);
-                            localStorage.setItem('bikeComparisons', JSON.stringify(existingComparisons));
-                            alert(`${bike.name} added to comparison list!`);
-                          } else {
-                            alert(`${bike.name} is already in your comparison list!`);
-                          }
-                        }}
-                      >
-                        Compare
+                        <span className="flex items-center">
+                          View Details <ArrowRight className="ml-2 h-4 w-4" />
+                        </span>
                       </Button>
                     </div>
-                  </CardContent>
-
-
+                  </CardFooter>
                 </Card>
               </motion.div>
             ))}
