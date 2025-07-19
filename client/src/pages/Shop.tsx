@@ -384,46 +384,7 @@ const Shop = () => {
           <p className="text-gray-600 mb-6">Quality gear for the modern motorcyclist</p>
         </div>
         
-        {/* Quick Stats */}
-        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
-            <div className="text-center">
-              <div className="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <HardHat className="h-6 w-6 text-amber-600" />
-              </div>
-              <p className="text-sm text-gray-600">Helmets</p>
-              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'helmets').length}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <ShieldCheck className="h-6 w-6 text-blue-600" />
-              </div>
-              <p className="text-sm text-gray-600">Jackets</p>
-              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'jackets').length}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Wind className="h-6 w-6 text-green-600" />
-              </div>
-              <p className="text-sm text-gray-600">Gloves</p>
-              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'gloves').length}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Shirt className="h-6 w-6 text-purple-600" />
-              </div>
-              <p className="text-sm text-gray-600">Boots</p>
-              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'boots').length}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-pink-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Zap className="h-6 w-6 text-pink-600" />
-              </div>
-              <p className="text-sm text-gray-600">Accessories</p>
-              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'accessories').length}</p>
-            </div>
-          </div>
-        </div>
+        
         
         <Tabs defaultValue="helmets" onValueChange={setSelectedCategory} className="w-full">
           <TabsList className="grid w-full grid-cols-5 bg-gray-100 rounded-full p-1 mb-8">
