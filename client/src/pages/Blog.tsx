@@ -207,35 +207,23 @@ const Blog = () => {
         </div>
         
         {/* Quick Stats */}
-        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Calendar className="h-6 w-6 text-blue-600" />
-              </div>
-              <p className="text-sm text-gray-600">Articles</p>
-              <p className="font-bold text-gray-900">{blogArticles.length}</p>
+        <div className="bg-white rounded-full shadow-sm border p-3 mb-8">
+          <div className="flex justify-between items-center gap-3">
+            <div className="text-center min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 mb-1">ARTICLES</p>
+              <p className="text-lg font-bold text-gray-900">{blogArticles.length}</p>
             </div>
-            <div className="text-center">
-              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <User className="h-6 w-6 text-green-600" />
-              </div>
-              <p className="text-sm text-gray-600">Writers</p>
-              <p className="font-bold text-gray-900">{Array.from(new Set(blogArticles.map(a => a.author.name))).length}</p>
+            <div className="text-center min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 mb-1">WRITERS</p>
+              <p className="text-lg font-bold text-gray-900">{Array.from(new Set(blogArticles.map(a => a.author.name))).length}</p>
             </div>
-            <div className="text-center">
-              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Search className="h-6 w-6 text-purple-600" />
-              </div>
-              <p className="text-sm text-gray-600">Categories</p>
-              <p className="font-bold text-gray-900">{uniqueCategories.length}</p>
+            <div className="text-center min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 mb-1">CATEGORIES</p>
+              <p className="text-lg font-bold text-gray-900">{uniqueCategories.length}</p>
             </div>
-            <div className="text-center">
-              <div className="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Clock className="h-6 w-6 text-amber-600" />
-              </div>
-              <p className="text-sm text-gray-600">Avg Read</p>
-              <p className="font-bold text-gray-900">8 min</p>
+            <div className="text-center min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 mb-1">AVG READ</p>
+              <p className="text-lg font-bold text-gray-900">8 min</p>
             </div>
           </div>
         </div>
