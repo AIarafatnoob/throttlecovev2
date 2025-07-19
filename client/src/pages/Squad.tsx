@@ -8,14 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, MapPin, Clock, Users, MessageCircle, Trophy, Route, Settings, Plus, Search, Bell, Phone, Shield, Camera, Navigation } from "lucide-react";
-import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
-import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 
 const Squad = () => {
   const [selectedGroup, setSelectedGroup] = useState(1);
-  const [isAddMotorcycleDialogOpen, setIsAddMotorcycleDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
+  const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
+  const [isEmergencyAlertOpen, setIsEmergencyAlertOpen] = useState(false);
+  const [showQuickActions, setShowQuickActions] = useState(false);
 
   // Mock data for demonstration
   const groups = [
@@ -105,8 +104,24 @@ const Squad = () => {
     { id: 3, sender: "Mike Rodriguez", avatar: "MR", message: "Count me in too. I know a great coffee stop midway.", time: "1 min ago", type: "text" },
   ];
 
-  const handleAddMotorcycle = () => {
-    setIsAddMotorcycleDialogOpen(true);
+  const handleQuickActionToggle = () => {
+    setShowQuickActions(!showQuickActions);
+  };
+
+  const handleCreateEvent = () => {
+    setIsCreateEventDialogOpen(true);
+    setShowQuickActions(false);
+  };
+
+  const handleEmergencyAlert = () => {
+    setIsEmergencyAlertOpen(true);
+    setShowQuickActions(false);
+  };
+
+  const handleLocationShare = () => {
+    // Implementation for location sharing
+    console.log("Sharing location with squad...");
+    setShowQuickActions(false);
   };
 
   return (
@@ -569,31 +584,149 @@ const Squad = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Floating Add Motorcycle Button */}
-        <motion.div
-          className="fixed bottom-6 right-6 z-50 group"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Button 
-            onClick={handleAddMotorcycle}
-            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          >
-            <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
-          </Button>
-        </motion.div>
+        {/* Floating Squad Actions */}
+        <div className="fixed bottom-6 right-6 z-50">
+          {/* Quick Action Buttons - Show when expanded */}
+          {showQuickActions && (
+            <motion.div
+              className="absolute bottom-20 right-0 space-y-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+            >
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={handleCreateEvent}
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
+                  title="Create Event"
+                >
+                  <Calendar className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={handleLocationShare}
+                  className="bg-green-600 hover:bg-green-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
+                  title="Share Location"
+                >
+                  <MapPin className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={handleEmergencyAlert}
+                  className="bg-red-600 hover:bg-red-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
+                  title="Emergency Alert"
+                >
+                  <Shield className="h-5 w-5" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
 
-        {/* Add Motorcycle Dialog */}
-        <AddMotorcycleDialog 
-          open={isAddMotorcycleDialogOpen} 
-          onOpenChange={setIsAddMotorcycleDialogOpen}
-          onSuccess={() => {
-            setIsAddMotorcycleDialogOpen(false);
-            queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
-          }}
-        />
+          {/* Main Action Button */}
+          <motion.div
+            className="group"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Button 
+              onClick={handleQuickActionToggle}
+              className={`bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0 ${
+                showQuickActions ? 'rotate-45' : ''
+              }`}
+            >
+              <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+            </Button>
+          </motion.div>
+        </div>
+
+        {/* Create Event Dialog */}
+        <Dialog open={isCreateEventDialogOpen} onOpenChange={setIsCreateEventDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Create Squad Event</DialogTitle>
+              <DialogDescription>
+                Plan a new ride or meetup for your squad.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Event Name</label>
+                <Input placeholder="Weekend Mountain Ride" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Date & Time</label>
+                <Input type="datetime-local" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Meeting Point</label>
+                <Input placeholder="Pier 39 Parking Lot" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Route Distance</label>
+                <Input placeholder="45 km" />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={() => setIsCreateEventDialogOpen(false)} variant="outline" className="flex-1">
+                  Cancel
+                </Button>
+                <Button onClick={() => setIsCreateEventDialogOpen(false)} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  Create Event
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Emergency Alert Dialog */}
+        <Dialog open={isEmergencyAlertOpen} onOpenChange={setIsEmergencyAlertOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-red-600">Emergency Alert</DialogTitle>
+              <DialogDescription>
+                Send an emergency alert to your squad members with your current location.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-800">
+                  This will immediately notify all squad members and share your GPS location.
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Emergency Type</label>
+                <select className="w-full mt-1 p-2 border rounded-lg">
+                  <option>Accident</option>
+                  <option>Mechanical Breakdown</option>
+                  <option>Medical Emergency</option>
+                  <option>Lost/Stranded</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Additional Details (Optional)</label>
+                <textarea 
+                  className="w-full mt-1 p-2 border rounded-lg" 
+                  rows={3}
+                  placeholder="Describe the situation..."
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={() => setIsEmergencyAlertOpen(false)} variant="outline" className="flex-1">
+                  Cancel
+                </Button>
+                <Button onClick={() => setIsEmergencyAlertOpen(false)} className="flex-1 bg-red-600 hover:bg-red-700">
+                  Send Alert
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
