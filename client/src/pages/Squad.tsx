@@ -108,7 +108,7 @@ const Squad = () => {
           <div className="text-center lg:text-left">
             <div className="flex justify-center lg:justify-start items-center gap-3 mb-4">
               <img
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNGRjNCMzAiLz4KPHN2ZyB4PSI0IiB5PSI0IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0yIDIwQzIgMTYgNiAxMiAxMCAxMkgxNEMxOCAxMiAyMiAxNiAyMiAyMEMyMiAyNCAyNCAyMiAyMCAyMkM0IDIyIDIgMjQgMiAyMFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik04IDEyVjhIMTZWMTIiIGZpbGw9IndoaXRlIi8+CjwvZz4KPC9zdmc+"
+                src="/src/assets/tclogov2h2.svg"
                 alt="ThrottleCove Logo"
                 className="h-12 w-12"
               />
