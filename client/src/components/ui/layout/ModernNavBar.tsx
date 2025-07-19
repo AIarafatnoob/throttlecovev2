@@ -54,7 +54,7 @@ const ModernNavBar = () => {
   ];
 
   return (
-    <nav className={`bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
+    <nav className={`bg-gradient-to-br from-slate-50 to-slate-100 border-b border-gray-200 shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "-translate-y-full"
       }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
