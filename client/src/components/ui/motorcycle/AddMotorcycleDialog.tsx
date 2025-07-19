@@ -141,18 +141,10 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto rounded-3xl">
-        <DialogHeader className="relative pb-4">
+        <DialogHeader className="pb-4">
           <DialogTitle className="text-2xl font-bold text-center text-[#1A1A1A] mb-6">
             Add Your Motorcycle
           </DialogTitle>
-          <Button 
-            className="absolute right-0 top-0" 
-            variant="ghost" 
-            size="icon"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
         
         <Form {...form}>
