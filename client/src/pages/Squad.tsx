@@ -123,26 +123,31 @@ const Squad = () => {
 
         {/* Quick Actions Bar */}
         <div className="bg-white rounded-full shadow-sm border p-2 mb-6">
-          <div className="flex items-center gap-2 overflow-x-auto">
-            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
-              <Shield className="w-4 h-4 mr-1" />
-              Emergency
+          <div className="flex items-center justify-between gap-1">
+            <Button variant="ghost" size="sm" className="rounded-full px-2 py-1 h-8 text-xs flex-1 min-w-0">
+              <Shield className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Emergency</span>
+              <span className="sm:hidden">SOS</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
-              <Phone className="w-4 h-4 mr-1" />
-              Voice Chat
+            <Button variant="ghost" size="sm" className="rounded-full px-2 py-1 h-8 text-xs flex-1 min-w-0">
+              <Phone className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Voice</span>
+              <span className="sm:hidden">Call</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
-              <MapPin className="w-4 h-4 mr-1" />
-              Share Location
+            <Button variant="ghost" size="sm" className="rounded-full px-2 py-1 h-8 text-xs flex-1 min-w-0">
+              <MapPin className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Location</span>
+              <span className="sm:hidden">GPS</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
-              <Camera className="w-4 h-4 mr-1" />
-              Live Photo
+            <Button variant="ghost" size="sm" className="rounded-full px-2 py-1 h-8 text-xs flex-1 min-w-0">
+              <Camera className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Photo</span>
+              <span className="sm:hidden">Pic</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
-              <Navigation className="w-4 h-4 mr-1" />
-              Route Share
+            <Button variant="ghost" size="sm" className="rounded-full px-2 py-1 h-8 text-xs flex-1 min-w-0">
+              <Navigation className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Route</span>
+              <span className="sm:hidden">Nav</span>
             </Button>
           </div>
         </div>
