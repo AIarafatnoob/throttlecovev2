@@ -205,6 +205,21 @@ const NewGarage = () => {
   const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
   const [isDocumentPreviewOpen, setIsDocumentPreviewOpen] = useState(false);
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
 
   const { data: motorcycles, isLoading, error } = useQuery<Motorcycle[]>({
@@ -756,7 +771,7 @@ const NewGarage = () => {
 
                   <div className="relative bg-gray-200 rounded-full h-3 overflow-hidden">
                     {/* Progress fill */}
-                    <div 
+                    The code integrates document vault access within the motorcycle card's expanded details.<div 
                       className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full transition-all duration-700 ease-out"
                       style={{ 
                         width: `${Math.min((totalKilometers / 300000) * 100, 100)}%` 
@@ -1040,7 +1055,16 @@ const NewGarage = () => {
                                   }`}>
                                     {doc.status}
                                   </Badge>
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                  <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  className="h-6 w-6 p-0"
+                                  onClick={() => {
+                                    // Logic to open the DocumentVault with the specific document
+                                    setIsVaultOpen(true);
+                                    setSelectedDocumentType(doc.name); // Assuming doc.name is the document type
+                                  }}
+                                >
                                     <Eye className="h-3 w-3" />
                                   </Button>
                                 </div>
