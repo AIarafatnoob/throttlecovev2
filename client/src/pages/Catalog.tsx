@@ -194,7 +194,7 @@ const Catalog = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div className="text-center w-full">
-            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>RIDE CATALOGE</h1>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>RIDE CATALOG</h1>
             <p className="text-gray-600">Explore our collection of motorcycles from top manufacturers</p>
           </div>
         </div>
