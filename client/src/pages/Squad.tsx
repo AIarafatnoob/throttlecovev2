@@ -104,87 +104,99 @@ const Squad = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Squad</h1>
             <p className="text-gray-600">Connect, ride, and conquer together</p>
           </div>
-          <div className="flex gap-3 mt-4 md:mt-0">
-            <Button variant="outline" size="sm">
+          <div className="flex gap-3 mt-4 lg:mt-0">
+            <Button variant="outline" size="sm" className="rounded-full">
               <Bell className="w-4 h-4 mr-2" />
               Notifications
             </Button>
-            <Button size="sm">
+            <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
               Create Event
             </Button>
           </div>
         </div>
 
-        {/* Quick Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Users className="w-8 h-8 text-blue-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Groups</p>
-                  <p className="text-2xl font-bold text-gray-900">3</p>
-                </div>
+        {/* Quick Actions Bar */}
+        <div className="bg-white rounded-full shadow-sm border p-2 mb-6">
+          <div className="flex items-center gap-2 overflow-x-auto">
+            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
+              <Shield className="w-4 h-4 mr-1" />
+              Emergency
+            </Button>
+            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
+              <Phone className="w-4 h-4 mr-1" />
+              Voice Chat
+            </Button>
+            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
+              <MapPin className="w-4 h-4 mr-1" />
+              Share Location
+            </Button>
+            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
+              <Camera className="w-4 h-4 mr-1" />
+              Live Photo
+            </Button>
+            <Button variant="ghost" size="sm" className="rounded-full flex-shrink-0 text-xs">
+              <Navigation className="w-4 h-4 mr-1" />
+              Route Share
+            </Button>
+          </div>
+        </div>
+
+        {/* Quick Stats Cards - Horizontal Layout */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Users className="w-6 h-6 text-blue-600" />
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Calendar className="w-8 h-8 text-green-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Next Ride</p>
-                  <p className="text-2xl font-bold text-gray-900">8h</p>
-                </div>
+              <p className="text-2xl font-bold text-gray-900">3</p>
+              <p className="text-sm text-gray-600">Groups</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Calendar className="w-6 h-6 text-green-600" />
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Trophy className="w-8 h-8 text-yellow-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Rank</p>
-                  <p className="text-2xl font-bold text-gray-900">#4</p>
-                </div>
+              <p className="text-2xl font-bold text-gray-900">8h</p>
+              <p className="text-sm text-gray-600">Next Ride</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Trophy className="w-6 h-6 text-yellow-600" />
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Route className="w-8 h-8 text-purple-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">This Month</p>
-                  <p className="text-2xl font-bold text-gray-900">387km</p>
-                </div>
+              <p className="text-2xl font-bold text-gray-900">#4</p>
+              <p className="text-sm text-gray-600">Rank</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Route className="w-6 h-6 text-purple-600" />
               </div>
-            </CardContent>
-          </Card>
+              <p className="text-2xl font-bold text-gray-900">387km</p>
+              <p className="text-sm text-gray-600">This Month</p>
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}
         <Tabs defaultValue="feed" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="feed">Feed</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="riders">Riders</TabsTrigger>
-            <TabsTrigger value="leaderboard">Stats</TabsTrigger>
-            <TabsTrigger value="routes">Routes</TabsTrigger>
-            <TabsTrigger value="chat">Chat</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-6 bg-gray-100 rounded-full p-1">
+            <TabsTrigger value="feed" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Feed</TabsTrigger>
+            <TabsTrigger value="events" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Events</TabsTrigger>
+            <TabsTrigger value="riders" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Riders</TabsTrigger>
+            <TabsTrigger value="leaderboard" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Stats</TabsTrigger>
+            <TabsTrigger value="routes" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Routes</TabsTrigger>
+            <TabsTrigger value="chat" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">Chat</TabsTrigger>
           </TabsList>
 
           {/* Feed Tab */}
           <TabsContent value="feed" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <Card className="mb-6">
+                <Card className="mb-6 rounded-2xl border-0 shadow-sm bg-gradient-to-r from-blue-50 to-purple-50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5" />
@@ -197,17 +209,17 @@ const Squad = () => {
                         <AvatarFallback>YU</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <Input placeholder="Share a tip, route, or photo..." className="mb-3" />
+                        <Input placeholder="Share a tip, route, or photo..." className="mb-3 rounded-full border-0 bg-white/80" />
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" className="rounded-full border-0 bg-white/60 hover:bg-white">
                             <Camera className="w-4 h-4 mr-2" />
                             Photo
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" className="rounded-full border-0 bg-white/60 hover:bg-white">
                             <Navigation className="w-4 h-4 mr-2" />
                             Route
                           </Button>
-                          <Button size="sm">Post</Button>
+                          <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">Post</Button>
                         </div>
                       </div>
                     </div>
@@ -216,7 +228,7 @@ const Squad = () => {
 
                 <div className="space-y-4">
                   {feedPosts.map((post) => (
-                    <Card key={post.id}>
+                    <Card key={post.id} className="rounded-2xl border-0 shadow-sm hover:shadow-md transition-shadow">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-3">
                           <Avatar>
@@ -226,7 +238,10 @@ const Squad = () => {
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold">{post.author}</span>
-                                <Badge variant={post.type === "route" ? "default" : post.type === "photo" ? "secondary" : "outline"}>
+                                <Badge 
+                                  variant={post.type === "route" ? "default" : post.type === "photo" ? "secondary" : "outline"}
+                                  className="rounded-full"
+                                >
                                   {post.type}
                                 </Badge>
                               </div>
@@ -236,7 +251,7 @@ const Squad = () => {
                             {post.attachments && (
                               <div className="flex gap-2 mb-3">
                                 {post.attachments.map((attachment, idx) => (
-                                  <Badge key={idx} variant="outline">{attachment}</Badge>
+                                  <Badge key={idx} variant="outline" className="rounded-full">{attachment}</Badge>
                                 ))}
                               </div>
                             )}
@@ -254,13 +269,13 @@ const Squad = () => {
 
               {/* Sidebar */}
               <div className="space-y-6">
-                <Card>
+                <Card className="rounded-2xl border-0 shadow-sm">
                   <CardHeader>
                     <CardTitle className="text-lg">Your Groups</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {groups.map((group) => (
-                      <div key={group.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors">
+                      <div key={group.id} className="flex items-center justify-between p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors">
                         <div className="flex items-center gap-3">
                           <Avatar className="w-8 h-8">
                             <AvatarFallback className="text-xs">{group.avatar}</AvatarFallback>
@@ -270,32 +285,32 @@ const Squad = () => {
                             <p className="text-xs text-gray-500">{group.members} members</p>
                           </div>
                         </div>
-                        <Badge variant="outline" className="text-xs">{group.nextRide}</Badge>
+                        <Badge variant="outline" className="text-xs rounded-full">{group.nextRide}</Badge>
                       </div>
                     ))}
-                    <Button variant="outline" size="sm" className="w-full">
+                    <Button variant="outline" size="sm" className="w-full rounded-full border-dashed">
                       <Plus className="w-4 h-4 mr-2" />
                       Join Group
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl border-0 shadow-sm bg-gradient-to-b from-orange-50 to-red-50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
+                    <CardTitle className="text-lg text-orange-800">Safety First</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start rounded-full border-orange-200 bg-white/60 hover:bg-white text-orange-700">
                       <Shield className="w-4 h-4 mr-2" />
                       Emergency Alert
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start rounded-full border-orange-200 bg-white/60 hover:bg-white text-orange-700">
                       <Phone className="w-4 h-4 mr-2" />
-                      Voice Chat
+                      Emergency Contact
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start rounded-full border-orange-200 bg-white/60 hover:bg-white text-orange-700">
                       <MapPin className="w-4 h-4 mr-2" />
-                      Share Location
+                      Live Location
                     </Button>
                   </CardContent>
                 </Card>
@@ -307,7 +322,7 @@ const Squad = () => {
           <TabsContent value="events" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Upcoming Events</h2>
-              <Button>
+              <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Event
               </Button>
@@ -315,7 +330,7 @@ const Squad = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {upcomingEvents.map((event) => (
-                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                <Card key={event.id} className="hover:shadow-lg transition-shadow rounded-2xl border-0 shadow-sm">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -325,7 +340,10 @@ const Squad = () => {
                           {event.date} at {event.time}
                         </CardDescription>
                       </div>
-                      <Badge variant={event.pace === "Easy" ? "secondary" : event.pace === "Moderate" ? "default" : "destructive"}>
+                      <Badge 
+                        variant={event.pace === "Easy" ? "secondary" : event.pace === "Moderate" ? "default" : "destructive"}
+                        className="rounded-full"
+                      >
                         {event.pace}
                       </Badge>
                     </div>
@@ -351,9 +369,9 @@ const Squad = () => {
                         Meeting: {event.meetingPoint}
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Button size="sm" className="flex-1">RSVP Going</Button>
-                        <Button size="sm" variant="outline">Maybe</Button>
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" className="flex-1 rounded-full bg-green-600 hover:bg-green-700">RSVP Going</Button>
+                        <Button size="sm" variant="outline" className="rounded-full">Maybe</Button>
+                        <Button size="sm" variant="outline" className="rounded-full">
                           <MessageCircle className="w-4 h-4" />
                         </Button>
                       </div>
@@ -371,9 +389,9 @@ const Squad = () => {
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <Input placeholder="Search riders..." className="pl-10 w-64" />
+                  <Input placeholder="Search riders..." className="pl-10 w-64 rounded-full" />
                 </div>
-                <Button variant="outline">
+                <Button variant="outline" className="rounded-full">
                   <Settings className="w-4 h-4 mr-2" />
                   Filter
                 </Button>
@@ -382,7 +400,7 @@ const Squad = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {riders.map((rider) => (
-                <Card key={rider.id} className="hover:shadow-lg transition-shadow">
+                <Card key={rider.id} className="hover:shadow-lg transition-shadow rounded-2xl border-0 shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-3">
                       <div className="relative">
@@ -396,16 +414,16 @@ const Squad = () => {
                       <div className="flex-1">
                         <h3 className="font-semibold">{rider.name}</h3>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          <Badge variant="outline" className="text-xs">{rider.style}</Badge>
-                          <Badge variant="secondary" className="text-xs">{rider.skill}</Badge>
+                          <Badge variant="outline" className="text-xs rounded-full">{rider.style}</Badge>
+                          <Badge variant="secondary" className="text-xs rounded-full">{rider.skill}</Badge>
                         </div>
                         <p className="text-sm text-gray-500 mt-2">Last ride: {rider.lastRide}</p>
                         <div className="flex gap-2 mt-3">
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button size="sm" variant="outline" className="flex-1 rounded-full">
                             <MessageCircle className="w-4 h-4 mr-1" />
                             Chat
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" className="rounded-full">
                             <Users className="w-4 h-4" />
                           </Button>
                         </div>
@@ -421,15 +439,15 @@ const Squad = () => {
           <TabsContent value="leaderboard" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">This Month's Leaderboard</h2>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">Weekly</Button>
-                <Button size="sm">Monthly</Button>
-                <Button variant="outline" size="sm">All Time</Button>
+              <div className="flex gap-2 bg-gray-100 rounded-full p-1">
+                <Button variant="outline" size="sm" className="rounded-full border-0 bg-transparent">Weekly</Button>
+                <Button size="sm" className="rounded-full bg-white shadow-sm">Monthly</Button>
+                <Button variant="outline" size="sm" className="rounded-full border-0 bg-transparent">All Time</Button>
               </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="rounded-2xl border-0 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Trophy className="w-5 h-5" />
@@ -439,8 +457,8 @@ const Squad = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {leaderboard.map((rider) => (
-                      <div key={rider.rank} className={`flex items-center justify-between p-3 rounded-lg ${
-                        rider.name === "You" ? "bg-blue-50 border border-blue-200" : "bg-gray-50"
+                      <div key={rider.rank} className={`flex items-center justify-between p-3 rounded-2xl ${
+                        rider.name === "You" ? "bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200" : "bg-gray-50"
                       }`}>
                         <div className="flex items-center gap-3">
                           <span className="text-lg font-bold w-6">{rider.badge || `#${rider.rank}`}</span>
@@ -458,29 +476,29 @@ const Squad = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="rounded-2xl border-0 shadow-sm bg-gradient-to-b from-green-50 to-blue-50">
                 <CardHeader>
-                  <CardTitle>Your Stats</CardTitle>
+                  <CardTitle className="text-green-800">Your Stats</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center p-3 bg-white/60 rounded-2xl">
                       <span>Total Distance</span>
                       <span className="font-semibold">387 km</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center p-3 bg-white/60 rounded-2xl">
                       <span>Rides Completed</span>
                       <span className="font-semibold">12</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center p-3 bg-white/60 rounded-2xl">
                       <span>Avg. Speed</span>
                       <span className="font-semibold">25.3 km/h</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center p-3 bg-white/60 rounded-2xl">
                       <span>Max Speed</span>
                       <span className="font-semibold">48.7 km/h</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center p-3 bg-white/60 rounded-2xl">
                       <span>Elevation Gained</span>
                       <span className="font-semibold">2,843 m</span>
                     </div>
@@ -494,30 +512,38 @@ const Squad = () => {
           <TabsContent value="routes" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Route Library</h2>
-              <Button>
+              <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Upload Route
               </Button>
             </div>
             
-            <div className="text-center py-12">
-              <Navigation className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Route sharing coming soon!</h3>
-              <p className="text-gray-500">Upload GPX files, discover hidden gems, and share your favorite routes with the squad.</p>
-            </div>
+            <Card className="rounded-2xl border-0 shadow-sm bg-gradient-to-b from-blue-50 to-purple-50">
+              <CardContent className="text-center py-12">
+                <div className="bg-white/60 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Navigation className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Route sharing coming soon!</h3>
+                <p className="text-gray-500 mb-6">Upload GPX files, discover hidden gems, and share your favorite routes with the squad.</p>
+                <Button variant="outline" className="rounded-full border-blue-200 text-blue-700 hover:bg-white">
+                  <Navigation className="w-4 h-4 mr-2" />
+                  Explore Sample Routes
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Chat Tab */}
           <TabsContent value="chat" className="space-y-6">
-            <Card className="h-96">
+            <Card className="h-96 rounded-2xl border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Group Chat - Coastal Riders</span>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="rounded-full">
                       <Phone className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="rounded-full bg-red-50 text-red-600 border-red-200 hover:bg-red-100">
                       <Shield className="w-4 h-4" />
                     </Button>
                   </div>
@@ -536,15 +562,17 @@ const Squad = () => {
                             <span className="font-medium text-sm">{msg.sender}</span>
                             <span className="text-xs text-gray-500">{msg.time}</span>
                           </div>
-                          <p className="text-sm text-gray-800">{msg.message}</p>
+                          <div className="bg-gray-50 rounded-2xl p-3 max-w-xs">
+                            <p className="text-sm text-gray-800">{msg.message}</p>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </ScrollArea>
                 <div className="flex gap-2">
-                  <Input placeholder="Type a message..." className="flex-1" />
-                  <Button size="sm">Send</Button>
+                  <Input placeholder="Type a message..." className="flex-1 rounded-full" />
+                  <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">Send</Button>
                 </div>
               </CardContent>
             </Card>
