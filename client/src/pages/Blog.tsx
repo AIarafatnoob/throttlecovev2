@@ -188,22 +188,9 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>BLOG AND NEWS</h1>
-            <p className="text-gray-600">Latest articles, guides, and stories from the motorcycle world</p>
-          </div>
-          <Button
-            className="mt-4 md:mt-0 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6"
-            onClick={() => {
-              toast({
-                title: "Subscribe",
-                description: "Thank you for subscribing to our newsletter!",
-              });
-            }}
-          >
-            Subscribe to Newsletter
-          </Button>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-[#1A1A1A] mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>BLOG AND NEWS</h1>
+          <p className="text-gray-600">Latest articles, guides, and stories from the motorcycle world</p>
         </div>
         
         {/* Quick Stats */}
