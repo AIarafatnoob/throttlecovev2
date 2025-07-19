@@ -186,176 +186,223 @@ const Blog = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">Motorcycle Blog</h1>
-          <p className="text-gray-600">Latest articles, guides, and stories from the motorcycle world</p>
-        </div>
-        <Button
-          className="mt-4 md:mt-0 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
-          onClick={() => {
-            toast({
-              title: "Subscribe",
-              description: "Thank you for subscribing to our newsletter!",
-            });
-          }}
-        >
-          Subscribe to Newsletter
-        </Button>
-      </div>
-      
-      {/* Featured article */}
-      <motion.div 
-        className="relative h-[400px] rounded-lg overflow-hidden mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <img 
-          src={blogArticles[0].imageUrl} 
-          alt={blogArticles[0].title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-          <Badge className="mb-3 bg-[#FF3B30] hover:bg-[#FF3B30]/90">{blogArticles[0].category}</Badge>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{blogArticles[0].title}</h2>
-          <p className="text-white/80 mb-4 max-w-2xl">{blogArticles[0].excerpt}</p>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="h-10 w-10 mr-3">
-                <AvatarImage src={blogArticles[0].author.avatar} alt={blogArticles[0].author.name} />
-                <AvatarFallback>{blogArticles[0].author.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-white text-sm font-medium">{blogArticles[0].author.name}</p>
-                <div className="flex items-center text-white/70 text-xs">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {formatDate(blogArticles[0].date)}
-                  <span className="mx-2">•</span>
-                  <Clock className="h-3 w-3 mr-1" />
-                  {blogArticles[0].readTime}
-                </div>
-              </div>
-            </div>
-            <Button 
-              className="bg-white text-[#1A1A1A] hover:bg-white/90"
-              onClick={() => handleReadArticle(blogArticles[0].id)}
-            >
-              Read Article <ArrowUpRight className="ml-2 h-4 w-4" />
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">Motorcycle Blog</h1>
+            <p className="text-gray-600">Latest articles, guides, and stories from the motorcycle world</p>
           </div>
-        </div>
-      </motion.div>
-      
-      {/* Search and filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="flex-grow relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <Input
-            type="text"
-            placeholder="Search articles..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {uniqueCategories.map(cat => (
-              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      
-      {/* Blog articles grid */}
-      {filteredArticles.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <User className="h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-xl font-medium mb-2">No Articles Found</h3>
-          <p className="text-gray-500 max-w-md">
-            We couldn't find any articles matching your search criteria. Try adjusting your filters or search terms.
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredArticles.slice(1).map((article, index) => (
-            <motion.div
-              key={article.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-            >
-              <Card className="overflow-hidden h-full flex flex-col hover:shadow-md transition-all">
-                <div className="relative h-48">
-                  <img 
-                    src={article.imageUrl} 
-                    alt={article.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <Badge className="absolute top-3 left-3 bg-[#FF3B30] hover:bg-[#FF3B30]/90">
-                    {article.category}
-                  </Badge>
-                </div>
-                
-                <CardContent className="flex-grow p-5">
-                  <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(article.date)}
-                    <span className="mx-2">•</span>
-                    <Clock className="h-4 w-4 mr-1" />
-                    {article.readTime}
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-2 line-clamp-2">{article.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
-                  
-                  <div className="flex items-center justify-between mt-auto pt-4">
-                    <div className="flex items-center">
-                      <Avatar className="h-8 w-8 mr-2">
-                        <AvatarImage src={article.author.avatar} alt={article.author.name} />
-                        <AvatarFallback>{article.author.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">{article.author.name}</span>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-[#FF3B30] hover:text-[#FF3B30]/90 p-0"
-                      onClick={() => handleReadArticle(article.id)}
-                    >
-                      Read More <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
-      
-      {filteredArticles.length > 1 && (
-        <div className="mt-10 flex justify-center">
-          <Button 
-            variant="outline" 
-            className="border-[#1A1A1A] text-[#1A1A1A]"
+          <Button
+            className="mt-4 md:mt-0 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full px-6"
             onClick={() => {
               toast({
-                title: "Load More",
-                description: "Loading more articles...",
+                title: "Subscribe",
+                description: "Thank you for subscribing to our newsletter!",
               });
             }}
           >
-            Load More Articles
+            Subscribe to Newsletter
           </Button>
         </div>
-      )}
+        
+        {/* Quick Stats */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Calendar className="h-6 w-6 text-blue-600" />
+              </div>
+              <p className="text-sm text-gray-600">Articles</p>
+              <p className="font-bold text-gray-900">{blogArticles.length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <User className="h-6 w-6 text-green-600" />
+              </div>
+              <p className="text-sm text-gray-600">Writers</p>
+              <p className="font-bold text-gray-900">{Array.from(new Set(blogArticles.map(a => a.author.name))).length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Search className="h-6 w-6 text-purple-600" />
+              </div>
+              <p className="text-sm text-gray-600">Categories</p>
+              <p className="font-bold text-gray-900">{uniqueCategories.length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Clock className="h-6 w-6 text-amber-600" />
+              </div>
+              <p className="text-sm text-gray-600">Avg Read</p>
+              <p className="font-bold text-gray-900">8 min</p>
+            </div>
+          </div>
+        </div>
+      
+        {/* Featured article */}
+        <motion.div 
+          className="relative h-[400px] rounded-2xl overflow-hidden mb-8 shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <img 
+            src={blogArticles[0].imageUrl} 
+            alt={blogArticles[0].title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent rounded-2xl"></div>
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <Badge className="mb-3 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-4 py-1">{blogArticles[0].category}</Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{blogArticles[0].title}</h2>
+            <p className="text-white/80 mb-4 max-w-2xl">{blogArticles[0].excerpt}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Avatar className="h-10 w-10 mr-3">
+                  <AvatarImage src={blogArticles[0].author.avatar} alt={blogArticles[0].author.name} />
+                  <AvatarFallback>{blogArticles[0].author.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-white text-sm font-medium">{blogArticles[0].author.name}</p>
+                  <div className="flex items-center text-white/70 text-xs bg-black/20 backdrop-blur-sm rounded-full px-3 py-1 mt-1">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {formatDate(blogArticles[0].date)}
+                    <span className="mx-2">•</span>
+                    <Clock className="h-3 w-3 mr-1" />
+                    {blogArticles[0].readTime}
+                  </div>
+                </div>
+              </div>
+              <Button 
+                className="bg-white text-[#1A1A1A] hover:bg-white/90 rounded-full"
+                onClick={() => handleReadArticle(blogArticles[0].id)}
+              >
+                Read Article <ArrowUpRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Search and filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex-grow relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Input
+              type="text"
+              placeholder="Search articles..."
+              className="pl-12 rounded-full border-gray-200 bg-white shadow-sm"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-[180px] rounded-full border-gray-200 bg-white shadow-sm">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl">
+              <SelectItem value="all" className="rounded-full">All Categories</SelectItem>
+              {uniqueCategories.map(cat => (
+                <SelectItem key={cat} value={cat} className="rounded-full">{cat}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      
+        {/* Blog articles grid */}
+        {filteredArticles.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl shadow-sm">
+            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+              <User className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-medium mb-2">No Articles Found</h3>
+            <p className="text-gray-500 max-w-md">
+              We couldn't find any articles matching your search criteria. Try adjusting your filters or search terms.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArticles.slice(1).map((article, index) => (
+              <motion.div
+                key={article.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <Card className="overflow-hidden h-full flex flex-col hover:shadow-md transition-all rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                  <div className="relative h-48">
+                    <img 
+                      src={article.imageUrl} 
+                      alt={article.title}
+                      className="w-full h-full object-cover rounded-t-2xl"
+                    />
+                    <Badge className="absolute top-3 left-3 bg-[#FF3B30] hover:bg-[#FF3B30]/90 rounded-full px-3 py-1">
+                      {article.category}
+                    </Badge>
+                  </div>
+                  
+                  <CardContent className="flex-grow p-5">
+                    <div className="bg-gray-50 rounded-full px-3 py-1 inline-flex items-center text-xs text-gray-500 mb-3">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {formatDate(article.date)}
+                      <span className="mx-2">•</span>
+                      <Clock className="h-3 w-3 mr-1" />
+                      {article.readTime}
+                    </div>
+                    
+                    <h3 className="text-xl font-bold mb-2 line-clamp-2">{article.title}</h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.tags.slice(0, 2).map((tag, i) => (
+                        <span key={i} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      <div className="flex items-center">
+                        <Avatar className="h-8 w-8 mr-2">
+                          <AvatarImage src={article.author.avatar} alt={article.author.name} />
+                          <AvatarFallback>{article.author.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">{article.author.name}</span>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-[#FF3B30] hover:text-[#FF3B30]/90 p-0 rounded-full"
+                        onClick={() => handleReadArticle(article.id)}
+                      >
+                        Read More <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      
+        {filteredArticles.length > 1 && (
+          <div className="mt-10 flex justify-center">
+            <Button 
+              variant="outline" 
+              className="border-[#1A1A1A] text-[#1A1A1A] rounded-full px-8"
+              onClick={() => {
+                toast({
+                  title: "Load More",
+                  description: "Loading more articles...",
+                });
+              }}
+            >
+              Load More Articles
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -377,106 +377,153 @@ const Shop = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Rider Essentials</h1>
-      <p className="text-gray-600 mb-6">Quality gear for the modern motorcyclist</p>
-      
-      <Tabs defaultValue="helmets" onValueChange={setSelectedCategory} className="w-full">
-        <TabsList className="w-full mb-8 flex justify-between overflow-x-auto">
-          <TabsTrigger value="helmets" className="flex items-center gap-2">
-            <HardHat className="h-4 w-4" />
-            <span>Helmets</span>
-          </TabsTrigger>
-          <TabsTrigger value="jackets" className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4" />
-            <span>Jackets</span>
-          </TabsTrigger>
-          <TabsTrigger value="gloves" className="flex items-center gap-2">
-            <Wind className="h-4 w-4" />
-            <span>Gloves</span>
-          </TabsTrigger>
-          <TabsTrigger value="boots" className="flex items-center gap-2">
-            <Shirt className="h-4 w-4" />
-            <span>Boots</span>
-          </TabsTrigger>
-          <TabsTrigger value="accessories" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            <span>Accessories</span>
-          </TabsTrigger>
-        </TabsList>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">Rider Essentials</h1>
+          <p className="text-gray-600 mb-6">Quality gear for the modern motorcyclist</p>
+        </div>
         
-        {['helmets', 'jackets', 'gloves', 'boots', 'accessories'].map((category) => (
-          <TabsContent value={category} key={category}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <Card key={product.id} className="overflow-hidden transition-all duration-300 hover:shadow-lg">
-                  <div className="relative">
-                    <div 
-                      className="h-48 bg-cover bg-center" 
-                      style={{ 
-                        backgroundImage: `url(${getImagePlaceholder(product.category, product.id)})`,
-                        backgroundColor: product.category === 'helmets' ? '#F59E0B' : 
-                                        product.category === 'jackets' ? '#3B82F6' : 
-                                        product.category === 'gloves' ? '#10B981' : 
-                                        product.category === 'boots' ? '#8B5CF6' : '#EC4899'
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end">
-                        <div className="p-4 text-white">
-                          <div className="flex items-center gap-2">
-                            <CategoryIcon category={product.category} />
-                            <span className="capitalize text-sm">{product.category}</span>
+        {/* Quick Stats */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="text-center">
+              <div className="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <HardHat className="h-6 w-6 text-amber-600" />
+              </div>
+              <p className="text-sm text-gray-600">Helmets</p>
+              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'helmets').length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <ShieldCheck className="h-6 w-6 text-blue-600" />
+              </div>
+              <p className="text-sm text-gray-600">Jackets</p>
+              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'jackets').length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Wind className="h-6 w-6 text-green-600" />
+              </div>
+              <p className="text-sm text-gray-600">Gloves</p>
+              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'gloves').length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Shirt className="h-6 w-6 text-purple-600" />
+              </div>
+              <p className="text-sm text-gray-600">Boots</p>
+              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'boots').length}</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-pink-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Zap className="h-6 w-6 text-pink-600" />
+              </div>
+              <p className="text-sm text-gray-600">Accessories</p>
+              <p className="font-bold text-gray-900">{products.filter(p => p.category === 'accessories').length}</p>
+            </div>
+          </div>
+        </div>
+        
+        <Tabs defaultValue="helmets" onValueChange={setSelectedCategory} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 bg-gray-100 rounded-full p-1 mb-8">
+            <TabsTrigger value="helmets" className="flex items-center gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <HardHat className="h-4 w-4" />
+              <span className="hidden sm:inline">Helmets</span>
+            </TabsTrigger>
+            <TabsTrigger value="jackets" className="flex items-center gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <ShieldCheck className="h-4 w-4" />
+              <span className="hidden sm:inline">Jackets</span>
+            </TabsTrigger>
+            <TabsTrigger value="gloves" className="flex items-center gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <Wind className="h-4 w-4" />
+              <span className="hidden sm:inline">Gloves</span>
+            </TabsTrigger>
+            <TabsTrigger value="boots" className="flex items-center gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <Shirt className="h-4 w-4" />
+              <span className="hidden sm:inline">Boots</span>
+            </TabsTrigger>
+            <TabsTrigger value="accessories" className="flex items-center gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Access.</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          {['helmets', 'jackets', 'gloves', 'boots', 'accessories'].map((category) => (
+            <TabsContent value={category} key={category}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product) => (
+                  <Card key={product.id} className="overflow-hidden transition-all duration-300 hover:shadow-lg rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                    <div className="relative">
+                      <div 
+                        className="h-48 bg-cover bg-center rounded-t-2xl" 
+                        style={{ 
+                          backgroundImage: `url(${getImagePlaceholder(product.category, product.id)})`,
+                          backgroundColor: product.category === 'helmets' ? '#F59E0B' : 
+                                          product.category === 'jackets' ? '#3B82F6' : 
+                                          product.category === 'gloves' ? '#10B981' : 
+                                          product.category === 'boots' ? '#8B5CF6' : '#EC4899'
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end rounded-t-2xl">
+                          <div className="p-4 text-white">
+                            <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 inline-flex items-center gap-2">
+                              <CategoryIcon category={product.category} />
+                              <span className="capitalize text-sm">{product.category}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      {product.badge && (
+                        <Badge className="absolute top-3 right-3 bg-[#FF3B30] text-white rounded-full px-3 py-1">
+                          {product.badge}
+                        </Badge>
+                      )}
                     </div>
-                    {product.badge && (
-                      <Badge className="absolute top-2 right-2 bg-[#FF3B30] text-white">
-                        {product.badge}
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-xl">{product.name}</CardTitle>
-                      <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
-                    </div>
-                    <StarRating rating={product.rating} />
-                    <CardDescription className="line-clamp-2">
-                      {product.description}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="mt-2">
-                      <div className="text-sm font-medium mb-1">Key Features:</div>
-                      <ul className="text-xs text-gray-600 space-y-1">
-                        {product.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
-                            <span className="mr-1 text-[#FF3B30]">•</span>
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter className="flex justify-between border-t pt-4">
-                    <Button variant="outline">Details</Button>
-                    <Button 
-                      className="bg-[#FF3B30] hover:bg-opacity-90"
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+                    
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start mb-3">
+                        <CardTitle className="text-xl">{product.name}</CardTitle>
+                        <div className="bg-gray-100 rounded-full px-3 py-1">
+                          <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      <StarRating rating={product.rating} />
+                      <CardDescription className="line-clamp-2">
+                        {product.description}
+                      </CardDescription>
+                    </CardHeader>
+                    
+                    <CardContent className="pt-0">
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium">Key Features:</div>
+                        <div className="grid grid-cols-1 gap-2">
+                          {product.features.slice(0, 3).map((feature, i) => (
+                            <div key={i} className="flex items-center p-2 bg-gray-50 rounded-2xl text-xs">
+                              <span className="mr-2 text-[#FF3B30]">•</span>
+                              <span>{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                    
+                    <CardFooter className="flex justify-between pt-4">
+                      <Button variant="outline" className="rounded-full">Details</Button>
+                      <Button 
+                        className="bg-[#FF3B30] hover:bg-opacity-90 rounded-full"
+                        onClick={() => handleAddToCart(product)}
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
     </div>
   );
 };
