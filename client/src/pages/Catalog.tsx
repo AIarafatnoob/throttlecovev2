@@ -190,212 +190,250 @@ const Catalog = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">Motorcycle Catalog</h1>
-          <p className="text-gray-600">Explore our collection of motorcycles from top manufacturers</p>
-        </div>
-      </div>
-      
-      {/* Search and Filters */}
-      <motion.div 
-        className="bg-white rounded-lg shadow-sm border p-4 mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-grow relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-            <Input
-              type="text"
-              placeholder="Search motorcycles by make or model..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Sport">Sport ({categoryCounts.Sport})</SelectItem>
-                <SelectItem value="Adventure">Adventure ({categoryCounts.Adventure})</SelectItem>
-                <SelectItem value="Cruiser">Cruiser ({categoryCounts.Cruiser})</SelectItem>
-                <SelectItem value="Naked">Naked ({categoryCounts.Naked})</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                <SelectItem value="price-desc">Price: High to Low</SelectItem>
-              </SelectContent>
-            </Select>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">Motorcycle Catalog</h1>
+            <p className="text-gray-600">Explore our collection of motorcycles from top manufacturers</p>
           </div>
         </div>
-      </motion.div>
-      
-      {/* Tabs for browsing by category */}
-      <Tabs defaultValue="all" className="mb-8">
-        <TabsList className="bg-transparent border-b w-full justify-start space-x-8 rounded-none">
-          <TabsTrigger 
-            value="all" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#FF3B30] data-[state=active]:text-[#1A1A1A] rounded-none px-1 py-2 text-gray-600"
-          >
-            All
-          </TabsTrigger>
-          <TabsTrigger 
-            value="sport" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#FF3B30] data-[state=active]:text-[#1A1A1A] rounded-none px-1 py-2 text-gray-600"
-          >
-            Sport
-          </TabsTrigger>
-          <TabsTrigger 
-            value="adventure" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#FF3B30] data-[state=active]:text-[#1A1A1A] rounded-none px-1 py-2 text-gray-600"
-          >
-            Adventure
-          </TabsTrigger>
-          <TabsTrigger 
-            value="cruiser" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#FF3B30] data-[state=active]:text-[#1A1A1A] rounded-none px-1 py-2 text-gray-600"
-          >
-            Cruiser
-          </TabsTrigger>
-          <TabsTrigger 
-            value="naked" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#FF3B30] data-[state=active]:text-[#1A1A1A] rounded-none px-1 py-2 text-gray-600"
-          >
-            Naked
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
-      {/* Motorcycle grid */}
-      {sortedMotorcycles.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Filter className="h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-xl font-medium mb-2">No Motorcycles Found</h3>
-          <p className="text-gray-500 max-w-md">
-            We couldn't find any motorcycles matching your search criteria. Try adjusting your filters or search terms.
-          </p>
+        
+        {/* Search and Filters */}
+        <motion.div 
+          className="bg-white rounded-2xl shadow-sm border p-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-grow relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Input
+                type="text"
+                placeholder="Search motorcycles by make or model..."
+                className="pl-10 rounded-full border-gray-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="w-[180px] rounded-full border-gray-200">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem value="all" className="rounded-full">All Categories</SelectItem>
+                  <SelectItem value="Sport" className="rounded-full">Sport ({categoryCounts.Sport})</SelectItem>
+                  <SelectItem value="Adventure" className="rounded-full">Adventure ({categoryCounts.Adventure})</SelectItem>
+                  <SelectItem value="Cruiser" className="rounded-full">Cruiser ({categoryCounts.Cruiser})</SelectItem>
+                  <SelectItem value="Naked" className="rounded-full">Naked ({categoryCounts.Naked})</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px] rounded-full border-gray-200">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem value="newest" className="rounded-full">Newest First</SelectItem>
+                  <SelectItem value="price-asc" className="rounded-full">Price: Low to High</SelectItem>
+                  <SelectItem value="price-desc" className="rounded-full">Price: High to Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Quick Stats Bar */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-blue-600 font-bold">{motorcycles.length}</span>
+              </div>
+              <p className="text-sm text-gray-600">Total Models</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-green-600 font-bold">{categoryCounts.Sport}</span>
+              </div>
+              <p className="text-sm text-gray-600">Sport Bikes</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-yellow-600 font-bold">{categoryCounts.Adventure}</span>
+              </div>
+              <p className="text-sm text-gray-600">Adventure</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-purple-600 font-bold">{categoryCounts.Cruiser + categoryCounts.Naked}</span>
+              </div>
+              <p className="text-sm text-gray-600">Other Types</p>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedMotorcycles.map((motorcycle, index) => (
-            <motion.div
-              key={motorcycle.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+
+        {/* Tabs for browsing by category */}
+        <Tabs defaultValue="all" className="mb-8">
+          <TabsList className="grid w-full grid-cols-5 bg-gray-100 rounded-full p-1">
+            <TabsTrigger 
+              value="all" 
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Card className="overflow-hidden h-full flex flex-col hover:shadow-md transition-shadow">
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={motorcycle.imageUrl} 
-                    alt={`${motorcycle.make} ${motorcycle.model}`}
-                    className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                  />
-                  <div className="absolute top-2 right-2 flex space-x-2">
-                    <Button 
-                      size="icon" 
-                      variant="ghost" 
-                      className="h-8 w-8 rounded-full bg-white text-gray-600 hover:text-[#FF3B30]"
-                      onClick={() => handleSaveMotorcycle(motorcycle.id)}
-                    >
-                      <Bookmark className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      size="icon" 
-                      variant="ghost" 
-                      className="h-8 w-8 rounded-full bg-white text-gray-600 hover:text-[#FF3B30]"
-                      onClick={() => handleShareMotorcycle(motorcycle.id)}
-                    >
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <span className="text-white text-sm font-medium">
-                          {motorcycle.year} {motorcycle.make}
-                        </span>
-                        <h3 className="text-white font-bold">{motorcycle.model}</h3>
+              All
+            </TabsTrigger>
+            <TabsTrigger 
+              value="sport" 
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              Sport
+            </TabsTrigger>
+            <TabsTrigger 
+              value="adventure" 
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              Adventure
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cruiser" 
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              Cruiser
+            </TabsTrigger>
+            <TabsTrigger 
+              value="naked" 
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              Naked
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        {/* Motorcycle grid */}
+        {sortedMotorcycles.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm border p-12">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <Filter className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-medium mb-2">No Motorcycles Found</h3>
+              <p className="text-gray-500 max-w-md">
+                We couldn't find any motorcycles matching your search criteria. Try adjusting your filters or search terms.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedMotorcycles.map((motorcycle, index) => (
+              <motion.div
+                key={motorcycle.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-all duration-300 rounded-2xl border-0 shadow-sm bg-gradient-to-b from-white to-gray-50">
+                  <div className="relative h-48 overflow-hidden rounded-t-2xl">
+                    <img 
+                      src={motorcycle.imageUrl} 
+                      alt={`${motorcycle.make} ${motorcycle.model}`}
+                      className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                    />
+                    <div className="absolute top-3 right-3 flex space-x-2">
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-[#FF3B30] hover:bg-white border-0"
+                        onClick={() => handleSaveMotorcycle(motorcycle.id)}
+                      >
+                        <Bookmark className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-[#FF3B30] hover:bg-white border-0"
+                        onClick={() => handleShareMotorcycle(motorcycle.id)}
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 mb-2 inline-block">
+                            <span className="text-white text-xs font-medium">
+                              {motorcycle.year} {motorcycle.make}
+                            </span>
+                          </div>
+                          <h3 className="text-white font-bold text-lg">{motorcycle.model}</h3>
+                        </div>
+                        <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
+                          <span className="text-gray-900 font-bold">{motorcycle.price}</span>
+                        </div>
                       </div>
-                      <span className="text-white font-bold">{motorcycle.price}</span>
                     </div>
                   </div>
-                </div>
-                
-                <CardContent className="flex-grow py-4">
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Category</span>
-                      <p className="font-medium">{motorcycle.category}</p>
+                  
+                  <CardContent className="flex-grow py-6">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
+                        <span className="text-gray-600 text-sm">Category</span>
+                        <span className="font-semibold text-gray-900">{motorcycle.category}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-gray-50 rounded-2xl text-center">
+                          <p className="text-xs text-gray-500 mb-1">Engine</p>
+                          <p className="font-semibold text-sm">{motorcycle.engineSize}</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-2xl text-center">
+                          <p className="text-xs text-gray-500 mb-1">Power</p>
+                          <p className="font-semibold text-sm">{motorcycle.power}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-gray-500">Engine</span>
-                      <p className="font-medium">{motorcycle.engineSize}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Power</span>
-                      <p className="font-medium">{motorcycle.power}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Weight</span>
-                      <p className="font-medium">{motorcycle.weight}</p>
-                    </div>
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="pt-0 pb-4">
-                  <Button 
-                    className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white"
-                    onClick={() => {
-                      toast({
-                        title: "Motorcycle Details",
-                        description: `View detailed specifications for ${motorcycle.make} ${motorcycle.model}`,
-                      });
-                    }}
-                  >
-                    <span className="flex items-center">
-                      View Details <ArrowUpRight className="ml-2 h-4 w-4" />
-                    </span>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
-      
-      {sortedMotorcycles.length > 0 && (
-        <div className="mt-8 flex justify-center">
-          <Button 
-            variant="outline" 
-            className="border-[#1A1A1A] text-[#1A1A1A] px-6"
-            onClick={() => {
-              toast({
-                title: "Load More",
-                description: "Loading more motorcycles...",
-              });
-            }}
-          >
-            <span className="flex items-center">
-              Load More <ChevronDown className="ml-2 h-4 w-4" />
-            </span>
-          </Button>
-        </div>
-      )}
+                  </CardContent>
+                  
+                  <CardFooter className="pt-0 pb-6 px-6">
+                    <Button 
+                      className="w-full bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full h-12"
+                      onClick={() => {
+                        toast({
+                          title: "Motorcycle Details",
+                          description: `View detailed specifications for ${motorcycle.make} ${motorcycle.model}`,
+                        });
+                      }}
+                    >
+                      <span className="flex items-center">
+                        View Details <ArrowUpRight className="ml-2 h-4 w-4" />
+                      </span>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        )}
+        
+        {sortedMotorcycles.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <Button 
+              variant="outline" 
+              className="border-gray-300 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-50"
+              onClick={() => {
+                toast({
+                  title: "Load More",
+                  description: "Loading more motorcycles...",
+                });
+              }}
+            >
+              <span className="flex items-center">
+                Load More <ChevronDown className="ml-2 h-4 w-4" />
+              </span>
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
