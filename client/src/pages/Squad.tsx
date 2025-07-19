@@ -108,19 +108,20 @@ const Squad = () => {
     setShowQuickActions(!showQuickActions);
   };
 
-  const handleCreateEvent = () => {
+  const handleNewGroup = () => {
+    // Implementation for creating new group
+    console.log("Creating new group...");
+    setShowQuickActions(false);
+  };
+
+  const handleNewEvent = () => {
     setIsCreateEventDialogOpen(true);
     setShowQuickActions(false);
   };
 
-  const handleEmergencyAlert = () => {
-    setIsEmergencyAlertOpen(true);
-    setShowQuickActions(false);
-  };
-
-  const handleLocationShare = () => {
-    // Implementation for location sharing
-    console.log("Sharing location with squad...");
+  const handleNewRide = () => {
+    // Implementation for creating new ride
+    console.log("Creating new ride...");
     setShowQuickActions(false);
   };
 
@@ -596,9 +597,19 @@ const Squad = () => {
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  onClick={handleCreateEvent}
+                  onClick={handleNewGroup}
+                  className="bg-purple-600 hover:bg-purple-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
+                  title="New Group"
+                >
+                  <Users className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={handleNewEvent}
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
-                  title="Create Event"
+                  title="New Event"
                 >
                   <Calendar className="h-5 w-5" />
                 </Button>
@@ -606,21 +617,11 @@ const Squad = () => {
               
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  onClick={handleLocationShare}
+                  onClick={handleNewRide}
                   className="bg-green-600 hover:bg-green-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
-                  title="Share Location"
+                  title="New Ride"
                 >
-                  <MapPin className="h-5 w-5" />
-                </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={handleEmergencyAlert}
-                  className="bg-red-600 hover:bg-red-700 text-white rounded-full w-12 h-12 shadow-lg p-0"
-                  title="Emergency Alert"
-                >
-                  <Shield className="h-5 w-5" />
+                  <Route className="h-5 w-5" />
                 </Button>
               </motion.div>
             </motion.div>
