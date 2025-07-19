@@ -207,28 +207,7 @@ const AddMotorcycleDialog = ({ open, onOpenChange, onSuccess }: AddMotorcycleDia
                   />
                 </div>
 
-                {/* Documents Upload */}
-                <div className="flex-1">
-                  <div 
-                    className="bg-white rounded-full border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer hover:border-[#FF3B30] transition-colors min-h-[80px] flex flex-col items-center justify-center"
-                    onClick={() => documentsInputRef.current?.click()}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-5 w-5 text-gray-400" />
-                      <span className="text-sm text-gray-600 font-medium">
-                        {uploadedDocuments.length > 0 ? `${uploadedDocuments.length} Files` : "Add Documents"}
-                      </span>
-                    </div>
-                  </div>
-                  <input
-                    ref={documentsInputRef}
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleDocumentsUpload}
-                    className="hidden"
-                  />
-                </div>
+                
               </div>
 
               {/* Document List */}
