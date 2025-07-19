@@ -190,7 +190,7 @@ const Blog = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-header text-[#1A1A1A] mb-2">Motorcycle Blog</h1>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-1" style={{ fontFamily: 'Kanit, sans-serif' }}>BLOG AND NEWS</h1>
             <p className="text-gray-600">Latest articles, guides, and stories from the motorcycle world</p>
           </div>
           <Button
