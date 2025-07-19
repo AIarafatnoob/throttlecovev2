@@ -1000,8 +1000,161 @@ const NewGarage = () => {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="mt-6 pt-6 border-t border-gray-100 space-y-4"
+                        className="mt-6 pt-6 border-t border-gray-100 space-y-6"
                       >
+                        {/* Vehicle Details Section */}
+                        <div>
+                          <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm mb-3">
+                            <Bike className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                            Vehicle Details
+                          </h4>
+                          
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-gray-50 rounded-xl p-3">
+                              <p className="text-xs text-gray-500 mb-1">Year</p>
+                              <p className="font-medium text-sm text-[#1A1A1A]">{motorcycle.year || "N/A"}</p>
+                            </div>
+                            <div className="bg-gray-50 rounded-xl p-3">
+                              <p className="text-xs text-gray-500 mb-1">Engine Size</p>
+                              <p className="font-medium text-sm text-[#1A1A1A]">{motorcycle.engineSize || "N/A"}</p>
+                            </div>
+                            <div className="bg-gray-50 rounded-xl p-3">
+                              <p className="text-xs text-gray-500 mb-1">Status</p>
+                              <Badge className={`text-xs ${
+                                motorcycle.status === 'active' ? 'bg-green-100 text-green-800' :
+                                motorcycle.status === 'in service' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-blue-100 text-blue-800'
+                              }`}>
+                                {motorcycle.status}
+                              </Badge>
+                            </div>
+                            <div className="bg-gray-50 rounded-xl p-3">
+                              <p className="text-xs text-gray-500 mb-1">VIN</p>
+                              <p className="font-medium text-xs text-[#1A1A1A] truncate">{motorcycle.vin || "Not set"}</p>
+                            </div>
+                          </div>
+
+                          {motorcycle.purchasePrice && (
+                            <div className="mt-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-200">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-xs text-blue-600 mb-1">Purchase Price</p>
+                                  <p className="font-bold text-sm text-blue-800">${(motorcycle.purchasePrice / 100).toLocaleString()}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs text-blue-600 mb-1">Est. Current Value</p>
+                                  <p className="font-medium text-sm text-blue-700">${Math.round(motorcycle.purchasePrice / 100 * 0.85).toLocaleString()}</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Essential Products Section */}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
+                              <TrendingUp className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                              Essential Products
+                            </h4>
+                            <Button size="sm" variant="outline" className={`text-xs h-7 rounded-xl transition-all duration-300 ${isOverFooter ? 'border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white' : 'border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white'}`}>
+                              <Eye className="h-3 w-3 mr-1" />
+                              View All
+                            </Button>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-2">
+                            {[
+                              { 
+                                id: 1, 
+                                name: "Engine Oil", 
+                                icon: "🛢️", 
+                                category: "Engine",
+                                price: "$25.99",
+                                stock: "In Stock",
+                                compatibility: `${motorcycle.make} ${motorcycle.model}`,
+                                lastChanged: "2 months ago"
+                              },
+                              { 
+                                id: 2, 
+                                name: "Chain Lube", 
+                                icon: "🔗", 
+                                category: "Drive Train",
+                                price: "$12.49",
+                                stock: "Low Stock",
+                                compatibility: "Universal",
+                                lastChanged: "3 weeks ago"
+                              },
+                              { 
+                                id: 3, 
+                                name: "Air Filter", 
+                                icon: "🌬️", 
+                                category: "Engine",
+                                price: "$18.99",
+                                stock: "In Stock",
+                                compatibility: `${motorcycle.make} ${motorcycle.model}`,
+                                lastChanged: "6 months ago"
+                              }
+                            ].map((product) => (
+                              <div 
+                                key={product.id}
+                                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-xl hover:border-[#FF3B30]/30 hover:bg-gray-50 transition-all duration-200"
+                              >
+                                <div className="flex items-center space-x-3 flex-1">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-[#FF3B30]/10 to-[#FF3B30]/5 rounded-xl flex items-center justify-center">
+                                    <span className="text-base">{product.icon}</span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <p className="font-medium text-sm text-[#1A1A1A]">{product.name}</p>
+                                      <Badge className="text-xs bg-gray-100 text-gray-600">
+                                        {product.category}
+                                      </Badge>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                      <span>{product.compatibility}</span>
+                                      <span>•</span>
+                                      <span>Last: {product.lastChanged}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-2">
+                                  <div className="text-right">
+                                    <p className="font-bold text-sm text-[#1A1A1A]">{product.price}</p>
+                                    <p className={`text-xs ${
+                                      product.stock === "In Stock" ? "text-green-600" :
+                                      product.stock === "Low Stock" ? "text-yellow-600" :
+                                      "text-red-600"
+                                    }`}>
+                                      {product.stock}
+                                    </p>
+                                  </div>
+                                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-[#FF3B30]/10">
+                                    <Plus className="h-4 w-4 text-[#FF3B30]" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Quick Order Section */}
+                          <div className="mt-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium text-sm text-green-800 mb-1">Quick Maintenance Kit</p>
+                                <p className="text-xs text-green-600">Oil + Filter + Chain Lube</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-sm text-green-800 mb-1">$49.99</p>
+                                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs h-7">
+                                  Add Kit
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Vehicle Documents */}
                         <div>
                           <div className="flex items-center justify-between mb-3">
@@ -1017,19 +1170,23 @@ const NewGarage = () => {
 
                           <div className="grid grid-cols-1 gap-2">
                             {[
-                              { id: 1, name: "Registration", icon: "📋", status: "valid" },
-                              { id: 2, name: "Insurance", icon: "🛡️", status: "expiring" },
-                              { id: 3, name: "Service Record", icon: "🔧", status: "valid" }
+                              { id: 1, name: "Registration", icon: "📋", status: "valid", expires: "Dec 2025" },
+                              { id: 2, name: "Insurance", icon: "🛡️", status: "expiring", expires: "Feb 2025" },
+                              { id: 3, name: "Service Record", icon: "🔧", status: "valid", expires: "N/A" }
                             ].map((doc) => (
                               <div 
                                 key={doc.id}
-                                className="flex items-center justify-between p-2 bg-gray-50 rounded-xl border"
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border"
                               >
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm">{doc.icon}</span>
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                                    <span className="text-sm">{doc.icon}</span>
+                                  </div>
                                   <div>
-                                    <p className="font-medium text-xs text-[#1A1A1A]">{doc.name}</p>
-                                    <p className="text-xs text-gray-500">Updated recently</p>
+                                    <p className="font-medium text-sm text-[#1A1A1A]">{doc.name}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {doc.expires !== "N/A" ? `Expires: ${doc.expires}` : "Permanent record"}
+                                    </p>
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
@@ -1040,7 +1197,7 @@ const NewGarage = () => {
                                   }`}>
                                     {doc.status}
                                   </Badge>
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
                                     <Eye className="h-3 w-3" />
                                   </Button>
                                 </div>
@@ -1049,6 +1206,47 @@ const NewGarage = () => {
                           </div>
                         </div>
 
+                        {/* Maintenance History Preview */}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-[#1A1A1A] flex items-center text-sm">
+                              <Wrench className="h-4 w-4 mr-2 text-[#FF3B30]" />
+                              Recent Maintenance
+                            </h4>
+                            <Button size="sm" variant="outline" className={`text-xs h-7 rounded-xl transition-all duration-300 ${isOverFooter ? 'border-[#FF3B30] text-[#FF3B30] hover:bg-[#FF3B30] hover:text-white' : 'border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white'}`}>
+                              <Calendar className="h-3 w-3 mr-1" />
+                              Full History
+                            </Button>
+                          </div>
+
+                          <div className="space-y-2">
+                            {[
+                              { 
+                                date: "Jan 15, 2025", 
+                                service: "Oil Change", 
+                                cost: "$35.00", 
+                                km: Math.round((motorcycle.mileage || 0) * 1.60934) - 500
+                              },
+                              { 
+                                date: "Dec 20, 2024", 
+                                service: "Chain Adjustment", 
+                                cost: "$15.00", 
+                                km: Math.round((motorcycle.mileage || 0) * 1.60934) - 1200
+                              }
+                            ].map((record, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-2 h-2 bg-[#FF3B30] rounded-full"></div>
+                                  <div>
+                                    <p className="font-medium text-xs text-[#1A1A1A]">{record.service}</p>
+                                    <p className="text-xs text-gray-500">{record.date} • {record.km.toLocaleString()} km</p>
+                                  </div>
+                                </div>
+                                <p className="font-medium text-xs text-[#1A1A1A]">{record.cost}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
 
                       </motion.div>
                     )}
