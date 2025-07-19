@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 const Squad = () => {
   const [selectedGroup, setSelectedGroup] = useState(1);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
+  const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
   const [isEmergencyAlertOpen, setIsEmergencyAlertOpen] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
 
@@ -109,8 +110,7 @@ const Squad = () => {
   };
 
   const handleNewGroup = () => {
-    // Implementation for creating new group
-    console.log("Creating new group...");
+    setIsCreateGroupDialogOpen(true);
     setShowQuickActions(false);
   };
 
@@ -678,6 +678,109 @@ const Squad = () => {
                 </Button>
                 <Button onClick={() => setIsCreateEventDialogOpen(false)} className="flex-1 bg-blue-600 hover:bg-blue-700">
                   Create Event
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Group Dialog */}
+        <Dialog open={isCreateGroupDialogOpen} onOpenChange={setIsCreateGroupDialogOpen}>
+          <DialogContent className="sm:max-w-md rounded-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold">Create New Group</DialogTitle>
+              <DialogDescription className="text-center">
+                Start a new riding group and invite members to join your adventures.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6 p-2">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Group Name</label>
+                <Input 
+                  placeholder="Mountain Riders" 
+                  className="rounded-full h-12 border-2 focus:border-purple-400 transition-colors"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Description</label>
+                <textarea 
+                  placeholder="A group for mountain biking enthusiasts who love challenging trails and scenic routes..."
+                  className="w-full h-24 p-3 rounded-2xl border-2 focus:border-purple-400 transition-colors resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-3 block">Group Type</label>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" className="rounded-full border-2 hover:bg-purple-50 hover:border-purple-300">
+                    Casual Rides
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full border-2 hover:bg-purple-50 hover:border-purple-300">
+                    Racing
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full border-2 hover:bg-purple-50 hover:border-purple-300">
+                    Touring
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full border-2 hover:bg-purple-50 hover:border-purple-300">
+                    Off-Road
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full border-2 hover:bg-purple-50 hover:border-purple-300">
+                    Urban
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-3 block">Skill Level</label>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full border-2 hover:bg-green-50 hover:border-green-300">
+                    Beginner
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full border-2 hover:bg-yellow-50 hover:border-yellow-300">
+                    Intermediate
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full border-2 hover:bg-red-50 hover:border-red-300">
+                    Advanced
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-3 block">Privacy Settings</label>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full border-2 hover:bg-blue-50 hover:border-blue-300">
+                    <Users className="w-4 h-4 mr-2" />
+                    Public
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full border-2 hover:bg-gray-50 hover:border-gray-300">
+                    <Shield className="w-4 h-4 mr-2" />
+                    Private
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Location (Optional)</label>
+                <Input 
+                  placeholder="San Francisco, CA" 
+                  className="rounded-full h-12 border-2 focus:border-purple-400 transition-colors"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={() => setIsCreateGroupDialogOpen(false)} 
+                  variant="outline" 
+                  className="flex-1 rounded-full h-12 border-2"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => setIsCreateGroupDialogOpen(false)} 
+                  className="flex-1 rounded-full h-12 bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  Create Group
                 </Button>
               </div>
             </div>
