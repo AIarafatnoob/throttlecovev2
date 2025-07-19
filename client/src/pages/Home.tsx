@@ -2,7 +2,7 @@ import logoh from "@/assets/tclogov2h2.svg";
 import neonga from "@/assets/nwhero2.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "lucide-react";
