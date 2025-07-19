@@ -245,35 +245,7 @@ const Catalog = () => {
           </div>
         </motion.div>
         
-        {/* Quick Stats Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-blue-600 font-bold">{motorcycles.length}</span>
-              </div>
-              <p className="text-sm text-gray-600">Total Models</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-green-600 font-bold">{categoryCounts.Sport}</span>
-              </div>
-              <p className="text-sm text-gray-600">Sport Bikes</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-yellow-600 font-bold">{categoryCounts.Adventure}</span>
-              </div>
-              <p className="text-sm text-gray-600">Adventure</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-purple-600 font-bold">{categoryCounts.Cruiser + categoryCounts.Naked}</span>
-              </div>
-              <p className="text-sm text-gray-600">Other Types</p>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Tabs for browsing by category */}
         <Tabs defaultValue="all" className="mb-8">
