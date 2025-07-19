@@ -147,33 +147,33 @@ const Squad = () => {
           </div>
         </div>
 
-        {/* Quick Stats Cards - Horizontal Layout */}
-        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6">
+        {/* Quick Stats Cards - Pill-shaped Layout */}
+        <div className="bg-white rounded-full shadow-sm border p-4 mb-6">
           <div className="flex justify-between items-center gap-4 overflow-x-auto">
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Users className="w-6 h-6 text-white" />
               </div>
               <p className="text-2xl font-bold text-gray-900">3</p>
               <p className="text-sm text-gray-600 whitespace-nowrap">Groups</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Calendar className="w-6 h-6 text-green-600" />
+              <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Calendar className="w-6 h-6 text-white" />
               </div>
               <p className="text-2xl font-bold text-gray-900">8h</p>
               <p className="text-sm text-gray-600 whitespace-nowrap">Next Ride</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Trophy className="w-6 h-6 text-yellow-600" />
+              <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Trophy className="w-6 h-6 text-white" />
               </div>
               <p className="text-2xl font-bold text-gray-900">#4</p>
               <p className="text-sm text-gray-600 whitespace-nowrap">Rank</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Route className="w-6 h-6 text-purple-600" />
+              <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Route className="w-6 h-6 text-white" />
               </div>
               <p className="text-2xl font-bold text-gray-900">387km</p>
               <p className="text-sm text-gray-600 whitespace-nowrap">This Month</p>
