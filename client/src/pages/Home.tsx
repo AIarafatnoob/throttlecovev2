@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import { Bike, Search, TrafficCone, ArrowRight, Star, Heart, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import MotorcycleDetailsDialog from "@/components/ui/motorcycle/MotorcycleDetailsDialog";
 
 // Sample motorcycle data
 const motorcycles = [
@@ -88,6 +89,8 @@ const motorcycles = [
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedMotorcycle, setSelectedMotorcycle] = useState<any>(null);
 
   const filteredMotorcycles = motorcycles.filter(bike => {
     const matchesSearch = bike.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -285,7 +288,24 @@ const Home = () => {
                     <div className="flex gap-2">
                       <Button 
                         className="flex-1 bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full"
-                        onClick={() => window.location.href = `/catalog/${bike.id}`}
+                        onClick={() => {
+                          // Convert bike data to match MotorcycleDetailsDialog interface
+                          const motorcycleData = {
+                            id: bike.id,
+                            make: bike.brand,
+                            model: bike.name.replace(`${bike.brand} `, ''),
+                            year: bike.year,
+                            category: bike.type,
+                            engineSize: bike.engine,
+                            power: "150 HP", // Default value
+                            weight: "180 kg", // Default value
+                            price: bike.price,
+                            imageUrl: bike.image,
+                            color: "Standard" // Default value
+                          };
+                          setSelectedMotorcycle(motorcycleData);
+                          setIsDetailsDialogOpen(true);
+                        }}
                       >
                         View Details
                       </Button>
@@ -338,6 +358,13 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Motorcycle Details Dialog */}
+      <MotorcycleDetailsDialog 
+        motorcycle={selectedMotorcycle}
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
+      />
     </div>
   );
 };
