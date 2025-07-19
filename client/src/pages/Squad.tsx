@@ -8,9 +8,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, MapPin, Clock, Users, MessageCircle, Trophy, Route, Settings, Plus, Search, Bell, Phone, Shield, Camera, Navigation } from "lucide-react";
+import AddMotorcycleDialog from "@/components/ui/motorcycle/AddMotorcycleDialog";
+import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
 const Squad = () => {
   const [selectedGroup, setSelectedGroup] = useState(1);
+  const [isAddMotorcycleDialogOpen, setIsAddMotorcycleDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   // Mock data for demonstration
   const groups = [
@@ -99,6 +104,10 @@ const Squad = () => {
     { id: 2, sender: "Alex Chen", avatar: "AC", message: "I'm in! What route are you thinking?", time: "3 min ago", type: "text" },
     { id: 3, sender: "Mike Rodriguez", avatar: "MR", message: "Count me in too. I know a great coffee stop midway.", time: "1 min ago", type: "text" },
   ];
+
+  const handleAddMotorcycle = () => {
+    setIsAddMotorcycleDialogOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -559,6 +568,32 @@ const Squad = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Floating Add Motorcycle Button */}
+        <motion.div
+          className="fixed bottom-6 right-6 z-50 group"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Button 
+            onClick={handleAddMotorcycle}
+            className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          >
+            <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+          </Button>
+        </motion.div>
+
+        {/* Add Motorcycle Dialog */}
+        <AddMotorcycleDialog 
+          open={isAddMotorcycleDialogOpen} 
+          onOpenChange={setIsAddMotorcycleDialogOpen}
+          onSuccess={() => {
+            setIsAddMotorcycleDialogOpen(false);
+            queryClient.invalidateQueries({ queryKey: ['/api/motorcycles'] });
+          }}
+        />
       </div>
     </div>
   );
