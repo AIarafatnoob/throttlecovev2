@@ -111,16 +111,6 @@ const Squad = () => {
             </div>
             <p className="text-gray-600">Connect, ride, and conquer together</p>
           </div>
-          <div className="flex gap-3 mt-4 lg:mt-0">
-            <Button variant="outline" size="sm" className="rounded-full">
-              <Bell className="w-4 h-4 mr-2" />
-              Notifications
-            </Button>
-            <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Event
-            </Button>
-          </div>
         </div>
 
         {/* Quick Actions Bar */}
