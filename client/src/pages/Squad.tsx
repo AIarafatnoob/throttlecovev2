@@ -156,32 +156,20 @@ const Squad = () => {
         <div className="bg-white rounded-full shadow-sm border p-3 mb-6">
           <div className="flex justify-between items-center gap-3">
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-black w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Users className="w-4 h-4 text-white" />
-              </div>
+              <p className="text-xs font-medium text-gray-500 mb-1">GROUPS</p>
               <p className="text-lg font-bold text-gray-900">3</p>
-              <p className="text-xs text-gray-600 whitespace-nowrap">Groups</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-black w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Calendar className="w-4 h-4 text-white" />
-              </div>
+              <p className="text-xs font-medium text-gray-500 mb-1">NEXT RIDE</p>
               <p className="text-lg font-bold text-gray-900">8h</p>
-              <p className="text-xs text-gray-600 whitespace-nowrap">Next Ride</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-black w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Trophy className="w-4 h-4 text-white" />
-              </div>
+              <p className="text-xs font-medium text-gray-500 mb-1">RANK</p>
               <p className="text-lg font-bold text-gray-900">#4</p>
-              <p className="text-xs text-gray-600 whitespace-nowrap">Rank</p>
             </div>
             <div className="text-center min-w-0 flex-1">
-              <div className="bg-black w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Route className="w-4 h-4 text-white" />
-              </div>
+              <p className="text-xs font-medium text-gray-500 mb-1">THIS MONTH</p>
               <p className="text-lg font-bold text-gray-900">387km</p>
-              <p className="text-xs text-gray-600 whitespace-nowrap">This Month</p>
             </div>
           </div>
         </div>
