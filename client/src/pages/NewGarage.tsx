@@ -9,7 +9,7 @@ import DocumentVault from "@/components/ui/DocumentVault";
 import { DocumentPreview } from "@/components/ui/DocumentPreview";
 
 
-import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp, Upload } from "lucide-react";
+import { Plus, MoreVertical, Wrench, MapPin, Calendar, Gauge, TrendingUp, Camera, User, FileText, Settings, Eye, ChevronDown, ChevronUp, Upload, Bike } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
