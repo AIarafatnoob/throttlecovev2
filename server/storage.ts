@@ -107,7 +107,7 @@ export class MemStorage implements IStorage {
   
   async createUser(user: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const newUser: User = { ...user, id, createdAt: new Date() };
+    const newUser: User = { ...user, id, createdAt: new Date(), updatedAt: new Date() };
     this.users.set(id, newUser);
     return newUser;
   }
@@ -125,7 +125,7 @@ export class MemStorage implements IStorage {
   
   async createMotorcycle(motorcycle: InsertMotorcycle): Promise<Motorcycle> {
     const id = this.currentMotorcycleId++;
-    const newMotorcycle: Motorcycle = { ...motorcycle, id, createdAt: new Date() };
+    const newMotorcycle: Motorcycle = { ...motorcycle, id, createdAt: new Date(), updatedAt: new Date() };
     this.motorcycles.set(id, newMotorcycle);
     return newMotorcycle;
   }
@@ -156,7 +156,7 @@ export class MemStorage implements IStorage {
   
   async createMaintenanceRecord(record: InsertMaintenanceRecord): Promise<MaintenanceRecord> {
     const id = this.currentMaintenanceRecordId++;
-    const newRecord: MaintenanceRecord = { ...record, id, createdAt: new Date() };
+    const newRecord: MaintenanceRecord = { ...record, id, createdAt: new Date(), updatedAt: new Date() };
     this.maintenanceRecords.set(id, newRecord);
     return newRecord;
   }
@@ -187,7 +187,7 @@ export class MemStorage implements IStorage {
   
   async createMaintenanceSchedule(schedule: InsertMaintenanceSchedule): Promise<MaintenanceSchedule> {
     const id = this.currentMaintenanceScheduleId++;
-    const newSchedule: MaintenanceSchedule = { ...schedule, id, createdAt: new Date() };
+    const newSchedule: MaintenanceSchedule = { ...schedule, id, createdAt: new Date(), updatedAt: new Date() };
     this.maintenanceSchedules.set(id, newSchedule);
     return newSchedule;
   }
@@ -218,7 +218,7 @@ export class MemStorage implements IStorage {
   
   async createRide(ride: InsertRide): Promise<Ride> {
     const id = this.currentRideId++;
-    const newRide: Ride = { ...ride, id, createdAt: new Date() };
+    const newRide: Ride = { ...ride, id, createdAt: new Date(), updatedAt: new Date() };
     this.rides.set(id, newRide);
     return newRide;
   }
@@ -305,4 +305,19 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { initializeDatabase } from './database.js';
+import { DatabaseService } from './services/DatabaseService.js';
+
+// Initialize database storage (replace MemStorage)
+let storage: IStorage;
+
+try {
+  const db = await initializeDatabase();
+  storage = new DatabaseService(db);
+  console.log('✅ Using PostgreSQL Database Storage');
+} catch (error) {
+  console.warn('⚠️ Database connection failed, falling back to memory storage:', error.message);
+  storage = new MemStorage();
+}
+
+export { storage };

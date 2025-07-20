@@ -6,7 +6,7 @@ import { logger } from './utils/logger.js';
 
 // Create the database connection
 const sql = postgres(config.DATABASE_URL, { 
-  ssl: config.NODE_ENV === 'production' ? 'require' : false,
+  ssl: config.NODE_ENV === 'production' ? 'require' : 'prefer',
   max: 10,
   idle_timeout: 20,
   connect_timeout: 60,
