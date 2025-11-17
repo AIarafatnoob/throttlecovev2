@@ -1,0 +1,28 @@
+# Render Blueprint Configuration for ThrottleCove Backend
+# This file enables one-click deployment to Render
+# Visit: https://render.com/docs/blueprint-spec
+
+services:
+  # Backend API Service
+  - type: web
+    name: throttlecove-api
+    env: node
+    region: oregon # Change to your preferred region
+    plan: free # Options: free, starter ($7), standard ($25)
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # You'll set this manually from your Neon dashboard
+      - key: SESSION_SECRET
+        generateValue: true # Render will auto-generate a secure secret
+      - key: PORT
+        value: 5000
+
+# Note: After deployment, you'll need to:
+# 1. Set your DATABASE_URL in the Render dashboard (from Neon)
+# 2. Copy your backend URL and add it to Netlify as VITE_API_URL
+# 3. Run database migrations if needed
