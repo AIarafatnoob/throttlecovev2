@@ -1,0 +1,43 @@
+# Netlify Configuration for ThrottleCove Frontend
+# This configuration is for deploying ONLY the frontend static files
+
+[build]
+  # Build command for frontend
+  command = "npm run build"
+  
+  # Directory containing built static files
+  publish = "dist/public"
+  
+  # Base directory
+  base = "/"
+
+[build.environment]
+  # Node version
+  NODE_VERSION = "20"
+  
+  # Set to production
+  NODE_ENV = "production"
+
+# Redirect all requests to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Note: This configuration assumes you're deploying the backend separately
+# The frontend will need VITE_API_URL environment variable set to your backend URL
