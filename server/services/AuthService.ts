@@ -85,6 +85,39 @@ export class AuthService extends BaseService {
   // Login user
   async login(loginData: LoginData, req: Request): Promise<{ user: Omit<User, 'passwordHash'>; tokens: TokenPair }> {
     return this.handleErrors('User login', async () => {
+      // --- TEMPORARY DEMO USER LOGIN START ---
+      if (loginData.username === 'demo' && loginData.password === 'demo') {
+        const demoUser: User = {
+          id: 999, // A distinct ID for the demo user
+          username: 'demo',
+          email: 'demo@example.com',
+          fullName: 'Demo User',
+          emailVerified: true,
+          role: 'user',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          passwordHash: 'DEMO_PASSWORD_HASH_PLACEHOLDER', // Not actually used for login
+          lastLoginAt: new Date(),
+          failedLoginAttempts: 0,
+          lockUntil: null,
+        };
+
+        const tokens = await generateTokens(demoUser, req);
+        const { passwordHash: _, ...userWithoutPassword } = demoUser;
+
+        logger.info('Demo user logged in', {
+          userId: demoUser.id,
+          username: demoUser.username,
+          ip: req.ip,
+        });
+
+        return {
+          user: userWithoutPassword,
+          tokens,
+        };
+      }
+      // --- TEMPORARY DEMO USER LOGIN END ---
+
       // Find user by username or email
       const user = await this.db
         .select()
