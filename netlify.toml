@@ -18,6 +18,14 @@
   # Set to production
   NODE_ENV = "production"
 
+[functions]
+  directory = "dist/functions" # Netlify functions output directory
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat" # Redirect all /api requests to our serverless function
+  status = 200 # Use 200 to serve the function output as if it were a direct response
+
 # Redirect all requests to index.html for client-side routing
 [[redirects]]
   from = "/*"
