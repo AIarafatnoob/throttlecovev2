@@ -3,7 +3,7 @@
 
 [build]
   # Build command for frontend
-  command = "curl https://sh.rustup.rs -sSf | sh -s -- -y && export PATH=\"$HOME/.cargo/bin:$PATH\" && npm install && npm run build"
+  command = "curl https://sh.rustup.rs -sSf | sh -s -- -y && export PATH=\"$HOME/.cargo/bin:$PATH\" && npm install --include=dev && npm run build"
   
   # Directory containing built static files
   publish = "dist/public"
