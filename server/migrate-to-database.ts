@@ -1,6 +1,7 @@
 import { initializeDatabase } from './database.js';
 import { DatabaseService } from './services/DatabaseService.js';
 import { logger } from './utils/logger.js';
+import { hashPassword } from './utils/auth.js';
 
 /**
  * Migration script to switch from MemStorage to PostgreSQL Database
@@ -27,10 +28,13 @@ async function runMigration() {
     logger.info('Testing database operations...');
     
     // Create a test user (this will fail if tables don't exist)
+    const password = 'password'; // Use a plain-text password for the test user
+    const hashedPassword = await hashPassword(password);
+
     const testUser = await databaseService.createUser({
       username: 'testuser',
       email: 'test@example.com',
-      passwordHash: 'hashed_password',
+      passwordHash: hashedPassword,
       fullName: 'Test User'
     });
     logger.info('Test user created:', { id: testUser.id, username: testUser.username });
